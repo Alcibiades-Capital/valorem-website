@@ -70,3 +70,10 @@ for price oracles. Option exercise happens at the discretion of the option
 holder. The only oracles in the protocol design are VRF for provably random and
 fair exercise assignment.
 
+## Use cases
+
+### Writing call options
+
+The Valorem protocol can be used to write covered call options with the payoff 
+$$max(0, - S_t)$$.
+
