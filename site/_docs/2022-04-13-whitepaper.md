@@ -1,7 +1,7 @@
 ---
 date: 2022-04-13 00:00:00 +01
-title: Valorem Options V1 Protocol Whitepaper
-description: Valorem Options V1 is an oracle-free, permissionless, physically settled options protocol for ERC20 tokens. 
+title: Valorem Options Whitepaper
+description: This whitepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens. 
 ---
 
 ## Introduction
@@ -34,7 +34,7 @@ any non-rebasing, non-fee on transfer, ERC20 token pair to handle the minting
 and exercise settlement of any put or call options in a permissionless and 
 trustless manner.
 
-### Key Innovations
+### Key innovations
 
 #### Permissionless
 
@@ -44,7 +44,7 @@ who can or cannot use it. Anyone can create new options chains, write options,
 exercise the options they hold, transfer those options, and transfer claims
 generated during writing.
 
-#### Fully Collateralized
+#### Fully collateralized
 
 The protocol being fully collateralized means that options can be exercised at
 any time prior to expiry and after the exercise timestamp, without the risk of
