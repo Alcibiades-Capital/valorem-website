@@ -37,6 +37,7 @@ layout: default
   </div>
 </div>
 <script src=”https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<!-- for mathjax support -->
 {% if page.usemathjax %}
 <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
@@ -44,4 +45,4 @@ layout: default
         });
       </script>
 <script type="text/javascript" async src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-{% end if %}
+{% endif %}
