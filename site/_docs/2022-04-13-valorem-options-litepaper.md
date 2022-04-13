@@ -77,4 +77,3 @@ fair exercise assignment.
 
 The Valorem protocol can be used to write covered call options with the payoff 
 $$max(0, - S_t)$$.
-
