@@ -1,6 +1,7 @@
 ---
 date: 2022-04-13 00:00:00 +01
 title: Valorem Options Litepaper
+usemathjax: true
 description: This litepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens. 
 ---
 

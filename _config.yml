@@ -48,6 +48,7 @@ layouts_dir: _2-layouts
 keep_files:
   - css
   - assets
+markdown: kramdown
 kramdown:
   smart_quotes: ['lsquo', 'rsquo', 'ldquo', 'rdquo']
 plugins:
