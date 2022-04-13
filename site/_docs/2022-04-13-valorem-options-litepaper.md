@@ -23,7 +23,7 @@ of the Uniswap V3 LP NFT, and the nature of perpetual options, as
 opposed to ones with fixed exercise and expiry timestamps. Present on chain 
 protocols are fundamentally limited by these design choices.
 
-This whitepaper introduces the Valorem Options V1 protocol. Valorem 
+This litepaper introduces the Valorem Options V1 protocol. Valorem 
 is a DeFi native options protocol which aims to provide superior flexibility 
 over existing options protocols by removing price oracles, reliance on existing 
 defi primitives, and premium value assumptions. Valorem achieves this by 
