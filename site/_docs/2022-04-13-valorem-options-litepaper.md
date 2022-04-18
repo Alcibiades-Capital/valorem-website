@@ -7,7 +7,7 @@ description: This litepaper introduces Valorem Options V1, an oracle-free, permi
 
 ## Introduction
 
-Options are a primitive essential to the functioning of any financial system. 
+Options are a primitive essential component of any financial system. 
 In traditional finance, options volume exceeds spot volume. In the world of 
 digital assets, spot volumes still exceed options trading volumes. Options 
 trading volumes on assets like BTC and ETH have grown significantly in the 
@@ -21,7 +21,7 @@ inflexible and subject to adverse-selection. There are some recent protocols
 which emulate options via single tick Uniswap V3 LPs. These are restricted by 
 the lack of Uniswap V3 deployment across evm chains, gas inefficiency 
 of Uniswap V3 LP NFTs, and the nature of perpetual options (as 
-opposed to ones with fixed exercise and expiry timestamps). Present on chain 
+opposed to ones with fixed exercise and expiry timestamps) present on chain 
 protocols are fundamentally limited by these design choices.
 
 This litepaper introduces the Valorem Options V1 protocol. Valorem 
@@ -60,7 +60,7 @@ any exercise timestamp at least 24 hours before expiry. This flexibility enables
 the settlement layer to be used in a large range of applications. Options 
 contracts are issued as fungible ERC-1155 tokens, herein referred to as
 vTokens, with each token representing a contract. Option writers are
-additionally issued an ERC-1155 NFT representing a lot of contracts written
+additionally issued an ERC-1155 NFT representing many contracts written
 for claiming collateral and exercise assignment. These tokens allow for novel 
 structured products to be created atop the protocol.
 
@@ -178,7 +178,7 @@ financial instruments into a single, tradeable item that is typically secured
 by the underlying instruments held as collateral by the underwriter.  Many 
 structured product underwriters do not focus on trading the underlying 
 products, instead, the underwriters’ goal is to handle the execution, 
-assignment, and of the underlying in an efficient manner to minimize the 
+assignment, and transfer of the underlying in an efficient manner to minimize the 
 structured product’s price volatility due to the settlement operations of 
 the underlying.  By acting as an efficient clearinghouse, the Valorem protocol
 allows structured product protocols to bypass open market actions such as the
