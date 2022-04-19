@@ -7,7 +7,7 @@ description: This litepaper introduces Valorem Options V1, an oracle-free, permi
 
 ## Introduction
 
-Options are a primitive essential component of any financial system. 
+Options are a component, essential to the functioning of any financial system. 
 In traditional finance, options volume exceeds spot volume. In the world of 
 digital assets, spot volumes still exceed options trading volumes. Options 
 trading volumes on assets like BTC and ETH have grown significantly in the 
@@ -60,7 +60,7 @@ any exercise timestamp at least 24 hours before expiry. This flexibility enables
 the settlement layer to be used in a large range of applications. Options 
 contracts are issued as fungible ERC-1155 tokens, herein referred to as
 vTokens, with each token representing a contract. Option writers are
-additionally issued an ERC-1155 NFT representing many contracts written
+additionally issued an ERC-1155 NFT representing group contracts written
 for claiming collateral and exercise assignment. These tokens allow for novel 
 structured products to be created atop the protocol.
 
@@ -212,7 +212,7 @@ Although many options writers may focus on the contract’s expiration date,
 the Valorem protocol also provides them with the ability to set an earliest 
 exercise date. Users holding these options are blocked from exercising them 
 until the earliest exercise date has passed. While there are many possible 
-uses cases for being able to effectively "post date a check" in DeFi, one 
+use cases for being able to effectively "post date a check" in DeFi, one 
 that may be of particular interest to protocol developers is the ability to 
 create the DeFi version of an Employee Stock Option (ESO) with a cliff vesting
 schedule set via the option’s earliest exercise date. Protocols could 
