@@ -1,6 +1,6 @@
 site:
   title: Valorem Protocol
-  copyright: Alcibiades Capital LLC
+  copyright: Valorem Labs, Inc.
   description: |
     Write permissionless physically settled options on any ERC20 token.
 footer_markdown: |
