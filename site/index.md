@@ -6,7 +6,7 @@ hero:
   text_markdown: Join our Discord server for early access to our testnet release.
   buttons:
     - text: Join Discord
-      url: https://discord.gg/xwmCSbWK
+      url: https://discord.gg/jRNGhTef57
 page_blocks:
   - _id: use_cases
     cards:
