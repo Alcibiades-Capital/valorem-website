@@ -44,6 +44,12 @@ navigation_links:
       - footer
     group:
       - social
+  - url: mailto:info@valorem.xyz
+    name: Contact
+    visible:
+      - footer
+    group:
+      - main
 footer_groups:
   - main
   - social
