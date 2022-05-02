@@ -31,26 +31,24 @@ page_blocks:
   - _id: roadmap
     heading: Lots to look forward to.
     text_markdown: |
-      No DeFi project website is complete without a roadmap. Here’s ours.
+      No DeFi protocol is complete without a roadmap. Here’s ours.
     events:
-      - heading: Testnet launch
+      - heading: Mainnet launch
         text_markdown: |
-          The Valorem Options V1 contracts will launch on the Harmony testnet and be available to users so that we can get feedback and iterate.
-        eta: April 2022
-      - heading: UI App
-        text_markdown: |
-          Our react user interface for options writers and holders will be ready to use.
+          The option settlement engine will launch on mainnet with documentation, user interface and ability for users to write, hold and transfer options and claims.
         eta: May 2022
-      - heading: Mainnet Launch
+      - heading: Contributor token options
         text_markdown: |
-          We'll have a completed audit, and the settlement layer will launch on mainnet.
+          We will build partnerships with protocols to use Valorem Contibutor Token Options to incentivize protocol contributors throughout DeFi. This will build a diverse income for the protocol from writing and exercise fees.
         eta: June 2022
-      - heading: Join the future of DeFi derivatives
+      - heading: Options market 
         text_markdown: |
-          Be a part of what comes next on our roadmap by joining our chat and letting us know what you'd like to see.
-        button:
-          text: Join Discord
-          url: https://discord.gg/jRNGhTef57
+          Valorem will build or use an existing limit order book to allow the decentralized trading of options.
+        eta: August 2022
+      - heading: Structured products 
+        text_markdown: |
+          Valorem will continue to build and integrate other structured products to increase notational volume and revenue.
+        eta: Q4 2022 and beyond
   - _id: partner_featured
     label: In partnership with
     image_path: /assets/images/partners/harmony.png

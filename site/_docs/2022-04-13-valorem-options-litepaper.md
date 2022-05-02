@@ -213,11 +213,11 @@ that may be of particular interest to protocol developers is the ability to
 create the DeFi version of an Employee Stock Option (ESO) with a cliff vesting
 schedule set via the option’s earliest exercise date. Protocols could
 implement Valorem into their vaults and issue these DeFi equivalents of
-ESOs called Developer Token Options (DTO) to developers in key roles.
-This would align the selected developers’ financial compensation with
+ESOs called Contributor Token Options (CTO) to contributors in key roles.
+This would align the selected contributors’ financial compensation with
 the long term success of the protocol thereby decreasing the likelihood of
-protocol abandonment, increasing users’ faith in the developer team, and
-encouraging continued innovation.
+protocol abandonment, increasing users’ faith in the team, and encouraging 
+continued innovation.
 
 ### Mitigation of Cross-Protocol Financial Contagion
 
