@@ -49,7 +49,7 @@ navigation_links:
     visible:
       - footer
     group:
-      - main
+      - social
 footer_groups:
   - main
   - social
