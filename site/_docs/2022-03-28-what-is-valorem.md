@@ -15,7 +15,7 @@ restrict access.
 The Valorem protocol enables writing covered call and 
 covered put, physically settled, options. All written options are fully 
 collateralized against an ERC-20 underlying asset and exercised with an ERC-20 
-exercise asset using a VRF random number per unique option type for fair 
+exercise asset using a deterministic algorithm based on the option hash for fair 
 settlement.
 
 Options contracts are issued as fungible ERC-1155 tokens, herein referred to as 

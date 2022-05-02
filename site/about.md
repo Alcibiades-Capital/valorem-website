@@ -39,7 +39,7 @@ page_blocks:
     links:
       - heading: Discord
         subheading: Join the conversation
-        url: https://discord.gg/5jZdPuY9kR
+        url: https://discord.gg/jRNGhTef57
       - heading: Twitter
         subheading: Keep up to date
         url: https://twitter.com/valoremxyz
@@ -50,5 +50,5 @@ page_blocks:
     heading: App coming soon. In the meantime, join our Discord server to get early beta access to our testnet release.
     buttons:
       - text: Join Discord
-        url: https://discord.gg/5jZdPuY9kR
+        url: https://discord.gg/jRNGhTef57
 ---
