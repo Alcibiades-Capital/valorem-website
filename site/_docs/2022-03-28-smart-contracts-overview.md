@@ -17,21 +17,21 @@ of exercises to claims written.
 
 ## Core Interface
 
-The core exposes an interface for users of the protocol, which is documented in the 
+The core exposes an interface for users of the protocol, which is documented in the
 codebase, additional documentation is provided here.
 
 ### IOptionSettlementEngine
 
-`IOptionSettlementEngine` is an 
-[ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) 
-interface extended to provide an interface to the Valorem protocol options 
+`IOptionSettlementEngine` is an
+[ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155)
+interface extended to provide an interface to the Valorem protocol options
 settlement system.
 
 #### Enums
 
 ##### Type
 
-The `Type` enum contains information about the type of a given token in the 
+The `Type` enum contains information about the type of a given token in the
 settlement engine.
 
 ```solidity
@@ -95,7 +95,7 @@ event OptionsExercised(
     );
 ```
 
-#### OptionsWritten
+##### OptionsWritten
 
 The `OptionsWritten` event is emitted when `write` is called to write new options.
 
@@ -149,7 +149,7 @@ function feeBalance(address token) external view returns (uint256);
 
 ##### feeBps
 
-Returns the protocol fee in basis points charged to writers in the underlying 
+Returns the protocol fee in basis points charged to writers in the underlying
 asset and exercisers in the exercise asset.
 
 ```solidity
@@ -245,7 +245,7 @@ function write(uint256 optionId, uint112 amount)
 
 ##### exercise
 
-Exercises `amount` of `optionId`, transferring in the exercise asset, and 
+Exercises `amount` of `optionId`, transferring in the exercise asset, and
 transferring out the underlying asset if all requirements are met.
 
 ```solidity
@@ -254,14 +254,14 @@ function exercise(uint256 optionId, uint112 amount) external;
 
 ##### redeem
 
-Redeems `claimId` for the underlying asset(s) if `msg.sender` is the caller and 
+Redeems `claimId` for the underlying asset(s) if `msg.sender` is the caller and
 the options chain for the claim has reached expiry. Burns the claim NFT on success.
 
 ```function redeem(uint256 claimId) external;```
 
 ##### underlying
 
-Returns the `Underlying` struct about assets for 1 wei of a given `tokenId` if 
+Returns the `Underlying` struct about assets for 1 wei of a given `tokenId` if
 that token exists.
 
 ```solidity
@@ -289,8 +289,8 @@ struct Claim {
 
 ##### Option
 
-The `Option` struct contains all data about an option chain/token and is keyed on the 
-unique hash `keccak256(abi.encode(Option memory))` where `settlementSeed` is set to 
+The `Option` struct contains all data about an option chain/token and is keyed on the
+unique hash `keccak256(abi.encode(Option memory))` where `settlementSeed` is set to
 `0` at the time of hashing.
 
 ```solidity
@@ -307,7 +307,7 @@ unique hash `keccak256(abi.encode(Option memory))` where `settlementSeed` is set
 
 ##### Underlying
 
-The `Underlying` struct contains information about the underlying assets for 1 
+The `Underlying` struct contains information about the underlying assets for 1
 wei of a given token ID in the settlement engine.
 
 ```solidity
@@ -318,7 +318,3 @@ struct Underlying {
         int256 exercisePosition;
     }
 ```
-
-
-
-

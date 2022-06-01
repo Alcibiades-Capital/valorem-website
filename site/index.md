@@ -36,15 +36,15 @@ page_blocks:
       - heading: Mainnet launch
         text_markdown: |
           The option settlement engine will launch on mainnet with documentation, user interface and ability for users to write, hold and transfer options and claims.
-        eta: May 2022
+        eta: Q3 2022
       - heading: Contributor token options
         text_markdown: |
           We will build partnerships with protocols to use Valorem Contibutor Token Options to incentivize protocol contributors throughout DeFi. This will build a diverse income for the protocol from writing and exercise fees.
-        eta: June 2022
+        eta: Q3 2022
       - heading: Options market 
         text_markdown: |
           Valorem will build or use an existing limit order book to allow the decentralized trading of options.
-        eta: August 2022
+        eta: Q4 2022
       - heading: Structured products 
         text_markdown: |
           Valorem will continue to build and integrate other structured products to increase notational volume and revenue.

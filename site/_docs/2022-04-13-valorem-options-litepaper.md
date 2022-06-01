@@ -120,12 +120,11 @@ instead.
 
 ### Exercise Assignment
 
-When an option is exercised, the Valorem protocol uses a provably fair pseudo
-random number from a VRF oracle to determine which `claim` token’s
-corresponding collateral will be assigned.  This process repeatedly cycles
-through randomly selected `claim` tokens’ collateral until sufficient
-collateral has been assigned to cover the full amount owed to the option
-holder.
+When an option is exercised, the Valorem protocol uses a deterministic algorithm
+to determine which `claim` token’s corresponding collateral will be assigned. 
+This process repeatedly cycles through selected `claim` tokens’ collateral 
+until sufficient collateral has been assigned to cover the full amount owed 
+to the option holder.
 
 ## Use cases
 

@@ -38,7 +38,7 @@ navigation_links:
       - footer
     group:
       - social
-  - url: https://github.com/Alcibiades-Capital/valorem-options-contracts
+  - url: https://github.com/valorem-labs-inc
     name: Github
     visible:
       - footer
