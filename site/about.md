@@ -8,27 +8,37 @@ hero:
 page_blocks:
   - _id: partners_all
     cards:
-      - label: Partner
+      - label: Investor
+        logo_path: /assets/images/partners/cogitent_ventures.png
+        logo_alt: Cogitent Ventures logo
+        url: https://cogitent.ventures
+      - label: Investor
         logo_path: /assets/images/partners/ac.svg
         logo_alt: Alcibiades Capital logo
         url: https://alcibiades.capital
-      - label: Partner
+      - label: Grant Sponsor
         logo_path: /assets/images/partners/harmony.png
         logo_alt: Harmony logo
         url: https://talk.harmony.one/t/valorem-options-flexible-derivatives-defi-primitive-for-harmony-blockchain/12733
-      - label: Partner
+      - label: Advisor
         image_path: /assets/images/partners/amadeo.jpg
         image_alt: "Amadeo Brands’ profile picture"
         heading: Amadeo Brands
         subheading: "@amadeobrands"
         url: https://twitter.com/amadeobrands
-      - label: Collaborator
-        image_path: /assets/images/partners/felix.jpg
-        image_alt: "Felix Hill’s profile picture"
-        heading: Felix Hill
-        subheading: "@blockchainbyt"
-        url: https://twitter.com/BlockchainByt
-      - label: Collaborator
+      - label: Advisor
+        image_path: /assets/images/partners/tom_howard.jpg
+        image_alt: "Tom Howard’s profile picture"
+        heading: Tom Howard
+        subheading: "@_TomHoward"
+        url: https://twitter.com/_TomHoward
+      - label: Advisor
+        image_path: /assets/images/partners/bandit.jpg
+        image_alt: "bandit.eth’s profile picture"
+        heading: bandit.eth
+        subheading: "@mevbandit"
+        url: https://twitter.com/mevbandit
+      - label: Branding and App Design
         logo_path: /assets/images/partners/cultmethod.svg
         logo_alt: CultMethod logo
         url: https://cultmethod.com
