@@ -55,7 +55,7 @@ page_blocks:
           Valorem will continue to build and integrate other structured products to increase notational volume and revenue.
         eta: Q4 2022 and beyond
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom optino in minutes.
+    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
       - text: Launch app
         url: https://valorem-frontend.herokuapp.com/
