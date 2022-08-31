@@ -20,8 +20,8 @@ navigation_links:
       - footer
     group:
       - main
-  - url: https://discord.gg/5jZdPuY9kR
-    name: Join Discord
+  - url: https://valorem-frontend.herokuapp.com/
+    name: Launch app
     visible:
       - header
     group:

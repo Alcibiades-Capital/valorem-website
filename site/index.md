@@ -2,9 +2,12 @@
 title:
 description:
 hero:
+  label: Open beta!
   heading: Permissionless physically settled options, on any ERC20 token.
-  text_markdown: Join our Discord server for early access to our testnet release.
+  text_markdown:
   buttons:
+    - text: Launch app
+      url: https://valorem-frontend.herokuapp.com/
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
 page_blocks:
@@ -22,12 +25,14 @@ page_blocks:
         text_markdown: |
           Use Alchemix to borrow against future yield, buy a Valorem call option with the yield, and voila, a principal protected note.
         icon: sl-ppn
-    heading: This, and much more, will be possible with Valorem.
+    heading: This, and much more, is possible with Valorem.
     text_markdown: |
       We’re building Valorem to unlock advanced hedging strategies in DeFi and enable more efficient yield on-chain. This flexible primitive can be leveraged to create new defi components.
-    button:
-      text: Read docs
-      url: /docs/
+    buttons:
+      - text: Launch app
+        url: https://valorem-frontend.herokuapp.com/
+      - text: Read docs
+        url: /docs/
   - _id: roadmap
     heading: Lots to look forward to.
     text_markdown: |
@@ -49,16 +54,16 @@ page_blocks:
         text_markdown: |
           Valorem will continue to build and integrate other structured products to increase notational volume and revenue.
         eta: Q4 2022 and beyond
+  - _id: cta
+    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
+    buttons:
+      - text: Launch app
+        url: https://valorem-frontend.herokuapp.com/
   - _id: partner_featured
     label: In partnership with
-    image_path: /assets/images/partners/harmony.png
-    image_alt: Harmony
+    image_path: /assets/images/partners/ac.svg
+    image_alt: Alcibiades Capital
     button:
       text: See more partners
       url: /about/
-  - _id: cta
-    heading: App coming soon. In the meantime, join our Discord server to get early access to our testnet release.
-    buttons:
-      - text: Join Discord
-        url: https://discord.gg/jRNGhTef57
 ---

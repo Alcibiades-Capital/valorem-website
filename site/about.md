@@ -57,8 +57,8 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/Alcibiades-Capital/valorem-options-contracts
   - _id: cta
-    heading: App coming soon. In the meantime, join our Discord server to get early beta access to our testnet release.
+    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
-      - text: Join Discord
-        url: https://discord.gg/jRNGhTef57
+      - text: Launch app
+        url: https://valorem-frontend.herokuapp.com/
 ---

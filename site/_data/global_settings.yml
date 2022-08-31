@@ -1,8 +1,10 @@
 site:
   title: Valorem Protocol
-  copyright: Valorem Labs Inc.
+  copyright: Valorem Labs Inc
   description: |
     Write permissionless physically settled options on any ERC20 token.
+banner_markdown: |
+  Open beta available now! Help shape the future of ERC20 options. [Launch app →](https://valorem-frontend.herokuapp.com/)
 footer_markdown: |
   Valorem helps DeFi power users pursue advanced hedging strategies by writing their own physically settled options permissionlessly on any ERC20 token.
 default_cta:
