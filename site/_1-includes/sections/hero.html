@@ -13,13 +13,16 @@
   <section class="s-hero bg-gradient-default from-purple-500 to-white">
     <div class="max-w-screen-xl mx-auto">
       <div class="max-w-screen-lg space-y-16">
+        {% if item.label %}
+        <div class="label -mb-4">{{ item.label | smartify }}</div>
+        {% endif %}
         <h1 class="text-gray-900">{{ item.heading | default: page.title | smartify }}</h1>
         {% if item.text_markdown %}
         <div class="text-xl lg:text-2xl">{{ item.text_markdown | markdownify }}</div>
         {% endif %}
-        <div>
+        <div class="space-x-3 lg:space-x-6">
           {% for item in item.buttons limit:2 %}
-          <a href="{{ item.url }}" class="btn btn-purple-500 btn--large even:btn--outlined">{{ item.text }}</a>
+          <a href="{{ item.url }}" class="btn btn-purple-500 lg:btn--large even:btn--outlined">{{ item.text }}</a>
           {% endfor %}
         </div>
       </div>
