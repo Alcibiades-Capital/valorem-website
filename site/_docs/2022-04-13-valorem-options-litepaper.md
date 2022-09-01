@@ -69,7 +69,7 @@ protocol.
 
 The Valorem protocol acts as an underwriter and clearinghouse for writing 
 and exercising options contracts and as a custodian and assignment engine 
-for the options’ underlying collateral.Both the options contract and the 
+for the options’ underlying collateral. Both the options contract and the 
 underlying collateral are tokenized for ownership on EVM blockchains. 
 The protocol allows the following actions:
 
@@ -90,11 +90,11 @@ collateral into Valorem. They can specify the following:
 This information comprises a unique hash `keccak256(abi.encode(Option memory))`,
 which is then used to determine if that type of option already exists and, if 
 it doesn’t, create it. Once the option type is created, upon writing, the option
-writer will receive a `claim` token indicating that they have written the option.
-They will also receive an `option` token, indicating that they have the ability
-to exercise the option pursuant to the terms set during writing.  Both the
-`claim` token and the `option` token can be transferred or traded to other
-actors on the chain.
+writer will receive a `claim` token indicating that they have written the option,
+while the option owner will also receive an `option` token, indicating that they 
+have the ability to exercise the option pursuant to the terms set during writing.
+Both the `claim` token and the `option` token can be transferred or traded to
+other actors on the chain.
 
 ### Exercising Options
 Owners of an `option` token can exercise the option pursuant to the following
