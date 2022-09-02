@@ -20,7 +20,7 @@ navigation_links:
       - footer
     group:
       - main
-  - url: https://valorem-frontend.herokuapp.com/
+  - url: https://app.valorem.xyz/
     name: Launch app
     visible:
       - header

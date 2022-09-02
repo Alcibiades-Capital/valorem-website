@@ -60,5 +60,5 @@ page_blocks:
     heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
       - text: Launch app
-        url: https://valorem-frontend.herokuapp.com/
+        url: https://app.valorem.xyz/
 ---
