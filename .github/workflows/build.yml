@@ -24,7 +24,7 @@ jobs:
     - name: Configure ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.3'
+        ruby-version: '3.0'
         bundler-cache: true
     - name: Install bundle command
       run: gem install bundler
