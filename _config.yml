@@ -80,3 +80,8 @@ pagination:
   trail:
     before: 3
     after: 3
+
+jekyll_analytics:
+  Plausible:
+    domain: 'valorem.xyz'
+    source: 'https://plausible.io/js/script.js'
