@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/hendrikschneider/jekyll-analytics
+  remote: https://github.com/0xAlcibiades/jekyll-analytics.git
   revision: 40e09570dea80e3a9ecb0ad796aad1c434ff067c
   ref: 40e09570dea80e3a9ecb0ad796aad1c434ff067c
   specs:

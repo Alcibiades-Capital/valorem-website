@@ -35,10 +35,14 @@ jobs:
         run: bundle install
       - name: Build the site via Jekyll
         run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
       - name: Run npm ci
         run: npm ci
       - name: Run gulp
         run: gulp
+        env:
+          JEKYLL_ENV: production
       - name: Copy the CNAME and other build additions to the site
         run: cp ./BuildAdditions/* ./_site/
       - name: Deploy the site
