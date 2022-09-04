@@ -3,6 +3,21 @@
   
     
     <url>
+      <loc>https://valorem.xyz/blog/contributor-token-options/</loc>
+      
+        <lastmod>2022-09-03T19:00:00-04:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.5</priority>
+      
+    </url>
+    
+  
+    
+    <url>
       <loc>https://valorem.xyz/blog/building-a-new-options-protocol/</loc>
       
         <lastmod>2022-04-10T19:00:00-04:00</lastmod>
@@ -23,7 +38,7 @@
     <url>
       <loc>https://valorem.xyz/about/</loc>
       
-        <lastmod>2022-09-02T20:57:42-04:00</lastmod>
+        <lastmod>2022-09-04T19:23:21-04:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
@@ -38,7 +53,7 @@
     <url>
       <loc>https://valorem.xyz/docs/</loc>
       
-        <lastmod>2022-09-02T20:57:42-04:00</lastmod>
+        <lastmod>2022-09-04T19:23:21-04:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
@@ -53,7 +68,7 @@
     <url>
       <loc>https://valorem.xyz/</loc>
       
-        <lastmod>2022-09-02T20:57:42-04:00</lastmod>
+        <lastmod>2022-09-04T19:23:21-04:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
@@ -70,7 +85,7 @@
     <url>
       <loc>https://valorem.xyz/blog/</loc>
       
-        <lastmod>2022-09-02T20:57:42-04:00</lastmod>
+        <lastmod>2022-09-04T19:23:21-04:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
