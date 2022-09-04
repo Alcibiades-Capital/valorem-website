@@ -8,7 +8,7 @@ banner_markdown: |
 footer_markdown: |
   Valorem helps DeFi power users pursue advanced hedging strategies by writing their own physically settled options permissionlessly on any ERC20 token.
 default_cta:
-  heading: App coming soon. In the meantime, join our Discord server to get early beta access to our testnet release.
+  heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
   buttons:
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
