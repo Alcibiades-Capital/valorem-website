@@ -11,7 +11,7 @@
               <div class="label">{{ group | capitalize }}</div>
               {% assign footerNavCurrent = footerNav|where_exp:"item","item.group contains group" %}
               {% for item in footerNavCurrent %}
-              <a href="{{item.url}}" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500">
+              <a href="{{item.url}}" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500"{% if item.group contains "social" %} data-analytics='"Social", {"props":{"location":"footer"}}'{% endif %}>
               {% include icons/social.html class="w-4 h-4" %}{{item.name}}
               </a>
               {% endfor %}

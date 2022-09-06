@@ -21,20 +21,5 @@
     {% comment %}SEO snippet{% endcomment %}
     {% include partials/seo.html %}
 
-    {% comment %}Google Analytics snippet—will load in production environment. Important: Make sure the site.ga_username has been updated!{% endcomment %}
-    {% if jekyll.environment == "production" and site.ga_username != "" %}
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{site.ga_username}}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', '{{site.ga_username}}');
-        </script>
-    {% endif %}
-
-    {% comment %}Google Tag Manager snippet—will load in production environment. Make sure site.gtm_username has been updated! **Never activate both Google Analytics and GTM at the same time**{% endcomment %}
-    {% include partials/gtm-head.html %}
-
     <script defer type="text/javascript" src="/assets/js/alpine.js"></script>
 </head>

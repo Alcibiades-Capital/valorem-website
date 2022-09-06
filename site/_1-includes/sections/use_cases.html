@@ -15,7 +15,7 @@
       <div class="max-w-screen-md mx-auto text-gray-600 text-xl lg:text-2xl">{{ item.text_markdown | markdownify }}</div>
       <div class="pt-2 space-x-3 lg:space-x-6">
         {% for item in item.buttons limit:2 %}
-        <a class="btn btn-purple-500 btn--outlined even:btn--ghost" href="{{ item.url }}">{{ item.text }}</a>
+        <a class="btn btn-purple-500 btn--outlined even:btn--ghost" href="{{ item.url }}"{% if item.url contains "app.valorem.xyz" %} data-analytics='"CTA", {"props":{"location":"use_cases"}}'{% endif %}>{{ item.text }}</a>
         {% endfor %}
       </div>
     </div>

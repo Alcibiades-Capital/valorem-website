@@ -6,9 +6,6 @@
 {% include partials/1-head.html %}
 
 <body class="{{page.class}} mx-auto text-lg tracking-wide">
-    {% comment %}Google Tag Manager NoScript snippet—will load in production environment. Make sure site.gtm_username
-    has been updated!{% endcomment %}
-    {% include partials/gtm-body.html %}
 
     <a id="skip-nav" class="sr-only" href="#main-content">Skip to content</a>
 
@@ -22,6 +19,35 @@
     {% include partials/3-footer.html %}
 
     {% comment %}Javascript file{% endcomment %}
+    <script>
+      let links = document.querySelectorAll("a[data-analytics]");
+      for (var i = 0; i < links.length; i++) {
+          links[i].addEventListener('click', handleLinkEvent);
+          links[i].addEventListener('auxclick', handleLinkEvent);
+      }
+
+      function handleLinkEvent(event) {
+          var link = event.target;
+          var middle = event.type == "auxclick" && event.which == 2;
+          var click = event.type == "click";
+          while (link && (typeof link.tagName == 'undefined' || link.tagName.toLowerCase() != 'a' || !link.href)) {
+              link = link.parentNode;
+          }
+          if (middle || click) {
+              let attributes = link.getAttribute('data-analytics').split(/,(.+)/);
+              let events = [JSON.parse(attributes[0]), JSON.parse(attributes[1] || '{}')];
+              plausible(...events);
+          }
+          if (!link.target) {
+              if (!(event.ctrlKey || event.metaKey || event.shiftKey) && click) {
+                  setTimeout(function () {
+                      location.href = link.href;
+                  }, 150);
+                  event.preventDefault();
+              }
+          }
+      }
+    </script>
 
 </body>
 
