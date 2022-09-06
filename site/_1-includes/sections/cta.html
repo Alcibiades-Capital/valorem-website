@@ -8,7 +8,7 @@
     <h2 class="text-gray-900">{{ item.heading | default: settings.default_cta.heading | smartify }}</h2>
     <div>
       {% for item in buttonArray limit:2 %}
-      <a href="{{ item.url }}" class="btn btn-purple-500 btn--large even:btn--outlined">{{ item.text }}</a>
+      <a href="{{ item.url }}" class="btn btn-purple-500 btn--large even:btn--outlined"{% if item.url contains "app.valorem.xyz" %} data-analytics='"CTA", {"props":{"location":"CTA block"}}'{% endif %}>{{ item.text }}</a>
       {% endfor %}
     </div>
   </div>

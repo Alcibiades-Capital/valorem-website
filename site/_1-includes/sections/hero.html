@@ -22,7 +22,7 @@
         {% endif %}
         <div class="space-x-3 lg:space-x-6">
           {% for item in item.buttons limit:2 %}
-          <a href="{{ item.url }}" class="btn btn-purple-500 lg:btn--large even:btn--outlined">{{ item.text }}</a>
+          <a href="{{ item.url }}" class="btn btn-purple-500 lg:btn--large even:btn--outlined"{% if item.url contains "app.valorem.xyz" %} data-analytics='"CTA", {"props":{"location":"hero"}}'{% endif %}>{{ item.text }}</a>
           {% endfor %}
         </div>
       </div>
