@@ -12,6 +12,7 @@ group :jekyll_plugins do
   gem "jekyll-responsive-image"
   gem "jekyll-last-modified-at"
   gem "jekyll-paginate-v2"
+  gem "jekyll-analytics", "~> 0.1", git: 'https://github.com/0xAlcibiades/jekyll-analytics.git', ref: '40e09570dea80e3a9ecb0ad796aad1c434ff067c'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

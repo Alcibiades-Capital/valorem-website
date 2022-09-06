@@ -7,7 +7,7 @@ hero:
   text_markdown:
   buttons:
     - text: Launch app
-      url: https://valorem-frontend.herokuapp.com/
+      url: https://app.valorem.xyz/
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
 page_blocks:
@@ -30,7 +30,7 @@ page_blocks:
       We’re building Valorem to unlock advanced hedging strategies in DeFi and enable more efficient yield on-chain. This flexible primitive can be leveraged to create new defi components.
     buttons:
       - text: Launch app
-        url: https://valorem-frontend.herokuapp.com/
+        url: https://app.valorem.xyz/
       - text: Read docs
         url: /docs/
   - _id: roadmap
@@ -55,10 +55,10 @@ page_blocks:
           Valorem will continue to build and integrate other structured products to increase notational volume and revenue.
         eta: Q4 2022 and beyond
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom optino in minutes.
+    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
       - text: Launch app
-        url: https://valorem-frontend.herokuapp.com/
+        url: https://app.valorem.xyz/
   - _id: partner_featured
     label: In partnership with
     image_path: /assets/images/partners/ac.svg

@@ -24,7 +24,7 @@ jobs:
     - name: Configure ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
+        ruby-version: '3.0'
         bundler-cache: true
     - name: Install bundle command
       run: gem install bundler
@@ -32,6 +32,8 @@ jobs:
       run: bundle install
     - name: Build the site via Jekyll
       run: bundle exec jekyll build --trace
+      env:
+        JEKYLL_ENV: production 
     - name: Run npm ci
       run: npm ci
     - name: Run gulp

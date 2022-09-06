@@ -57,8 +57,8 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/Alcibiades-Capital/valorem-options-contracts
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom optino in minutes.
+    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
       - text: Launch app
-        url: https://valorem-frontend.herokuapp.com/
+        url: https://app.valorem.xyz/
 ---

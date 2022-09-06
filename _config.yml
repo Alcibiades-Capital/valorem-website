@@ -48,13 +48,16 @@ layouts_dir: _2-layouts
 keep_files:
   - css
   - assets
+
 kramdown:
   smart_quotes: ['lsquo', 'rsquo', 'ldquo', 'rdquo']
+
 plugins:
   - jekyll-include-cache
   - jekyll-responsive-image
   - jekyll-last-modified-at
   - jekyll-paginate-v2
+  - jekyll-analytics
 
 # Plugin settings
 responsive_image:
@@ -80,3 +83,8 @@ pagination:
   trail:
     before: 3
     after: 3
+
+jekyll_analytics:
+  Plausible:
+    domain: 'valorem.xyz'
+    source: 'https://plausible.io/js/script.js'
