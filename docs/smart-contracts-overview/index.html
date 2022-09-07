@@ -382,7 +382,8 @@ asset and exercisers in the exercise asset.</p>
 
 <p>Returns the token <code class="language-plaintext highlighter-rouge">Type</code> enum for a given <code class="language-plaintext highlighter-rouge">tokenId</code>.</p>
 
-<p><code class="language-plaintext highlighter-rouge">function tokenType(uint256 tokenId) external view returns (Type);</code></p>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">tokenType</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Type</span><span class="p">);</span>
+</code></pre></div></div>
 
 <h5 id="option">option</h5>
 
@@ -462,7 +463,8 @@ transferring out the underlying asset if all requirements are met.</p>
 <p>Redeems <code class="language-plaintext highlighter-rouge">claimId</code> for the underlying asset(s) if <code class="language-plaintext highlighter-rouge">msg.sender</code> is the caller and
 the options chain for the claim has reached expiry. Burns the claim NFT on success.</p>
 
-<p><code class="language-plaintext highlighter-rouge">function redeem(uint256 claimId) external;</code></p>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">redeem</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
+</code></pre></div></div>
 
 <h5 id="underlying">underlying</h5>
 
