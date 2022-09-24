@@ -1,14 +1,14 @@
 ---
-date: 2022-03-28 00:00:00 +01
-title: Smart Contracts Overview
-description: An overview of the Valorem protocol smart contracts.
+date: 2022-09-22 00:00:00 +01
+title: Core 
+description: The core smart contracts of the Valorem protocol expose a physically settled options primitive on any ERC20 token.
 ---
 
 Valorem V1 is a binary smart contract system comprised of many libraries, 
 which together make the Core. The Core contracts provide the option settlement 
 engine upon which more complex systems can be built.
 
-[Core Contracts Source Code](https://github.com/Alcibiades-Capital/valorem-options-contracts)
+[Core Contracts Source Code](https://github.com/valorem-labs-inc/valorem-core)
 
 The Core is designed to be gas efficient, minimal, and provide a secure settlement 
 system. The Core consists, primarily, of a settlement engine which allows users 

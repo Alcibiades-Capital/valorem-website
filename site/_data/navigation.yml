@@ -59,12 +59,16 @@ navigation_links_docs:
     name: What is Valorem?
     group:
       - documentation
-  - url: /docs/smart-contracts-overview/
-    name: Smart Contracts Overview
+  - url: /docs/valorem-protocol-core/
+    name: Core
+    group:
+      - documentation
+  - url: /docs/valorem-oracles/
+    name: Oracles
     group:
       - documentation
   - url: /docs/valorem-options-litepaper/
-    name: Valorem Options Litepaper
+    name: Valorem Litepaper
     group:
       - documentation
 
