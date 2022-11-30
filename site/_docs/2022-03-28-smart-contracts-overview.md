@@ -317,10 +317,10 @@ Check to see if an option is already initialized.
 function isOptionInitialized(uint160 optionKey) external view returns (bool);
 ```
 
-
 #### Functions - Token ID Encoding
 ##### encodeTokenId
 Encode the supplied option id and claim id. Option and claim token ids are encoded as follows:
+```
     MSb
     0000 0000   0000 0000   0000 0000   0000 0000 ┐
     0000 0000   0000 0000   0000 0000   0000 0000 │
@@ -332,6 +332,7 @@ Encode the supplied option id and claim id. Option and claim token ids are encod
     0000 0000   0000 0000   0000 0000   0000 0000 │ 96b auto-incrementing option lot claim number
     0000 0000   0000 0000   0000 0000   0000 0000 ┘
                                               LSb
+```
 
 ```solidity
 function encodeTokenId(uint160 optionKey, uint96 claimNum) external pure returns (uint256 tokenId);
