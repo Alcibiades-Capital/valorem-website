@@ -35,21 +35,13 @@ This struct contains the data about an options type associated with an ERC-1155 
 
 ```solidity
 struct Option {
-    /// @param underlyingAsset The underlying asset to be received
     address underlyingAsset;
-    /// @param underlyingAmount The amount of the underlying asset contained within an option contract of this type
     uint96 underlyingAmount;
-    /// @param exerciseAsset The address of the asset needed for exercise
     address exerciseAsset;
-    /// @param exerciseAmount The amount of the exercise asset required to exercise this option
     uint96 exerciseAmount;
-    /// @param exerciseTimestamp The timestamp after which this option can be exercised
     uint40 exerciseTimestamp;
-    /// @param expiryTimestamp The timestamp before which this option can be exercised
     uint40 expiryTimestamp;
-    /// @param settlementSeed Random seed created at the time of option type creation
     uint160 settlementSeed;
-    /// @param nextClaimNum Which option was written
     uint96 nextClaimNum;
 }
 ```
@@ -59,9 +51,7 @@ This struct contains the data about a lot of options written for a particular op
 
 ```solidity
 struct OptionLotClaim {
-    /// @param amountWritten The number of options written in this option lot claim
     uint112 amountWritten;
-    /// @param claimed Whether or not this option lot has been claimed by the writer
     bool claimed;
 }
 ```
@@ -71,13 +61,9 @@ Struct used in returning data regarding positions underlying a claim or option.
 
 ```solidity
 struct Underlying {
-    /// @param underlyingAsset address of the underlying asset erc20
     address underlyingAsset;
-    /// @param underlyingPosition position on the underlying asset
     int256 underlyingPosition;
-    /// @param exerciseAsset address of the exercise asset erc20
     address exerciseAsset;
-    /// @param exercisePosition position on the exercise asset
     int256 exercisePosition;
 }
 ```
