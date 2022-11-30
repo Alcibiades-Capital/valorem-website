@@ -1,51 +1,44 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="15px" viewBox="0 0 100 15" enable-background="new 0 0 100 15" xml:space="preserve">  <image id="image0" width="100" height="15" x="0" y="0"
-    href="data:image/png;base64,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
-jTWYdEKs0AAAAABJRU5ErkJggg==" />
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="100.000000pt" height="15.000000pt" viewBox="0 0 100.000000 15.000000"
+ preserveAspectRatio="xMidYMid meet">
+<metadata>
+Created by potrace 1.16, written by Peter Selinger 2001-2019
+</metadata>
+<g transform="translate(0.000000,15.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M80 146 c0 -2 7 -9 15 -16 12 -10 15 -10 15 4 0 9 -7 16 -15 16 -8 0
+-15 -2 -15 -4z"/>
+<path d="M245 75 c0 -53 4 -75 13 -75 8 0 12 22 12 75 0 53 -4 75 -12 75 -9 0
+-13 -22 -13 -75z"/>
+<path d="M393 80 c22 -50 33 -66 39 -56 5 9 1 32 -8 58 -21 52 -32 68 -49 68
+-9 0 -4 -22 18 -70z"/>
+<path d="M478 75 c-3 -69 -2 -75 17 -75 18 0 20 7 20 75 0 63 -3 75 -17 75
+-14 0 -17 -13 -20 -75z"/>
+<path d="M695 75 c0 -53 4 -75 13 -75 8 0 12 22 12 75 0 53 -4 75 -12 75 -9 0
+-13 -22 -13 -75z"/>
+<path d="M960 75 c0 -60 3 -75 15 -75 12 0 15 15 15 75 0 60 -3 75 -15 75 -12
+0 -15 -15 -15 -75z"/>
+<path d="M16 118 c-23 -32 -20 -65 9 -93 28 -29 43 -31 71 -10 18 14 17 14
+-13 15 -39 0 -58 28 -50 76 7 40 4 42 -17 12z"/>
+<path d="M313 119 c-20 -20 -17 -105 3 -113 21 -8 20 -13 14 62 -4 51 -7 61
+-17 51z"/>
+<path d="M643 119 c-18 -18 -16 -94 2 -109 20 -17 21 -15 15 58 -4 51 -7 61
+-17 51z"/>
+<path d="M750 57 c0 -42 4 -57 14 -57 10 0 12 11 9 48 -8 70 -23 76 -23 9z"/>
+<path d="M142 53 c2 -25 8 -48 13 -50 6 -2 9 17 7 47 -2 27 -8 50 -14 50 -5 0
+-8 -21 -6 -47z"/>
+<path d="M190 50 c0 -38 4 -50 15 -50 11 0 15 12 15 50 0 38 -4 50 -15 50 -11
+0 -15 -12 -15 -50z"/>
+<path d="M542 88 c-17 -17 -15 -54 4 -72 19 -20 38 -20 53 -2 10 12 9 13 -8 9
+-23 -6 -45 28 -36 57 7 23 4 25 -13 8z"/>
+<path d="M590 81 c0 -12 5 -21 10 -21 6 0 10 6 10 14 0 8 -4 18 -10 21 -5 3
+-10 -3 -10 -14z"/>
+<path d="M800 80 c-9 -17 -9 -29 -1 -46 17 -38 30 -28 24 19 -7 52 -9 54 -23
+27z"/>
+<path d="M858 55 c3 -38 6 -44 18 -34 17 14 18 51 2 67 -20 20 -23 14 -20 -33z"/>
+<path d="M909 79 c-8 -16 -8 -28 0 -45 16 -37 27 -29 26 21 0 49 -8 57 -26 24z"/>
+</g>
 </svg>
