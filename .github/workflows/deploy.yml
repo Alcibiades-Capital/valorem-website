@@ -23,7 +23,7 @@ jobs:
       - name: Update apt repos
         run: sudo apt-get update
       - name: Install imagemagick dependencies
-        run: sudo apt-get -y install imagemagick inkscape libmagickcore-dev libmagickwand-dev build-essential
+        run: sudo apt-get -y install imagemagick inkscape libmagickcore-dev libmagickwand-dev build-essential potrace
       - name: Configure ruby
         uses: ruby/setup-ruby@v1
         with:
