@@ -46,8 +46,7 @@ jobs:
       - name: Copy the CNAME and other build additions to the site
         run: cp ./BuildAdditions/* ./_site/
       - name: Deploy the site
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _site
-          publish_branch: gh_pages
+          folder: _site
+          branch: gh_pages
