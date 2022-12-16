@@ -2,7 +2,7 @@
 date: 2022-04-13 00:00:00 +01
 title: Valorem Options Litepaper
 usemathjax: true
-description: This litepaper introduces the Valorem Options protocol, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 tokens. 
+description: This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options. 
 ---
 
 ## Introduction
@@ -81,6 +81,11 @@ can be transferred freely from actors to other actors. The option tokens can
 be exercised during a specified time window, after which the claim tokens can 
 be redeemed.
 
+### Timekeeping
+
+All timekeeping in the Valorem options protocol uses `uint40` timestamps in
+seconds since the unix epoch.
+
 ### Creating an option type
 
 Actors can permissionlessly create new option types. They can specify the 
@@ -152,11 +157,6 @@ written, conferring the ability to exercise the option pursuant to the terms
 set during type creation. Both the claim token and the option token can be 
 transferred to other actors on the chain.
 
-### Timekeeping
-
-All timekeeping in the Valorem options protocol is done using `uint40` 
-timestamps in seconds since the unix epoch in UTC.
-
 ### Exercising options
 
 Holders of an option token can exercise the option pursuant to the following
@@ -177,6 +177,219 @@ the option type, the claim holder will receive some ratio of the underlying
 and exercise tokens. If the claim token was not assigned exercise, the claim 
 token holder will receive the underlying tokens deposited upon writing 
 back in full.
+
+### Buckets
+
+The Valorem protocol uses a claim bucketing mechanism to bound the runtime 
+complexity of exercise assignment. This also to ensures that malicious option 
+writers cannot perform a denial of service attack on the protocol by writing 
+large numbers of claims on an option type, which, without the bucketing 
+mechanism, could result in exercise assignment being prohibitively expensive.
+
+In this mechanism, a new bucket is created on the first write of a new option 
+type. Subsequent writes of the same option type will be added to the same 
+bucket until it is assigned an exercise. At that point, that bucket becomes 
+partially or fully exercised, and the next write creates a new bucket. Thus, 
+a bucket has an enumeration of states:
+
+```solidity
+enum BucketExerciseState {
+        Exercised,
+        PartiallyExercised,
+        Unexercised
+    }
+```
+
+The amounts written for a bucket are stored in a `Bucket` struct:
+
+```solidity
+struct Bucket {
+    /// amountWritten The number of option contracts written into this bucket.
+    uint112 amountWritten;
+    /// amountExercised The number of option contracts exercised from this bucket.
+    uint112 amountExercised;
+}
+```
+
+and the bucket lifecycle algorithm is:
+
+```solidity
+function _addOrUpdateClaimBucket(
+    OptionTypeState storage optionTypeState,
+    uint112 amount
+  ) private returns (uint96 bucketIndex) {
+  BucketInfo storage bucketInfo = optionTypeState.bucketInfo;
+  Bucket[] storage claimBuckets = bucketInfo.buckets;
+  uint96 writtenBucketIndex = uint96(claimBuckets.length);
+
+  if (claimBuckets.length == 0) {
+    // Then add a new bucket to this option type, because none exist.
+    claimBuckets.push(Bucket(amount, 0));
+    _updateUnexercisedBucketIndices(bucketInfo, writtenBucketIndex);
+
+    return writtenBucketIndex;
+  }
+
+  // Else, get the currentBucket.
+  uint96 currentBucketIndex = writtenBucketIndex - 1;
+  Bucket storage currentBucket = claimBuckets[currentBucketIndex];
+
+  if (
+    bucketInfo.bucketExerciseStates[currentBucketIndex]
+    != BucketExerciseState.Unexercised
+  ) {
+    // Add a new bucket to this option type, because the last was exercised.
+    claimBuckets.push(Bucket(amount, 0));
+    _updateUnexercisedBucketIndices(bucketInfo, writtenBucketIndex);
+  } else {
+    // Write to the existing unexercised bucket
+    currentBucket.amountWritten += amount;
+    writtenBucketIndex = currentBucketIndex;
+  }
+
+  return writtenBucketIndex;
+}
+
+```
+
+The probability of an exercise assignment to the most recently created bucket 
+is $ 1 \over n $, where $ n $ is the number of buckets. Because 
+$ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $, and since
+$ \sum_{n=1}^k {1 \over n} = H_k $, and 
+$ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and 
+$ \gamma \approx 0.5772156649 $, the average case growth rate of the number 
+of buckets for an option type is $ \mathcal{O}(\ln n) $. This makes it 
+prohibitively expensive for a malicious writer to perform a denial of service 
+attack on options exercisers, and generally keeps the runtime complexity to 
+exercise an option type bounded by $ \mathcal{O}(\ln n) $.
+
+### What comprises a claim?
+
+Because of the bucketing mechanism, Valorem claims are comprised of bucket 
+index data structures:
+
+```solidity
+struct ClaimIndex {
+        /// amountWritten The amount of option contracts written into claim for given bucket.
+        uint112 amountWritten;
+        /// bucketIndex The index of the Bucket into which the options collateral was deposited.
+        uint96 bucketIndex;
+    }
+```
+
+which are stored for each bucket the claim is a comprised of. Because of this 
+storage structure, calculating a claim position involves summations over the 
+claim's bucket indices.
+
+#### Calculating exercise state for a claim
+
+Given $ I_w $, the amount of options written into a bucket for a claim, $ C $,
+we can calculate $ C_e $, the amount of options exercised for a claim, and 
+$ C_u $ the amount of options unexercised for a claim using $ B_w $, the amount of
+options written into a bucket, and $ B_e $ the amount of options exercised from 
+a bucket.
+
+We can calculate the remaining amount of options unexercised for a bucket as
+$$ B_u = B_w - B_e $$
+therefore,
+
+$$ C_e = \sum_{i=1}^n i = {B_e I_w \over B_w} + \ldots + n $$
+
+and
+
+$$ C_u = \sum_{i=1}^n i = {B_u I_w \over B_w} + \ldots + n $$
+
+and
+
+$$ C_w = \sum_{i=1}^n i = ({B_e I_w \over B_w} + {B_u I_w \over B_w}) + \ldots + n $$
+
+which simplifies to
+
+$$ C_w = \sum_{i=1}^n i = I_w + \ldots + n $$
+
+#### Calculating underlying assets for a claim
+
+To preserve as much precision as possible, we calculate the amounts of the 
+exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by 
+multiplying the amount of the exercise asset, $ O_e $, and the underlying 
+asset, $ O_u $, before performing any division. Thus:
+
+$$ U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n $$
+
+and 
+
+$$ U_u = \sum_{i=1}^n i = {B_u O_e I_w \over B_w} + \ldots + n $$
+
+### Option exercise assignment
+
+Exercise assignment is performed using a deterministic algorithm seeded by
+the `uint160 optionKey`, with entropy from actors who write and exercise 
+options without either party being able to influence the outcome.
+
+The assignment algorithm is as follows:
+
+```solidity
+function _assignExercise(
+        OptionTypeState storage optionTypeState,
+        Option storage optionRecord,
+        uint112 amount
+    ) private {
+        // Setup pointers to buckets and buckets with collateral available for exercise.
+        Bucket[] storage buckets = optionTypeState.bucketInfo.buckets;
+        uint96[] storage unexercisedBucketIndices =
+            optionTypeState.bucketInfo.unexercisedBucketIndices;
+        uint96 numUnexercisedBuckets = uint96(unexercisedBucketIndices.length);
+        uint96 exerciseIndex =
+            uint96(optionRecord.settlementSeed % numUnexercisedBuckets);
+
+        while (amount > 0) {
+            // Get the claim bucket to assign exercise to.
+            uint96 bucketIndex = unexercisedBucketIndices[exerciseIndex];
+            Bucket storage bucketInfo = buckets[bucketIndex];
+
+            uint112 amountAvailable =
+                bucketInfo.amountWritten - bucketInfo.amountExercised;
+            uint112 amountPresentlyExercised = 0;
+            if (amountAvailable <= amount) {
+                amount -= amountAvailable;
+                amountPresentlyExercised = amountAvailable;
+                // Perform "swap and pop" index management.
+                numUnexercisedBuckets--;
+                uint96 overwrite =
+                    unexercisedBucketIndices[numUnexercisedBuckets];
+                unexercisedBucketIndices[exerciseIndex] = overwrite;
+                unexercisedBucketIndices.pop();
+
+                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
+                    BucketExerciseState.Exercised;
+            } else {
+                amountPresentlyExercised = amount;
+                amount = 0;
+                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
+                    BucketExerciseState.PartiallyExercised;
+            }
+            bucketInfo.amountExercised += amountPresentlyExercised;
+
+            if (amount != 0) {
+                exerciseIndex = (exerciseIndex + 1) % numUnexercisedBuckets;
+            }
+        }
+  // Update the seed for the next exercise.
+  optionRecord.settlementSeed = uint160(
+    uint256(
+      keccak256(
+        abi.encode(optionRecord.settlementSeed, exerciseIndex)
+      )
+    )
+  );
+}
+```
+
+The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is 
+the number of buckets consumed by the algorithm to fulfill the exercise. 
+However, the average case runtime complexity is better than
+$ \mathcal{O}(\ln n) $, since we know the growth rate of the number of 
+buckets. 
 
 ## Use cases
 
