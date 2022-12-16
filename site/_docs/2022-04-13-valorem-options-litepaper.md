@@ -319,7 +319,7 @@ $$ U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n $$
 
 and 
 
-$$ U_u = \sum_{i=1}^n i = {B_u O_e I_w \over B_w} + \ldots + n $$
+$$ U_u = \sum_{i=1}^n i = {B_u O_u I_w \over B_w} + \ldots + n $$
 
 ### Option exercise assignment
 
@@ -390,7 +390,7 @@ The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is
 the number of buckets consumed by the algorithm to fulfill the exercise. 
 However, the average case runtime complexity is better than
 $ \mathcal{O}(\ln n) $, since we know the growth rate of the number of 
-buckets. 
+buckets, and that we are operating on a subset of buckets.
 
 ## Use cases
 
