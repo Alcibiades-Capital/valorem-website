@@ -48,9 +48,9 @@
 " />
 <meta name="author" content="Alcibiades" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This litepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens.
+<meta name="description" content="This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options.
 " />
-<meta property="og:description" content="This litepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens.
+<meta property="og:description" content="This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options.
 " />
 <link rel="canonical" href="https://valorem.xyz/docs/valorem-options-litepaper/" />
 <meta property="og:url" content="https://valorem.xyz/docs/valorem-options-litepaper/" />
@@ -67,7 +67,7 @@
         "@context":"https://schema.org",
         "@type":"WebPage",
         "name":"Valorem Options Litepaper",
-        "description":"This litepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens.
+        "description":"This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options.
 ",
         "publisher":{
             "@type":"Organization",
@@ -231,13 +231,30 @@
         <hr>
         <h2 id="introduction">Introduction</h2>
 
+<p>This litepaper introduces the Valorem Options protocol, a DeFi native options 
+protocol which aims to provide superior flexibility in comparison with existing 
+options protocols by removing price oracles, reliance on existing defi 
+primitives, and premium value assumptions. Valorem achieves this by 
+implementing an option contract underwriting system and clearinghouse driven 
+by market forces and settled physically using a novel fair settlement 
+algorithm. The Valorem Options protocol consists of a set of smart contracts 
+targeting the 
+<a href="https://ethereum.github.io/yellowpaper/paper.pdf">Ethereum Virtual Machine</a>, 
+or EVM, which can interact directly with any pair of non-rebasing, 
+non-fee-on-transfer,
+<a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-20/">ERC-20</a>
+tokens to enable the transfer, and settlement of long and short put 
+and call option positions in a permissionless manner.</p>
+
+<h2 id="motivation">Motivation</h2>
+
 <p>Options are an essential component in high-functioning financial systems.
-In traditional finance, options volume exceeds spot volume, but in<br />
-blockchain finance, spot volumes still exceed options trading volumes. 
-Although options trading volume on assets like BTC and ETH has grown 
-significantly in the past year — both on centralized exchanges such as 
-Deribit, and on-chain protocols — it is clear that significant untapped 
-market opportunities remain.</p>
+In traditional finance, options volume exceeds spot volume, but in blockchain 
+finance, spot volumes still exceed options trading volumes. Although options 
+trading volume on assets like BTC and ETH has grown significantly in the past 
+year — both on centralized exchanges such as Deribit, and on-chain 
+protocols — it is clear that significant untapped market opportunities 
+remain.</p>
 
 <p>There are already a number of on-chain options market making protocols. While 
 most of these trade products that emulate traditional options structures, 
@@ -249,109 +266,351 @@ deployment across evm chains, gas inefficiency of Uniswap V3 LP NFTs,
 and the pricing limitations of perpetual options (as opposed to ones with 
 fixed exercise and expiry timestamps).</p>
 
-<p>This litepaper introduces the Valorem Options V1 protocol. Valorem 
-is a DeFi native options protocol which aims to provide superior flexibility 
-over existing options protocols by removing price oracles, reliance on existing 
-defi primitives, and premium value assumptions. Valorem achieves this by 
-implementing an options settlement protocol driven by market forces and settled 
-in a fair ordering using a deterministic algorithm. The Valorem Options V1 
-protocol consists of a set of smart contracts which can interact directly with 
-any non-rebasing, non-fee on transfer, ERC20 token pair to handle the minting,
-exercise and settlement of any put or call options in a permissionless and 
-trustless manner.</p>
+<p>A flexible base layer for that is portable to EVMs enables the 
+proliferation of derivatives products and facilitate the maturity of 
+decentralized finance by allowing new use cases to be developed.</p>
 
-<h3 id="key-innovations">Key innovations</h3>
+<h2 id="solution">Solution</h2>
 
-<h4 id="permissionless">Permissionless</h4>
+<h3 id="permissionless">Permissionless</h3>
 
 <p>The Valorem protocol is permissionless; the protocol is open to public use 
 with no ability to restrict who can or cannot use it. Any potential user 
-can create a new option chain, write options, exercise the options they hold, 
-transfer those options, and transfer claims generated during writing.</p>
+can perform any operation that the protocol supports.</p>
 
-<h4 id="fully-collateralized">Fully collateralized</h4>
+<h3 id="fully-collateralized">Fully collateralized</h3>
 
-<p>The protocol is fully collateralized; options can be exercised at
-any time prior to expiry and after the exercise timestamp, without the risk of
-default. This design choice was made due to the nature of decentralization and
-the permissionless nature of the protocol.</p>
+<p>Options written via the protocol are fully collateralized, eliminating 
+counterparty risk and ensuring settlement.</p>
 
-<h4 id="composability">Composability</h4>
+<h3 id="composable">Composable</h3>
 
-<p>The Valorem protocol is composable; it allows writers to write options on any 
-ERC-20 pair and use any strike price, any expiry timestamp at least 24 hours 
-in the future, and any exercise timestamp at least 24 hours before expiration 
-date. This flexibility enables the settlement layer to be used in a large 
-range of applications. Options contracts are issued as fungible ERC-1155 
-tokens, herein referred to as vTokens, with each token representing a 
-contract. Option writers are additionally issued an ERC-1155 NFT representing 
-group contracts written for claiming collateral and exercise assignment. 
-These tokens allow for novel structured products to be created atop the 
-protocol.</p>
+<p>The protocol is composable; the design is centered generality such 
+that it can easily be integrated into other smart contract systems as a 
+“money lego” to comprise more complex derivatives.</p>
 
-<h2 id="protocol-description">Protocol Description</h2>
+<h2 id="mechanism">Mechanism</h2>
 
-<p>The Valorem protocol acts as an underwriter and clearinghouse for writing 
-and exercising options contracts and as a custodian and assignment engine 
-for the options’ underlying collateral.Both the options contract and the 
-underlying collateral are tokenized for ownership on EVM blockchains. 
-The protocol allows the following actions:</p>
+<p>The Valorem protocol, at it’s core, is non-custodial engine for the 
+underwriting and physical settlement of options. The engine utilizes the 
+<a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/">ERC1155 multi-token standard</a>
+to gas-efficiently tokenize long and short positions, or options and claims. 
+Actors on chain — either individuals using their wallets or protocols 
+using smart contracts — can create a new option type, defined as the 
+unique tuple with regard option contract properties. They can then write 
+options of that type. Writing issues a fungible option token, and a non-fungible 
+claim token, representing a claim to the collateral used for writing, or the 
+exercise asset if assigned exercise via a fair assignment algorithm. The tokens 
+can be transferred freely from actors to other actors. The option tokens can 
+be exercised during a specified time window, after which the claim tokens can 
+be redeemed.</p>
 
-<h3 id="writing-options">Writing Options</h3>
+<h3 id="timekeeping">Timekeeping</h3>
 
-<p>Actors on chain — either individuals using their wallets or protocols 
-using smart contracts — can write options by depositing the necessary 
-collateral into Valorem. They can specify the following:</p>
+<p>All timekeeping in the Valorem options protocol uses <code class="language-plaintext highlighter-rouge">uint40</code> timestamps in
+seconds since the unix epoch.</p>
+
+<h3 id="creating-an-option-type">Creating an option type</h3>
+
+<p>Actors can permissionlessly create new option types. They can specify the 
+following:</p>
 
 <ul>
-  <li>The underlying collateral of the option; this is what the option owner receives
-if the option is exercised.</li>
-  <li>The exercise token of the option;  this is what the option owner pays, and
+  <li>The underlying collateral token of the option; this is what the option 
+owner receives if the option is exercised.</li>
+  <li>The amount of the underlying token collateralizing the option.</li>
+  <li>The exercise token of the option; this is what the option owner pays, and
 what the option writer receives; if the option is exercised.</li>
-  <li>The expiration date of the option.</li>
-  <li>The earliest exercise date of the option.</li>
-  <li>The strike price of the option.</li>
+  <li>The amount of the exercise token required to exercise the option.</li>
+  <li>The earliest exercise timestamp of the option.</li>
+  <li>The expiration timestamp of the option.</li>
 </ul>
 
-<p>This information comprises a unique hash <code class="language-plaintext highlighter-rouge">keccak256(abi.encode(Option memory))</code>,
-which is then used to determine if that type of option already exists and, if 
-it doesn’t, create it. Once the option type is created, upon writing, the option
-writer will receive a <code class="language-plaintext highlighter-rouge">claim</code> token indicating that they have written the option.
-They will also receive an <code class="language-plaintext highlighter-rouge">option</code> token, indicating that they have the ability
-to exercise the option pursuant to the terms set during writing.  Both the
-<code class="language-plaintext highlighter-rouge">claim</code> token and the <code class="language-plaintext highlighter-rouge">option</code> token can be transferred or traded to other
-actors on the chain.</p>
+<p>This information comprises a unique hash:</p>
 
-<h3 id="exercising-options">Exercising Options</h3>
-<p>Owners of an <code class="language-plaintext highlighter-rouge">option</code> token can exercise the option pursuant to the following
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint160</span> <span class="n">optionKey</span> <span class="o">=</span> <span class="kt">uint160</span><span class="p">(</span>
+           <span class="kt">bytes20</span><span class="p">(</span>
+               <span class="nb">keccak256</span><span class="p">(</span>
+                   <span class="n">abi</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span>
+                       <span class="n">underlyingAsset</span><span class="p">,</span>
+                       <span class="n">underlyingAmount</span><span class="p">,</span>
+                       <span class="n">exerciseAsset</span><span class="p">,</span>
+                       <span class="n">exerciseAmount</span><span class="p">,</span>
+                       <span class="n">exerciseTimestamp</span><span class="p">,</span>
+                       <span class="n">expiryTimestamp</span>
+                   <span class="p">)</span>
+               <span class="p">)</span>
+           <span class="p">)</span>
+       <span class="p">)</span>
+</code></pre></div></div>
+
+<p>which is then used to determine if that type of option already exists and, if
+it doesn’t, create it.</p>
+
+<h3 id="token-address-space">Token address space</h3>
+
+<p>The ERC1155 standard has a 256-bit address space for sub-tokens.
+Valorem uses 160 bits for fungible option tokens keyed on <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, 
+and 96 bits for claim NFTs per option type, keyed on an auto-incrementing 
+<code class="language-plaintext highlighter-rouge">uint96 claimKey</code>, starting from 1, resulting in a 256-bit token address 
+space laid out as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MSb
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+                                            LSb
+</code></pre></div></div>
+
+<p>Supporting <code class="language-plaintext highlighter-rouge">uint160</code> option types with <code class="language-plaintext highlighter-rouge">uint96 - 1</code> claim NFTs each.</p>
+
+<h3 id="writing-options">Writing options</h3>
+
+<p>Once an option type has been created, an actor can write options of that type.
+Upon writing, the option writer will receive a claim token representing the 
+short position, which is a claim to the underlying asset and the responsibility 
+to accept the exercise asset on full or partial exercise assignment. They will 
+also receive an option tokens, based on the amount of the option type they have
+written, conferring the ability to exercise the option pursuant to the terms 
+set during type creation. Both the claim token and the option token can be 
+transferred to other actors on the chain.</p>
+
+<h3 id="exercising-options">Exercising options</h3>
+
+<p>Holders of an option token can exercise the option pursuant to the following
 conditions:</p>
 
 <ul>
-  <li>The earliest exercise date has passed.</li>
-  <li>The expiration date has not passed</li>
-  <li>The owner of the <code class="language-plaintext highlighter-rouge">option</code> token has enough of the exercise token required
-to purchase the amount of the underlying token at the strike price.</li>
+  <li>The current timestamp is at least the exercise timestamp of the option type.</li>
+  <li>The current timestamp is before the expiry timestamp of the option type.</li>
+  <li>The owner of the option token has enough of the exercise token as required
+by the terms of the option type purchase the amount of the underlying token 
+at the strike price.</li>
 </ul>
 
-<h3 id="redeeming-options">Redeeming Options</h3>
-<p>Owners of a <code class="language-plaintext highlighter-rouge">claim</code> token can exercise their claim to the collateral in the
-Valorem protocol vault once the expiration date of the option has passed.
-If the collateral associated with their claims token was assigned during
-exercise of the option, the appropriate amount of the underlying token will
-be sent to the <code class="language-plaintext highlighter-rouge">claim</code> token holder and the <code class="language-plaintext highlighter-rouge">claim</code> token will be burned.
-There also exists the possibility of partial assignment, in which the
-<code class="language-plaintext highlighter-rouge">claim</code> holder will receive some ration of the underlying and exercise
-token. If the collateral associated with the <code class="language-plaintext highlighter-rouge">claim</code> token was not
-assigned, the <code class="language-plaintext highlighter-rouge">claim</code> token holder will receive their underlying token back
-instead.</p>
+<h3 id="redeeming-options">Redeeming options</h3>
 
-<h3 id="exercise-assignment">Exercise Assignment</h3>
+<p>Holders of a claim token can redeem their claim from the Valorem protocol 
+vault on or after the expiration timestamp of the option type for the claim. 
+If their claim was assigned full or partial exercise during the lifetime of 
+the option type, the claim holder will receive some ratio of the underlying 
+and exercise tokens. If the claim token was not assigned exercise, the claim 
+token holder will receive the underlying tokens deposited upon writing 
+back in full.</p>
 
-<p>When an option is exercised, the Valorem protocol uses a deterministic algorithm
-to determine which <code class="language-plaintext highlighter-rouge">claim</code> token’s corresponding collateral will be assigned. 
-This process repeatedly cycles through selected <code class="language-plaintext highlighter-rouge">claim</code> tokens’ collateral 
-until sufficient collateral has been assigned to cover the full amount owed 
-to the option holder.</p>
+<h3 id="buckets">Buckets</h3>
+
+<p>The Valorem protocol uses a claim bucketing mechanism to bound the runtime 
+complexity of exercise assignment. This also to ensures that malicious option 
+writers cannot perform a denial of service attack on the protocol by writing 
+large numbers of claims on an option type, which, without the bucketing 
+mechanism, could result in exercise assignment being prohibitively expensive.</p>
+
+<p>In this mechanism, a new bucket is created on the first write of a new option 
+type. Subsequent writes of the same option type will be added to the same 
+bucket until it is assigned an exercise. At that point, that bucket becomes 
+partially or fully exercised, and the next write creates a new bucket. Thus, 
+a bucket has an enumeration of states:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">enum</span> <span class="n">BucketExerciseState</span> <span class="p">{</span>
+        <span class="n">Exercised</span><span class="p">,</span>
+        <span class="n">PartiallyExercised</span><span class="p">,</span>
+        <span class="n">Unexercised</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The amounts written for a bucket are stored in a <code class="language-plaintext highlighter-rouge">Bucket</code> struct:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Bucket</span> <span class="p">{</span>
+    <span class="c1">/// amountWritten The number of option contracts written into this bucket.
+</span>    <span class="kt">uint112</span> <span class="n">amountWritten</span><span class="p">;</span>
+    <span class="c1">/// amountExercised The number of option contracts exercised from this bucket.
+</span>    <span class="kt">uint112</span> <span class="n">amountExercised</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and the bucket lifecycle algorithm is:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">_addOrUpdateClaimBucket</span><span class="p">(</span>
+    <span class="n">OptionTypeState</span> <span class="k">storage</span> <span class="n">optionTypeState</span><span class="p">,</span>
+    <span class="kt">uint112</span> <span class="n">amount</span>
+  <span class="p">)</span> <span class="k">private</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint96</span> <span class="n">bucketIndex</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">BucketInfo</span> <span class="k">storage</span> <span class="n">bucketInfo</span> <span class="o">=</span> <span class="n">optionTypeState</span><span class="p">.</span><span class="n">bucketInfo</span><span class="p">;</span>
+  <span class="n">Bucket</span><span class="p">[]</span> <span class="k">storage</span> <span class="n">claimBuckets</span> <span class="o">=</span> <span class="n">bucketInfo</span><span class="p">.</span><span class="n">buckets</span><span class="p">;</span>
+  <span class="kt">uint96</span> <span class="n">writtenBucketIndex</span> <span class="o">=</span> <span class="kt">uint96</span><span class="p">(</span><span class="n">claimBuckets</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">claimBuckets</span><span class="p">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Then add a new bucket to this option type, because none exist.
+</span>    <span class="n">claimBuckets</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Bucket</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="n">_updateUnexercisedBucketIndices</span><span class="p">(</span><span class="n">bucketInfo</span><span class="p">,</span> <span class="n">writtenBucketIndex</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">writtenBucketIndex</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Else, get the currentBucket.
+</span>  <span class="kt">uint96</span> <span class="n">currentBucketIndex</span> <span class="o">=</span> <span class="n">writtenBucketIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">Bucket</span> <span class="k">storage</span> <span class="n">currentBucket</span> <span class="o">=</span> <span class="n">claimBuckets</span><span class="p">[</span><span class="n">currentBucketIndex</span><span class="p">];</span>
+
+  <span class="k">if</span> <span class="p">(</span>
+    <span class="n">bucketInfo</span><span class="p">.</span><span class="n">bucketExerciseStates</span><span class="p">[</span><span class="n">currentBucketIndex</span><span class="p">]</span>
+    <span class="o">!=</span> <span class="n">BucketExerciseState</span><span class="p">.</span><span class="n">Unexercised</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Add a new bucket to this option type, because the last was exercised.
+</span>    <span class="n">claimBuckets</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Bucket</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="n">_updateUnexercisedBucketIndices</span><span class="p">(</span><span class="n">bucketInfo</span><span class="p">,</span> <span class="n">writtenBucketIndex</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// Write to the existing unexercised bucket
+</span>    <span class="n">currentBucket</span><span class="p">.</span><span class="n">amountWritten</span> <span class="o">+=</span> <span class="n">amount</span><span class="p">;</span>
+    <span class="n">writtenBucketIndex</span> <span class="o">=</span> <span class="n">currentBucketIndex</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">writtenBucketIndex</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>The probability of an exercise assignment to the most recently created bucket 
+is $ 1 \over n $, where $ n $ is the number of buckets. Because 
+$ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $, and since
+$ \sum_{n=1}^k {1 \over n} = H_k $, and 
+$ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and 
+$ \gamma \approx 0.5772156649 $, the average case growth rate of the number 
+of buckets for an option type is $ \mathcal{O}(\ln n) $. This makes it 
+prohibitively expensive for a malicious writer to perform a denial of service 
+attack on options exercisers, and generally keeps the runtime complexity to 
+exercise an option type bounded by $ \mathcal{O}(\ln n) $.</p>
+
+<h3 id="what-comprises-a-claim">What comprises a claim?</h3>
+
+<p>Because of the bucketing mechanism, Valorem claims are comprised of bucket 
+index data structures:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">ClaimIndex</span> <span class="p">{</span>
+        <span class="c1">/// amountWritten The amount of option contracts written into claim for given bucket.
+</span>        <span class="kt">uint112</span> <span class="n">amountWritten</span><span class="p">;</span>
+        <span class="c1">/// bucketIndex The index of the Bucket into which the options collateral was deposited.
+</span>        <span class="kt">uint96</span> <span class="n">bucketIndex</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>which are stored for each bucket the claim is a comprised of. Because of this 
+storage structure, calculating a claim position involves summations over the 
+claim’s bucket indices.</p>
+
+<h4 id="calculating-exercise-state-for-a-claim">Calculating exercise state for a claim</h4>
+
+<p>Given $ I_w $, the amount of options written into a bucket for a claim, $ C $,
+we can calculate $ C_e $, the amount of options exercised for a claim, and 
+$ C_u $ the amount of options unexercised for a claim using $ B_w $, the amount of
+options written into a bucket, and $ B_e $ the amount of options exercised from 
+a bucket.</p>
+
+<p>We can calculate the remaining amount of options unexercised for a bucket as
+\(B_u = B_w - B_e\)
+therefore,</p>
+
+\[C_e = \sum_{i=1}^n i = {B_e I_w \over B_w} + \ldots + n\]
+
+<p>and</p>
+
+\[C_u = \sum_{i=1}^n i = {B_u I_w \over B_w} + \ldots + n\]
+
+<p>and</p>
+
+\[C_w = \sum_{i=1}^n i = ({B_e I_w \over B_w} + {B_u I_w \over B_w}) + \ldots + n\]
+
+<p>which simplifies to</p>
+
+\[C_w = \sum_{i=1}^n i = I_w + \ldots + n\]
+
+<h4 id="calculating-underlying-assets-for-a-claim">Calculating underlying assets for a claim</h4>
+
+<p>To preserve as much precision as possible, we calculate the amounts of the 
+exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by 
+multiplying the amount of the exercise asset, $ O_e $, and the underlying 
+asset, $ O_u $, before performing any division. Thus:</p>
+
+\[U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n\]
+
+<p>and</p>
+
+\[U_u = \sum_{i=1}^n i = {B_u O_e I_w \over B_w} + \ldots + n\]
+
+<h3 id="option-exercise-assignment">Option exercise assignment</h3>
+
+<p>Exercise assignment is performed using a deterministic algorithm seeded by
+the <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, with entropy from actors who write and exercise 
+options without either party being able to influence the outcome.</p>
+
+<p>The assignment algorithm is as follows:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">_assignExercise</span><span class="p">(</span>
+        <span class="n">OptionTypeState</span> <span class="k">storage</span> <span class="n">optionTypeState</span><span class="p">,</span>
+        <span class="n">Option</span> <span class="k">storage</span> <span class="n">optionRecord</span><span class="p">,</span>
+        <span class="kt">uint112</span> <span class="n">amount</span>
+    <span class="p">)</span> <span class="k">private</span> <span class="p">{</span>
+        <span class="c1">// Setup pointers to buckets and buckets with collateral available for exercise.
+</span>        <span class="n">Bucket</span><span class="p">[]</span> <span class="k">storage</span> <span class="n">buckets</span> <span class="o">=</span> <span class="n">optionTypeState</span><span class="p">.</span><span class="n">bucketInfo</span><span class="p">.</span><span class="n">buckets</span><span class="p">;</span>
+        <span class="kt">uint96</span><span class="p">[]</span> <span class="k">storage</span> <span class="n">unexercisedBucketIndices</span> <span class="o">=</span>
+            <span class="n">optionTypeState</span><span class="p">.</span><span class="n">bucketInfo</span><span class="p">.</span><span class="n">unexercisedBucketIndices</span><span class="p">;</span>
+        <span class="kt">uint96</span> <span class="n">numUnexercisedBuckets</span> <span class="o">=</span> <span class="kt">uint96</span><span class="p">(</span><span class="n">unexercisedBucketIndices</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+        <span class="kt">uint96</span> <span class="n">exerciseIndex</span> <span class="o">=</span>
+            <span class="kt">uint96</span><span class="p">(</span><span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span> <span class="o">%</span> <span class="n">numUnexercisedBuckets</span><span class="p">);</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">amount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Get the claim bucket to assign exercise to.
+</span>            <span class="kt">uint96</span> <span class="n">bucketIndex</span> <span class="o">=</span> <span class="n">unexercisedBucketIndices</span><span class="p">[</span><span class="n">exerciseIndex</span><span class="p">];</span>
+            <span class="n">Bucket</span> <span class="k">storage</span> <span class="n">bucketInfo</span> <span class="o">=</span> <span class="n">buckets</span><span class="p">[</span><span class="n">bucketIndex</span><span class="p">];</span>
+
+            <span class="kt">uint112</span> <span class="n">amountAvailable</span> <span class="o">=</span>
+                <span class="n">bucketInfo</span><span class="p">.</span><span class="n">amountWritten</span> <span class="o">-</span> <span class="n">bucketInfo</span><span class="p">.</span><span class="n">amountExercised</span><span class="p">;</span>
+            <span class="kt">uint112</span> <span class="n">amountPresentlyExercised</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">amountAvailable</span> <span class="o">&lt;=</span> <span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">amount</span> <span class="o">-=</span> <span class="n">amountAvailable</span><span class="p">;</span>
+                <span class="n">amountPresentlyExercised</span> <span class="o">=</span> <span class="n">amountAvailable</span><span class="p">;</span>
+                <span class="c1">// Perform "swap and pop" index management.
+</span>                <span class="n">numUnexercisedBuckets</span><span class="o">--</span><span class="p">;</span>
+                <span class="kt">uint96</span> <span class="n">overwrite</span> <span class="o">=</span>
+                    <span class="n">unexercisedBucketIndices</span><span class="p">[</span><span class="n">numUnexercisedBuckets</span><span class="p">];</span>
+                <span class="n">unexercisedBucketIndices</span><span class="p">[</span><span class="n">exerciseIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">;</span>
+                <span class="n">unexercisedBucketIndices</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+
+                <span class="n">optionTypeState</span><span class="p">.</span><span class="n">bucketInfo</span><span class="p">.</span><span class="n">bucketExerciseStates</span><span class="p">[</span><span class="n">bucketIndex</span><span class="p">]</span> <span class="o">=</span>
+                    <span class="n">BucketExerciseState</span><span class="p">.</span><span class="n">Exercised</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">amountPresentlyExercised</span> <span class="o">=</span> <span class="n">amount</span><span class="p">;</span>
+                <span class="n">amount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="n">optionTypeState</span><span class="p">.</span><span class="n">bucketInfo</span><span class="p">.</span><span class="n">bucketExerciseStates</span><span class="p">[</span><span class="n">bucketIndex</span><span class="p">]</span> <span class="o">=</span>
+                    <span class="n">BucketExerciseState</span><span class="p">.</span><span class="n">PartiallyExercised</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">bucketInfo</span><span class="p">.</span><span class="n">amountExercised</span> <span class="o">+=</span> <span class="n">amountPresentlyExercised</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">amount</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">exerciseIndex</span> <span class="o">=</span> <span class="p">(</span><span class="n">exerciseIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">numUnexercisedBuckets</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+  <span class="c1">// Update the seed for the next exercise.
+</span>  <span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span> <span class="o">=</span> <span class="kt">uint160</span><span class="p">(</span>
+    <span class="kt">uint256</span><span class="p">(</span>
+      <span class="nb">keccak256</span><span class="p">(</span>
+        <span class="n">abi</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span><span class="p">,</span> <span class="n">exerciseIndex</span><span class="p">)</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is 
+the number of buckets consumed by the algorithm to fulfill the exercise. 
+However, the average case runtime complexity is better than
+$ \mathcal{O}(\ln n) $, since we know the growth rate of the number of 
+buckets.</p>
 
 <h2 id="use-cases">Use cases</h2>
 
@@ -481,7 +740,7 @@ with callbacks which may create an attack vector if not done correctly.</p>
     <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
       <div class="sticky top-20">
         <div class="label mb-6">On this page</div>
-        <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Introduction</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#key-innovations" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Key innovations</a></li></ol></li><li class=""><a href="#protocol-description" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol Description</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#writing-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Writing Options</a></li><li class=""><a href="#exercising-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercising Options</a></li><li class=""><a href="#redeeming-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeeming Options</a></li><li class=""><a href="#exercise-assignment" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise Assignment</a></li></ol></li><li class=""><a href="#use-cases" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Use cases</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#simple-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Simple Options</a></li><li class=""><a href="#trading-and-market-making" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trading and Market Making</a></li><li class=""><a href="#structured-products" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structured Products</a></li><li class=""><a href="#vesting-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Vesting Options</a></li><li class=""><a href="#mitigation-of-cross-protocol-financial-contagion" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mitigation of Cross-Protocol Financial Contagion</a></li></ol></li></ol>
+        <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Introduction</a></li><li class=""><a href="#motivation" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Motivation</a></li><li class=""><a href="#solution" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Solution</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#permissionless" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Permissionless</a></li><li class=""><a href="#fully-collateralized" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fully collateralized</a></li><li class=""><a href="#composable" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Composable</a></li></ol></li><li class=""><a href="#mechanism" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mechanism</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#timekeeping" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Timekeeping</a></li><li class=""><a href="#creating-an-option-type" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Creating an option type</a></li><li class=""><a href="#token-address-space" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Token address space</a></li><li class=""><a href="#writing-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Writing options</a></li><li class=""><a href="#exercising-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercising options</a></li><li class=""><a href="#redeeming-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeeming options</a></li><li class=""><a href="#buckets" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Buckets</a></li><li class=""><a href="#what-comprises-a-claim" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">What comprises a claim?</a></li><li class=""><a href="#option-exercise-assignment" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Option exercise assignment</a></li></ol></li><li class=""><a href="#use-cases" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Use cases</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#simple-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Simple Options</a></li><li class=""><a href="#trading-and-market-making" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trading and Market Making</a></li><li class=""><a href="#structured-products" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structured Products</a></li><li class=""><a href="#vesting-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Vesting Options</a></li><li class=""><a href="#mitigation-of-cross-protocol-financial-contagion" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mitigation of Cross-Protocol Financial Contagion</a></li></ol></li></ol>
       </div>
     </nav>
   </div>
