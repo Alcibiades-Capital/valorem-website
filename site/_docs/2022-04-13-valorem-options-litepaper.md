@@ -1,19 +1,37 @@
 ---
 date: 2022-04-13 00:00:00 +01
+last_modified_at: 2022-12-16 00:00:00 +01
 title: Valorem Options Litepaper
 usemathjax: true
-description: This litepaper introduces Valorem Options V1, an oracle-free, permissionless, physically settled options protocol for ERC20 tokens. 
+description: This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options. 
 ---
 
 ## Introduction
 
+This litepaper introduces the Valorem Options protocol, a DeFi native options 
+protocol which aims to provide superior flexibility in comparison with existing 
+options protocols by removing price oracles, reliance on existing defi 
+primitives, and premium value assumptions. Valorem achieves this by 
+implementing an option contract underwriting system and clearinghouse driven 
+by market forces and settled physically using a novel fair settlement 
+algorithm. The Valorem Options protocol consists of a set of smart contracts 
+targeting the 
+[Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf), 
+or EVM, which can interact directly with any pair of non-rebasing, 
+non-fee-on-transfer,
+[ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/)
+tokens to enable the transfer, and settlement of long and short put 
+and call option positions in a permissionless manner.
+
+## Motivation
+
 Options are an essential component in high-functioning financial systems.
-In traditional finance, options volume exceeds spot volume, but in  
-blockchain finance, spot volumes still exceed options trading volumes. 
-Although options trading volume on assets like BTC and ETH has grown 
-significantly in the past year &#151; both on centralized exchanges such as 
-Deribit, and on-chain protocols &#151; it is clear that significant untapped 
-market opportunities remain.
+In traditional finance, options volume exceeds spot volume, but in blockchain 
+finance, spot volumes still exceed options trading volumes. Although options 
+trading volume on assets like BTC and ETH has grown significantly in the past 
+year &#151; both on centralized exchanges such as Deribit, and on-chain 
+protocols &#151; it is clear that significant untapped market opportunities 
+remain.
 
 There are already a number of on-chain options market making protocols. While 
 most of these trade products that emulate traditional options structures, 
@@ -25,106 +43,354 @@ deployment across evm chains, gas inefficiency of Uniswap V3 LP NFTs,
 and the pricing limitations of perpetual options (as opposed to ones with 
 fixed exercise and expiry timestamps).
 
-This litepaper introduces the Valorem Options V1 protocol. Valorem 
-is a DeFi native options protocol which aims to provide superior flexibility 
-over existing options protocols by removing price oracles, reliance on existing 
-defi primitives, and premium value assumptions. Valorem achieves this by 
-implementing an options settlement protocol driven by market forces and settled 
-in a fair ordering using a deterministic algorithm. The Valorem Options V1 
-protocol consists of a set of smart contracts which can interact directly with 
-any non-rebasing, non-fee on transfer, ERC20 token pair to handle the minting,
-exercise and settlement of any put or call options in a permissionless and 
-trustless manner.
+A flexible base layer for that is portable to EVMs enables the 
+proliferation of derivatives products and facilitate the maturity of 
+decentralized finance by allowing new use cases to be developed.
 
-### Key innovations
+## Solution
 
-#### Permissionless
+### Permissionless
 
 The Valorem protocol is permissionless; the protocol is open to public use 
 with no ability to restrict who can or cannot use it. Any potential user 
-can create a new option chain, write options, exercise the options they hold, 
-transfer those options, and transfer claims generated during writing.
+can perform any operation that the protocol supports.
 
-#### Fully collateralized
+### Fully collateralized
 
-The protocol is fully collateralized; options can be exercised at
-any time prior to expiry and after the exercise timestamp, without the risk of
-default. This design choice was made due to the nature of decentralization and
-the permissionless nature of the protocol.
+Options written via the protocol are fully collateralized, eliminating 
+counterparty risk and ensuring settlement.
 
-#### Composability
+### Composable
 
-The Valorem protocol is composable; it allows writers to write options on any 
-ERC-20 pair and use any strike price, any expiry timestamp at least 24 hours 
-in the future, and any exercise timestamp at least 24 hours before expiration 
-date. This flexibility enables the settlement layer to be used in a large 
-range of applications. Options contracts are issued as fungible ERC-1155 
-tokens, herein referred to as vTokens, with each token representing a 
-contract. Option writers are additionally issued an ERC-1155 NFT representing 
-group contracts written for claiming collateral and exercise assignment. 
-These tokens allow for novel structured products to be created atop the 
-protocol.
+The protocol is composable; the design is centered generality such 
+that it can easily be integrated into other smart contract systems as a 
+"money lego" to comprise more complex derivatives.
 
-## Protocol Description
+## Mechanism
 
-The Valorem protocol acts as an underwriter and clearinghouse for writing 
-and exercising options contracts and as a custodian and assignment engine 
-for the options’ underlying collateral.Both the options contract and the 
-underlying collateral are tokenized for ownership on EVM blockchains. 
-The protocol allows the following actions:
-
-### Writing Options
-
+The Valorem protocol, at it's core, is non-custodial engine for the 
+underwriting and physical settlement of options. The engine utilizes the 
+[ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
+to gas-efficiently tokenize long and short positions, or options and claims. 
 Actors on chain &#151; either individuals using their wallets or protocols 
-using smart contracts &#151; can write options by depositing the necessary 
-collateral into Valorem. They can specify the following:
+using smart contracts &#151; can create a new option type, defined as the 
+unique tuple with regard option contract properties. They can then write 
+options of that type. Writing issues a fungible option token, and a non-fungible 
+claim token, representing a claim to the collateral used for writing, or the 
+exercise asset if assigned exercise via a fair assignment algorithm. The tokens 
+can be transferred freely from actors to other actors. The option tokens can 
+be exercised during a specified time window, after which the claim tokens can 
+be redeemed.
 
-- The underlying collateral of the option; this is what the option owner receives
-  if the option is exercised.
-- The exercise token of the option;  this is what the option owner pays, and
+### Timekeeping
+
+All timekeeping in the Valorem options protocol uses `uint40` timestamps in
+seconds since the unix epoch.
+
+### Creating an option type
+
+Actors can permissionlessly create new option types. They can specify the 
+following:
+
+- The underlying collateral token of the option; this is what the option 
+  owner receives if the option is exercised.
+- The amount of the underlying token collateralizing the option.
+- The exercise token of the option; this is what the option owner pays, and
   what the option writer receives; if the option is exercised.
-- The expiration date of the option.
-- The earliest exercise date of the option.
-- The strike price of the option.
+- The amount of the exercise token required to exercise the option.
+- The earliest exercise timestamp of the option.
+- The expiration timestamp of the option.
 
-This information comprises a unique hash `keccak256(abi.encode(Option memory))`,
-which is then used to determine if that type of option already exists and, if 
-it doesn’t, create it. Once the option type is created, upon writing, the option
-writer will receive a `claim` token indicating that they have written the option.
-They will also receive an `option` token, indicating that they have the ability
-to exercise the option pursuant to the terms set during writing.  Both the
-`claim` token and the `option` token can be transferred or traded to other
-actors on the chain.
+This information comprises a unique hash:
 
-### Exercising Options
-Owners of an `option` token can exercise the option pursuant to the following
+```solidity
+uint160 optionKey = uint160(
+           bytes20(
+               keccak256(
+                   abi.encode(
+                       underlyingAsset,
+                       underlyingAmount,
+                       exerciseAsset,
+                       exerciseAmount,
+                       exerciseTimestamp,
+                       expiryTimestamp
+                   )
+               )
+           )
+       )
+```
+
+which is then used to determine if that type of option already exists and, if
+it doesn't, create it.
+
+### Token address space
+
+The ERC1155 standard has a 256-bit address space for sub-tokens.
+Valorem uses 160 bits for fungible option tokens keyed on `uint160 optionKey`, 
+and 96 bits for claim NFTs per option type, keyed on an auto-incrementing 
+`uint96 claimKey`, starting from 1, resulting in a 256-bit token address 
+space laid out as follows:
+
+```
+MSb
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+                                            LSb
+```
+
+Supporting `uint160` option types with `uint96 - 1` claim NFTs each.
+
+### Writing options
+
+Once an option type has been created, an actor can write options of that type.
+Upon writing, the option writer will receive a claim token representing the 
+short position, which is a claim to the underlying asset and the responsibility 
+to accept the exercise asset on full or partial exercise assignment. They will 
+also receive an option tokens, based on the amount of the option type they have
+written, conferring the ability to exercise the option pursuant to the terms 
+set during type creation. Both the claim token and the option token can be 
+transferred to other actors on the chain.
+
+### Exercising options
+
+Holders of an option token can exercise the option pursuant to the following
 conditions:
 
-- The earliest exercise date has passed.
-- The expiration date has not passed
-- The owner of the `option` token has enough of the exercise token required
-  to purchase the amount of the underlying token at the strike price.
+- The current timestamp is at least the exercise timestamp of the option type. 
+- The current timestamp is before the expiry timestamp of the option type. 
+- The owner of the option token has enough of the exercise token as required
+  by the terms of the option type purchase the amount of the underlying token 
+  at the strike price.
 
-### Redeeming Options
-Owners of a `claim` token can exercise their claim to the collateral in the
-Valorem protocol vault once the expiration date of the option has passed.
-If the collateral associated with their claims token was assigned during
-exercise of the option, the appropriate amount of the underlying token will
-be sent to the `claim` token holder and the `claim` token will be burned.
-There also exists the possibility of partial assignment, in which the
-`claim` holder will receive some ration of the underlying and exercise
-token. If the collateral associated with the `claim` token was not
-assigned, the `claim` token holder will receive their underlying token back
-instead.
+### Redeeming options
 
+Holders of a claim token can redeem their claim from the Valorem protocol 
+vault on or after the expiration timestamp of the option type for the claim. 
+If their claim was assigned full or partial exercise during the lifetime of 
+the option type, the claim holder will receive some ratio of the underlying 
+and exercise tokens. If the claim token was not assigned exercise, the claim 
+token holder will receive the underlying tokens deposited upon writing 
+back in full.
 
-### Exercise Assignment
+### Buckets
 
-When an option is exercised, the Valorem protocol uses a deterministic algorithm
-to determine which `claim` token’s corresponding collateral will be assigned. 
-This process repeatedly cycles through selected `claim` tokens’ collateral 
-until sufficient collateral has been assigned to cover the full amount owed 
-to the option holder.
+The Valorem protocol uses a claim bucketing mechanism to bound the runtime 
+complexity of exercise assignment. This also to ensures that malicious option 
+writers cannot perform a denial of service attack on the protocol by writing 
+large numbers of claims on an option type, which, without the bucketing 
+mechanism, could result in exercise assignment being prohibitively expensive.
+
+In this mechanism, a new bucket is created on the first write of a new option 
+type. Subsequent writes of the same option type will be added to the same 
+bucket until it is assigned an exercise. At that point, that bucket becomes 
+partially or fully exercised, and the next write creates a new bucket. Thus, 
+a bucket has an enumeration of states:
+
+```solidity
+enum BucketExerciseState {
+        Exercised,
+        PartiallyExercised,
+        Unexercised
+    }
+```
+
+The amounts written for a bucket are stored in a `Bucket` struct:
+
+```solidity
+struct Bucket {
+    /// amountWritten The number of option contracts written into this bucket.
+    uint112 amountWritten;
+    /// amountExercised The number of option contracts exercised from this bucket.
+    uint112 amountExercised;
+}
+```
+
+and the bucket lifecycle algorithm is:
+
+```solidity
+function _addOrUpdateClaimBucket(
+    OptionTypeState storage optionTypeState,
+    uint112 amount
+  ) private returns (uint96 bucketIndex) {
+  BucketInfo storage bucketInfo = optionTypeState.bucketInfo;
+  Bucket[] storage claimBuckets = bucketInfo.buckets;
+  uint96 writtenBucketIndex = uint96(claimBuckets.length);
+
+  if (claimBuckets.length == 0) {
+    // Then add a new bucket to this option type, because none exist.
+    claimBuckets.push(Bucket(amount, 0));
+    _updateUnexercisedBucketIndices(bucketInfo, writtenBucketIndex);
+
+    return writtenBucketIndex;
+  }
+
+  // Else, get the currentBucket.
+  uint96 currentBucketIndex = writtenBucketIndex - 1;
+  Bucket storage currentBucket = claimBuckets[currentBucketIndex];
+
+  if (
+    bucketInfo.bucketExerciseStates[currentBucketIndex]
+    != BucketExerciseState.Unexercised
+  ) {
+    // Add a new bucket to this option type, because the last was exercised.
+    claimBuckets.push(Bucket(amount, 0));
+    _updateUnexercisedBucketIndices(bucketInfo, writtenBucketIndex);
+  } else {
+    // Write to the existing unexercised bucket
+    currentBucket.amountWritten += amount;
+    writtenBucketIndex = currentBucketIndex;
+  }
+
+  return writtenBucketIndex;
+}
+
+```
+
+The probability of an exercise assignment to the most recently created bucket 
+is $ 1 \over n $, where $ n $ is the number of buckets. Because 
+$ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $, and since
+$ \sum_{n=1}^k {1 \over n} = H_k $, and 
+$ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and 
+$ \gamma \approx 0.5772156649 $, the average case growth rate of the number 
+of buckets for an option type is $ \mathcal{O}(\ln n) $. This makes it 
+prohibitively expensive for a malicious writer to perform a denial of service 
+attack on options exercisers, and generally keeps the runtime complexity to 
+exercise an option type bounded by $ \mathcal{O}(\ln n) $.
+
+### What comprises a claim?
+
+Because of the bucketing mechanism, Valorem claims are comprised of bucket 
+index data structures:
+
+```solidity
+struct ClaimIndex {
+        /// amountWritten The amount of option contracts written into claim for given bucket.
+        uint112 amountWritten;
+        /// bucketIndex The index of the Bucket into which the options collateral was deposited.
+        uint96 bucketIndex;
+    }
+```
+
+which are stored for each bucket the claim is a comprised of. Because of this 
+storage structure, calculating a claim position involves summations over the 
+claim's bucket indices.
+
+#### Calculating exercise state for a claim
+
+Given $ I_w $, the amount of options written into a bucket for a claim, $ C $,
+we can calculate $ C_e $, the amount of options exercised for a claim, and 
+$ C_u $ the amount of options unexercised for a claim using $ B_w $, the amount of
+options written into a bucket, and $ B_e $ the amount of options exercised from 
+a bucket.
+
+We can calculate the remaining amount of options unexercised for a bucket as
+$$ B_u = B_w - B_e $$
+therefore,
+
+$$ C_e = \sum_{i=1}^n i = {B_e I_w \over B_w} + \ldots + n $$
+
+and
+
+$$ C_u = \sum_{i=1}^n i = {B_u I_w \over B_w} + \ldots + n $$
+
+and
+
+$$ C_w = \sum_{i=1}^n i = ({B_e I_w \over B_w} + {B_u I_w \over B_w}) + \ldots + n $$
+
+which simplifies to
+
+$$ C_w = \sum_{i=1}^n i = I_w + \ldots + n $$
+
+#### Calculating underlying assets for a claim
+
+To preserve as much precision as possible, we calculate the amounts of the 
+exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by 
+multiplying the amount of the exercise asset, $ O_e $, and the underlying 
+asset, $ O_u $, before performing any division. Thus:
+
+$$ U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n $$
+
+and 
+
+$$ U_u = \sum_{i=1}^n i = {B_u O_e I_w \over B_w} + \ldots + n $$
+
+### Option exercise assignment
+
+Exercise assignment is performed using a deterministic algorithm seeded by
+the `uint160 optionKey`, with entropy from actors who write and exercise 
+options without either party being able to influence the outcome.
+
+The assignment algorithm is as follows:
+
+```solidity
+function _assignExercise(
+        OptionTypeState storage optionTypeState,
+        Option storage optionRecord,
+        uint112 amount
+    ) private {
+        // Setup pointers to buckets and buckets with collateral available for exercise.
+        Bucket[] storage buckets = optionTypeState.bucketInfo.buckets;
+        uint96[] storage unexercisedBucketIndices =
+            optionTypeState.bucketInfo.unexercisedBucketIndices;
+        uint96 numUnexercisedBuckets = uint96(unexercisedBucketIndices.length);
+        uint96 exerciseIndex =
+            uint96(optionRecord.settlementSeed % numUnexercisedBuckets);
+
+        while (amount > 0) {
+            // Get the claim bucket to assign exercise to.
+            uint96 bucketIndex = unexercisedBucketIndices[exerciseIndex];
+            Bucket storage bucketInfo = buckets[bucketIndex];
+
+            uint112 amountAvailable =
+                bucketInfo.amountWritten - bucketInfo.amountExercised;
+            uint112 amountPresentlyExercised = 0;
+            if (amountAvailable <= amount) {
+                amount -= amountAvailable;
+                amountPresentlyExercised = amountAvailable;
+                // Perform "swap and pop" index management.
+                numUnexercisedBuckets--;
+                uint96 overwrite =
+                    unexercisedBucketIndices[numUnexercisedBuckets];
+                unexercisedBucketIndices[exerciseIndex] = overwrite;
+                unexercisedBucketIndices.pop();
+
+                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
+                    BucketExerciseState.Exercised;
+            } else {
+                amountPresentlyExercised = amount;
+                amount = 0;
+                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
+                    BucketExerciseState.PartiallyExercised;
+            }
+            bucketInfo.amountExercised += amountPresentlyExercised;
+
+            if (amount != 0) {
+                exerciseIndex = (exerciseIndex + 1) % numUnexercisedBuckets;
+            }
+        }
+  // Update the seed for the next exercise.
+  optionRecord.settlementSeed = uint160(
+    uint256(
+      keccak256(
+        abi.encode(optionRecord.settlementSeed, exerciseIndex)
+      )
+    )
+  );
+}
+```
+
+The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is 
+the number of buckets consumed by the algorithm to fulfill the exercise. 
+However, the average case runtime complexity is better than
+$ \mathcal{O}(\ln n) $, since we know the growth rate of the number of 
+buckets. 
 
 ## Use cases
 
