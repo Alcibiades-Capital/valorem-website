@@ -268,8 +268,8 @@ exercise an option type bounded by $ \mathcal{O}(\ln n) $.
 
 ### What comprises a claim?
 
-Because of the bucketing mechanism, Valorem claims are comprised of bucket 
-index data structures:
+Because of the bucketing mechanism and ability to add additional options to an
+existing claim, Valorem claims are comprised of claim index data structures:
 
 ```solidity
 struct ClaimIndex {
