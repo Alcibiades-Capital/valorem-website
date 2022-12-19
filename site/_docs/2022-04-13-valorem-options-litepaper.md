@@ -280,35 +280,36 @@ struct ClaimIndex {
     }
 ```
 
-which are stored for each bucket the claim is a comprised of. Because of this 
-storage structure, calculating a claim position involves summations over the 
-claim's bucket indices.
+which are stored for each bucket the claim is written into. A claim might be 
+composed of options written into multiple buckets, and the `ClaimIndex` stores 
+how many options are written into which bucket. Calculating a claim position
+involves summations over the claim's bucket indices.
 
 #### Calculating exercise state for a claim
 
-Given $ I_w $, the amount of options written into a bucket for a claim, $ C $,
+Given $ I_wi $, the amount of options written into bucket i for a claim, $ C $,
 we can calculate $ C_e $, the amount of options exercised for a claim, and 
-$ C_u $ the amount of options unexercised for a claim using $ B_w $, the amount of
-options written into a bucket, and $ B_e $ the amount of options exercised from 
-a bucket.
+$ C_u $ the amount of options unexercised for a claim using $ B_wi $, the amount of
+options written into bucket i, and $ B_ei $ the amount of options exercised from 
+bucket i.
 
-We can calculate the remaining amount of options unexercised for a bucket as
-$$ B_u = B_w - B_e $$
+We can calculate the remaining amount of options unexercised for bucket i as
+$$ B_ui = B_wi - B_ei $$
 therefore,
 
-$$ C_e = \sum_{i=1}^n i = {B_e I_w \over B_w} + \ldots + n $$
+$$ C_e = \sum_{i=1}^n exercised in ith bucket = {B_ei I_wi \over B_wi} + \ldots + n $$
 
 and
 
-$$ C_u = \sum_{i=1}^n i = {B_u I_w \over B_w} + \ldots + n $$
+$$ C_u = \sum_{i=1}^n unexercised in ith bucket = {B_ui I_wi \over B_wi} + \ldots + n $$
 
 and
 
-$$ C_w = \sum_{i=1}^n i = ({B_e I_w \over B_w} + {B_u I_w \over B_w}) + \ldots + n $$
+$$ C_w = \sum_{i=1}^n i = ({B_ei I_wi \over B_wi} + {B_ui I_wi \over B_wi}) + \ldots + n $$
 
 which simplifies to
 
-$$ C_w = \sum_{i=1}^n i = I_w + \ldots + n $$
+$$ C_w = \sum_{i=1}^n i = I_wi + \ldots + n $$
 
 #### Calculating underlying assets for a claim
 
@@ -317,11 +318,11 @@ exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by
 multiplying the amount of the exercise asset, $ O_e $, and the underlying 
 asset, $ O_u $, before performing any division. Thus:
 
-$$ U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n $$
+$$ U_e = \sum_{i=1}^n exercised in ith bucket = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
 
 and 
 
-$$ U_u = \sum_{i=1}^n i = {B_u O_u I_w \over B_w} + \ldots + n $$
+$$ U_u = \sum_{i=1}^n unexercised in ith bucket = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
 
 ### Option exercise assignment
 
