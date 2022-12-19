@@ -62,19 +62,19 @@ counterparty risk and ensuring settlement.
 
 ### Composable
 
-The protocol is composable; the design is centered generality such 
+The protocol is composable; generality is centered in the design such
 that it can easily be integrated into other smart contract systems as a 
 "money lego" to comprise more complex derivatives.
 
 ## Mechanism
 
-The Valorem protocol, at it's core, is non-custodial engine for the 
+The Valorem protocol, at its core, is a non-custodial engine for the
 underwriting and physical settlement of options. The engine utilizes the 
 [ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
 to gas-efficiently tokenize long and short positions, or options and claims. 
 Actors on chain &#151; either individuals using their wallets or protocols 
 using smart contracts &#151; can create a new option type, defined as the 
-unique tuple with regard option contract properties. They can then write 
+unique tuple with regard to the option contract's properties. They can then write
 options of that type. Writing issues a fungible option token, and a non-fungible 
 claim token, representing a claim to the collateral used for writing, or the 
 exercise asset if assigned exercise via a fair assignment algorithm. The tokens 
