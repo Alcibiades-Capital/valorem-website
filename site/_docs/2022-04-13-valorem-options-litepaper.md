@@ -470,7 +470,7 @@ option would be exercised or sold in the money upon the user’s redemption of
 the structured product, and the user would capture the upside without risk of
 initial principle.
 
-### Vesting Options
+### Example: Vesting Options
 
 Although price-sensitive options writers may focus on the contract’s expiration date,
 the Valorem protocol also provides writers with the ability to set an earliest
