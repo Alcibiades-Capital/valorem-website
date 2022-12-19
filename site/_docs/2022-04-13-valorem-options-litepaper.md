@@ -294,14 +294,22 @@ options written into bucket i, and $ B_ei $ the amount of options exercised from
 bucket i.
 
 We can calculate the remaining amount of options unexercised for bucket i as
-$$ B_ui = B_wi - B_ei $$
-therefore,
 
-$$ C_e = \sum_{i=1}^n exercised in ith bucket = {B_ei I_wi \over B_wi} + \ldots + n $$
+$$ B_ui = B_wi - B_ei $$
+
+therefore, with 
+
+$ C_ei $ = the amount of options exercised in bucket i for a particular claim, 
 
 and
 
-$$ C_u = \sum_{i=1}^n unexercised in ith bucket = {B_ui I_wi \over B_wi} + \ldots + n $$
+$ C_wi $ = the amount of options written in bucket i for a particular claim:
+
+$$ C_e = \sum_{i=1}^n C_ei = {B_ei I_wi \over B_wi} + \ldots + n $$
+
+and
+
+$$ C_u = \sum_{i=1}^n C_wi = {B_ui I_wi \over B_wi} + \ldots + n $$
 
 and
 
