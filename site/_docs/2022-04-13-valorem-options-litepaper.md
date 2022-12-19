@@ -95,8 +95,7 @@ following:
 - The underlying collateral token of the option; this is what the option 
   owner receives if the option is exercised.
 - The amount of the underlying token collateralizing the option.
-- The exercise token of the option; this is what the option owner pays, and
-  what the option writer receives; if the option is exercised.
+- The exercise token of the option; this is what the option owner pays to exercise the option.
 - The amount of the exercise token required to exercise the option.
 - The earliest exercise timestamp of the option.
 - The expiration timestamp of the option.
