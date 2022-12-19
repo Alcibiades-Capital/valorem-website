@@ -169,8 +169,7 @@ conditions:
 - The current timestamp is at least the exercise timestamp of the option type. 
 - The current timestamp is before the expiry timestamp of the option type. 
 - The owner of the option token has enough of the exercise token as required
-  by the terms of the option type purchase the amount of the underlying token 
-  at the strike price.
+  by the terms of the option type.
 
 ### Redeeming options
 
