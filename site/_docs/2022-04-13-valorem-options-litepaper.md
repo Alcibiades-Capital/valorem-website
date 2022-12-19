@@ -491,12 +491,13 @@ continued innovation.
 
 Although AMMs are often the first type of DeFi entity to be associated with
 options, the Valorem protocol was designed as a base layer that can be
-integrated by virtually any user type. One extremely niche use case for
+integrated by virtually any user type. One niche use case for
 Valorem is to enable lending protocols to manage the risk of accepting
-deposits of untested collateralized stable tokens. On deposit of the
-collateralized stable token into the lending protocol, the lending protocol
-would require the collateralized stable token protocol to write put options
-against assets (ideally other, safer stable tokens) in the collateralized
+deposits of untested collateralized stable tokens. 
+
+On deposit of the collateralized stable token into the lending protocol, the  
+lending protocol would require the collateralized stable token protocol to write 
+put options against assets (ideally other, safer stable tokens) in the collateralized
 stable token protocol’s vault and transfer those put options to the lending
 protocol’s vault. Should the collateralized stable token’s vault not have
 enough free collateral to write a put capable of covering the potential
