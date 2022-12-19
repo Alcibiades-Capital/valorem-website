@@ -459,7 +459,7 @@ purchase. The Valorem protocol’s unique vault mechanism decreases the credit
 risk of the product by guaranteeing the full availability of the collateral
 backing the underlying options.
 
-#### Example: Principle Protected Note
+#### Principle Protected Note
 
 A structured product's protocol could accept DAI deposits from a user.
 The protocol then places the DAI into a future yield tokenization protocol like
@@ -475,7 +475,7 @@ option would be exercised or sold in the money upon the user’s redemption of
 the structured product, and the user would capture the upside without risk of
 initial principle.
 
-### Example: Vesting Options
+### Vesting Options
 
 Although price-sensitive options writers may focus on the contract’s expiration date,
 the Valorem protocol also provides writers with the ability to set an earliest
@@ -492,7 +492,7 @@ the long term success of the protocol thereby decreasing the likelihood of
 protocol abandonment, increasing users’ faith in the team, and encouraging 
 continued innovation.
 
-### Example: Mitigation of Cross-Protocol Financial Contagion
+### Mitigation of Cross-Protocol Financial Contagion
 
 Although AMMs are often the first type of DeFi entity to be associated with
 options, the Valorem protocol was designed as a base layer that can be
