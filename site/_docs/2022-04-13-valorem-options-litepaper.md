@@ -149,13 +149,17 @@ Supporting `uint160` option types with `uint96 - 1` claim NFTs each.
 ### Writing options
 
 Once an option type has been created, an actor can write options of that type.
-Upon writing, the option writer will receive a claim token representing the 
+Upon writing, the option writer will receive a non-fungible claim token representing the 
 short position, which is a claim to the underlying asset and the responsibility 
 to accept the exercise asset on full or partial exercise assignment. They will 
-also receive an option tokens, based on the amount of the option type they have
+also receive option tokens equal to the amount of the option type they have
 written, conferring the ability to exercise the option pursuant to the terms 
 set during type creation. Both the claim token and the option token can be 
 transferred to other actors on the chain.
+
+Claims are also able to have additional options written on them. That is, an
+options writer can add additional underlying assets to a previously written
+claim by providing the claim ID to the `write` function.
 
 ### Exercising options
 
