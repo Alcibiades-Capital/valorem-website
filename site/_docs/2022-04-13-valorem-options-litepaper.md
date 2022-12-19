@@ -192,16 +192,7 @@ mechanism, could result in exercise assignment becoming prohibitively expensive.
 In this mechanism, a new bucket is created on the first write of a new option 
 type. Subsequent writes of the same option type will be added to the same 
 bucket until it is assigned an exercise. At that point, that bucket becomes 
-partially or fully exercised, and the next write creates a new bucket. Thus, 
-a bucket has an enumeration of states:
-
-```solidity
-enum BucketExerciseState {
-        Exercised,
-        PartiallyExercised,
-        Unexercised
-    }
-```
+partially or fully exercised, and the next write creates a new bucket. 
 
 The amounts written for a bucket are stored in a `Bucket` struct:
 
@@ -319,23 +310,24 @@ $$ C_w = \sum_{i=1}^n i = I_wi + \ldots + n $$
 #### Calculating underlying assets for a claim
 
 To preserve as much precision as possible, we calculate the amounts of the 
-exercise, $ U_e $, and underlying, $ U_u $, tokens collateralizing a claim by 
-multiplying the amount of the exercise asset, $ O_e $, and the underlying 
-asset, $ O_u $, before performing any division. With 
+exercise token position, $ P_e $, and underlying token position, $ P_u $, 
+tokens collateralizing a claim by multiplying the amount of the exercise 
+asset, $ O_e $, and the underlying asset, $ O_u $, before performing any 
+division. With 
 
-$ U_ei $ = the amount of the exercise asset to be paid from bucket $ i $
+$ P_ei $ = the amount of the exercise asset to be paid from bucket $ i $
 
 and
 
-$ U_ui $ = the amount of the underlying asset to be paid from bucket $ i $
+$ P_ui $ = the amount of the underlying asset to be paid from bucket $ i $
 
 Thus:
 
-$$ U_e = \sum_{i=1}^n U_ei = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
+$$ P_e = \sum_{i=1}^n P_ei = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
 
 and 
 
-$$ U_u = \sum_{i=1}^n U_ui = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
+$$ P_u = \sum_{i=1}^n P_ui = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
 
 ### Option exercise assignment
 
