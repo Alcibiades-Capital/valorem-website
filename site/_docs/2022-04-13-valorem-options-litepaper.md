@@ -507,7 +507,9 @@ token the lending protocol could instead exercise the put and be assigned
 the collateralized stable token’s collateral. This would be extremely
 beneficial for the collateralized stable token protocol because it would
 prevent the cascading market sell-off triggered by automated liquidation
-trades. The lending protocol would have even greater benefits: first, it would
+trades.
+
+The lending protocol would have even greater benefits: first, it would
 retain all TVL that would have otherwise been liquidated and captured by
 liquidation bots; second, its risk of financial contagion from the
 collateralized stable coin protocol will have been mitigated due to the
