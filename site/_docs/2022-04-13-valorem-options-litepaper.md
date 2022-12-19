@@ -62,19 +62,19 @@ counterparty risk and ensuring settlement.
 
 ### Composable
 
-The protocol is composable; the design is centered generality such 
+The protocol is composable; generality is centered in the design such
 that it can easily be integrated into other smart contract systems as a 
 "money lego" to comprise more complex derivatives.
 
 ## Mechanism
 
-The Valorem protocol, at it's core, is non-custodial engine for the 
+The Valorem protocol, at its core, is a non-custodial engine for the
 underwriting and physical settlement of options. The engine utilizes the 
 [ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
 to gas-efficiently tokenize long and short positions, or options and claims. 
 Actors on chain &#151; either individuals using their wallets or protocols 
 using smart contracts &#151; can create a new option type, defined as the 
-unique tuple with regard option contract properties. They can then write 
+unique tuple with regard to the option contract's properties. They can then write
 options of that type. Writing issues a fungible option token, and a non-fungible 
 claim token, representing a claim to the collateral used for writing, or the 
 exercise asset if assigned exercise via a fair assignment algorithm. The tokens 
@@ -95,8 +95,7 @@ following:
 - The underlying collateral token of the option; this is what the option 
   owner receives if the option is exercised.
 - The amount of the underlying token collateralizing the option.
-- The exercise token of the option; this is what the option owner pays, and
-  what the option writer receives; if the option is exercised.
+- The exercise token of the option; this is what the option owner pays to exercise the option.
 - The amount of the exercise token required to exercise the option.
 - The earliest exercise timestamp of the option.
 - The expiration timestamp of the option.
@@ -150,13 +149,17 @@ Supporting `uint160` option types with `uint96 - 1` claim NFTs each.
 ### Writing options
 
 Once an option type has been created, an actor can write options of that type.
-Upon writing, the option writer will receive a claim token representing the 
+Upon writing, the option writer will receive a non-fungible claim token representing the 
 short position, which is a claim to the underlying asset and the responsibility 
 to accept the exercise asset on full or partial exercise assignment. They will 
-also receive an option tokens, based on the amount of the option type they have
+also receive option tokens equal to the amount of the option type they have
 written, conferring the ability to exercise the option pursuant to the terms 
 set during type creation. Both the claim token and the option token can be 
 transferred to other actors on the chain.
+
+Claims are also able to have additional options written on them. That is, an
+options writer can add additional underlying assets to a previously written
+claim by providing the claim ID to the `write` function.
 
 ### Exercising options
 
@@ -166,8 +169,7 @@ conditions:
 - The current timestamp is at least the exercise timestamp of the option type. 
 - The current timestamp is before the expiry timestamp of the option type. 
 - The owner of the option token has enough of the exercise token as required
-  by the terms of the option type purchase the amount of the underlying token 
-  at the strike price.
+  by the terms of the option type.
 
 ### Redeeming options
 
@@ -185,21 +187,12 @@ The Valorem protocol uses a claim bucketing mechanism to bound the runtime
 complexity of exercise assignment. This also to ensures that malicious option 
 writers cannot perform a denial of service attack on the protocol by writing 
 large numbers of claims on an option type, which, without the bucketing 
-mechanism, could result in exercise assignment being prohibitively expensive.
+mechanism, could result in exercise assignment becoming prohibitively expensive.
 
 In this mechanism, a new bucket is created on the first write of a new option 
 type. Subsequent writes of the same option type will be added to the same 
 bucket until it is assigned an exercise. At that point, that bucket becomes 
-partially or fully exercised, and the next write creates a new bucket. Thus, 
-a bucket has an enumeration of states:
-
-```solidity
-enum BucketExerciseState {
-        Exercised,
-        PartiallyExercised,
-        Unexercised
-    }
-```
+partially or fully exercised, and the next write creates a new bucket. 
 
 The amounts written for a bucket are stored in a `Bucket` struct:
 
@@ -266,8 +259,8 @@ exercise an option type bounded by $ \mathcal{O}(\ln n) $.
 
 ### What comprises a claim?
 
-Because of the bucketing mechanism, Valorem claims are comprised of bucket 
-index data structures:
+Because of the bucketing mechanism and ability to add additional options to an
+existing claim, Valorem claims are comprised of claim index data structures:
 
 ```solidity
 struct ClaimIndex {
@@ -278,48 +271,63 @@ struct ClaimIndex {
     }
 ```
 
-which are stored for each bucket the claim is a comprised of. Because of this 
-storage structure, calculating a claim position involves summations over the 
-claim's bucket indices.
+which are stored for each bucket the claim is written into. A claim might be 
+composed of options written into multiple buckets, and the `ClaimIndex` stores 
+how many options are written into which bucket. Calculating a claim position
+involves summations over the claim's bucket indices.
 
 #### Calculating exercise state for a claim
 
-Given $ I_w $, the amount of options written into a bucket for a claim, $ C $,
+Given $ I_wi $, the amount of options written into bucket i for a claim, $ C $,
 we can calculate $ C_e $, the amount of options exercised for a claim, and 
-$ C_u $ the amount of options unexercised for a claim using $ B_w $, the amount of
-options written into a bucket, and $ B_e $ the amount of options exercised from 
-a bucket.
+$ C_u $ the amount of options unexercised for a claim using $ B_wi $, the amount of
+options written into bucket i, and $ B_ei $ the amount of options exercised from 
+bucket i.
 
-We can calculate the remaining amount of options unexercised for a bucket as
-$$ B_u = B_w - B_e $$
-therefore,
+We can calculate the remaining amount of options unexercised for bucket i as
 
-$$ C_e = \sum_{i=1}^n i = {B_e I_w \over B_w} + \ldots + n $$
+$$ B_ui = B_wi - B_ei $$
+
+therefore, with 
+
+$ C_ei $ = the amount of options exercised in bucket i for a particular claim, 
+and $ C_ui $ = the amount of options unexercised in bucket i for a particular claim,
+
+$$ C_e = \sum_{i=1}^n C_ei = {B_ei I_wi \over B_wi} + \ldots + n $$
 
 and
 
-$$ C_u = \sum_{i=1}^n i = {B_u I_w \over B_w} + \ldots + n $$
+$$ C_u = \sum_{i=1}^n C_ui = {B_ui I_wi \over B_wi} + \ldots + n $$
 
 and
 
-$$ C_w = \sum_{i=1}^n i = ({B_e I_w \over B_w} + {B_u I_w \over B_w}) + \ldots + n $$
+$$ C_w = \sum_{i=1}^n i = ({B_ei I_wi \over B_wi} + {B_ui I_wi \over B_wi}) + \ldots + n $$
 
 which simplifies to
 
-$$ C_w = \sum_{i=1}^n i = I_w + \ldots + n $$
+$$ C_w = \sum_{i=1}^n i = I_wi + \ldots + n $$
 
 #### Calculating underlying assets for a claim
 
 To preserve as much precision as possible, we calculate the amounts of the 
-exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by 
-multiplying the amount of the exercise asset, $ O_e $, and the underlying 
-asset, $ O_u $, before performing any division. Thus:
+exercise token position, $ P_e $, and underlying token position, $ P_u $, 
+tokens collateralizing a claim by multiplying the amount of the exercise 
+asset, $ O_e $, and the underlying asset, $ O_u $, before performing any 
+division. With 
 
-$$ U_e = \sum_{i=1}^n i = {B_e O_e I_w \over B_w} + \ldots + n $$
+$ P_ei $ = the amount of the exercise asset to be paid from bucket $ i $
+
+and
+
+$ P_ui $ = the amount of the underlying asset to be paid from bucket $ i $
+
+Thus:
+
+$$ P_e = \sum_{i=1}^n P_ei = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
 
 and 
 
-$$ U_u = \sum_{i=1}^n i = {B_u O_u I_w \over B_w} + \ldots + n $$
+$$ P_u = \sum_{i=1}^n P_ui = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
 
 ### Option exercise assignment
 
@@ -451,9 +459,9 @@ purchase. The Valorem protocol’s unique vault mechanism decreases the credit
 risk of the product by guaranteeing the full availability of the collateral
 backing the underlying options.
 
-#### Example: Principle Protected Note
+#### Principle Protected Note
 
-A structured products protocol could accept DAI deposits from a user.
+A structured product's protocol could accept DAI deposits from a user.
 The protocol then places the DAI into a future yield tokenization protocol like
 Alchemix. The principle investment is retained. The future income earning
 potential of this principle is leveraged to buy covered call options on an ERC20
@@ -488,12 +496,13 @@ continued innovation.
 
 Although AMMs are often the first type of DeFi entity to be associated with
 options, the Valorem protocol was designed as a base layer that can be
-integrated by virtually any user type. One extremely niche use case for
+integrated by virtually any user type. One niche use case for
 Valorem is to enable lending protocols to manage the risk of accepting
-deposits of untested collateralized stable tokens. On deposit of the
-collateralized stable token into the lending protocol, the lending protocol
-would require the collateralized stable token protocol to write put options
-against assets (ideally other, safer stable tokens) in the collateralized
+deposits of untested collateralized stable tokens. 
+
+On deposit of the collateralized stable token into the lending protocol, the  
+lending protocol would require the collateralized stable token protocol to write 
+put options against assets (ideally other, safer stable tokens) in the collateralized
 stable token protocol’s vault and transfer those put options to the lending
 protocol’s vault. Should the collateralized stable token’s vault not have
 enough free collateral to write a put capable of covering the potential
@@ -503,7 +512,9 @@ token the lending protocol could instead exercise the put and be assigned
 the collateralized stable token’s collateral. This would be extremely
 beneficial for the collateralized stable token protocol because it would
 prevent the cascading market sell-off triggered by automated liquidation
-trades. The lending protocol would have even greater benefits: first, it would
+trades.
+
+The lending protocol would have even greater benefits: first, it would
 retain all TVL that would have otherwise been liquidated and captured by
 liquidation bots; second, its risk of financial contagion from the
 collateralized stable coin protocol will have been mitigated due to the
