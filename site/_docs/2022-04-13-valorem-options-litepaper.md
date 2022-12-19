@@ -456,7 +456,7 @@ backing the underlying options.
 
 #### Example: Principle Protected Note
 
-A structured products protocol could accept DAI deposits from a user.
+A structured product's protocol could accept DAI deposits from a user.
 The protocol then places the DAI into a future yield tokenization protocol like
 Alchemix. The principle investment is retained. The future income earning
 potential of this principle is leveraged to buy covered call options on an ERC20
