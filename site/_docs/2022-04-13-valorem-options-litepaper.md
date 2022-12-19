@@ -187,7 +187,7 @@ The Valorem protocol uses a claim bucketing mechanism to bound the runtime
 complexity of exercise assignment. This also to ensures that malicious option 
 writers cannot perform a denial of service attack on the protocol by writing 
 large numbers of claims on an option type, which, without the bucketing 
-mechanism, could result in exercise assignment being prohibitively expensive.
+mechanism, could result in exercise assignment becoming prohibitively expensive.
 
 In this mechanism, a new bucket is created on the first write of a new option 
 type. Subsequent writes of the same option type will be added to the same 
