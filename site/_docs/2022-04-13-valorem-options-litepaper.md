@@ -487,7 +487,7 @@ the long term success of the protocol thereby decreasing the likelihood of
 protocol abandonment, increasing users’ faith in the team, and encouraging 
 continued innovation.
 
-### Mitigation of Cross-Protocol Financial Contagion
+### Example: Mitigation of Cross-Protocol Financial Contagion
 
 Although AMMs are often the first type of DeFi entity to be associated with
 options, the Valorem protocol was designed as a base layer that can be
