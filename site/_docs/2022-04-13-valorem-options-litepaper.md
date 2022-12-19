@@ -300,16 +300,13 @@ $$ B_ui = B_wi - B_ei $$
 therefore, with 
 
 $ C_ei $ = the amount of options exercised in bucket i for a particular claim, 
-
-and
-
-$ C_wi $ = the amount of options written in bucket i for a particular claim:
+and $ C_ui $ = the amount of options unexercised in bucket i for a particular claim,
 
 $$ C_e = \sum_{i=1}^n C_ei = {B_ei I_wi \over B_wi} + \ldots + n $$
 
 and
 
-$$ C_u = \sum_{i=1}^n C_wi = {B_ui I_wi \over B_wi} + \ldots + n $$
+$$ C_u = \sum_{i=1}^n C_ui = {B_ui I_wi \over B_wi} + \ldots + n $$
 
 and
 
@@ -322,15 +319,23 @@ $$ C_w = \sum_{i=1}^n i = I_wi + \ldots + n $$
 #### Calculating underlying assets for a claim
 
 To preserve as much precision as possible, we calculate the amounts of the 
-exercise, $ U_e $, and underlying, $ U_u$, tokens collateralizing a claim by 
+exercise, $ U_e $, and underlying, $ U_u $, tokens collateralizing a claim by 
 multiplying the amount of the exercise asset, $ O_e $, and the underlying 
-asset, $ O_u $, before performing any division. Thus:
+asset, $ O_u $, before performing any division. With 
 
-$$ U_e = \sum_{i=1}^n exercised in ith bucket = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
+$ U_ei $ = the amount of the exercise asset to be paid from bucket $ i $
+
+and
+
+$ U_ui $ = the amount of the underlying asset to be paid from bucket $ i $
+
+Thus:
+
+$$ U_e = \sum_{i=1}^n U_ei = {B_ei O_e I_wi \over B_wi} + \ldots + n $$
 
 and 
 
-$$ U_u = \sum_{i=1}^n unexercised in ith bucket = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
+$$ U_u = \sum_{i=1}^n U_ui = {B_ui O_u I_wi \over B_wi} + \ldots + n $$
 
 ### Option exercise assignment
 
