@@ -1,15 +1,17 @@
 ---
 date: 2022-04-13 00:00:00 +01
-last_modified_at: 2022-12-20 00:00:00 +01
+last_modified_at: 2022-12-22 00:00:00 +01
 title: Valorem Options Litepaper
 usemathjax: true
 description: This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options. 
 ---
 
 ## Introduction
+
 This litepaper introduces the [Valorem](https://valorem.xyz/) protocol, a DeFi native options underwriting system and clearinghouse. The protocol design aims to provide superior flexibility compared with existing options protocols by removing price oracles, reliance on existing DeFi primitives, and premium value assumptions. It achieves this by implementing an option contract underwriting system and clearinghouse driven by market forces and settled physically using a novel fair settlement algorithm. The Valorem Options protocol consists of a set of smart contracts targeting the [Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf), or EVM, which can interact directly with any pair of non-rebasing, non-fee-on-transfer [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) tokens to enable the transfer and settlement of long and short, put and call option positions in a permissionless manner.
 
 ## Motivation
+
 Options are an essential component in high-functioning financial systems. In traditional finance, options volume exceeds spot volume, but in blockchain finance, spot volumes still exceed options trading volumes. While options trading volume on assets like BTC and ETH has grown significantly in the past year — both centralized exchanges, such as Deribit, and on-chain protocols — it is clear that extensive untapped market potential remains. In the 6 weeks following the collapse of FTX, one derivatives exchange, GMX, saw TVL increase 48% as traders and market makers looked for solutions to replace FTX's centralized options exchange.
 
 There are already a number of on-chain options market making protocols. While most of these trade products that emulate traditional options structures, the reliance on price oracles and assumptions around option premiums via models such as Black-Scholes make them inflexible and subject to toxic orderflow. Recently, protocols synthesizing options via single tick Uniswap V3 LPs have emerged, but they are restricted by the lack of Uniswap V3 deployment across EVM chains, the gas inefficiency of Uniswap V3 LP NFTs, and the pricing limitations of perpetual options (as opposed to ones with fixed exercise and expiry [timestamps](https://en.wikipedia.org/wiki/Unix_time)).
@@ -17,23 +19,28 @@ There are already a number of on-chain options market making protocols. While mo
 A flexible, EVM-portable base layer will help fulfill unmet market demand for derivatives products and facilitate the maturity of DeFi by allowing new use cases to evolve.
 
 ## Guiding Principles
+
 ### Permissionless
+
 The Valorem protocol is permissionless. It is open to public use with no ability to restrict who can or cannot use it. Any potential user can perform any operation that the protocol supports.
 
 ### Fully Collateralized
+
 Options written on Valorem are fully collateralized, eliminating counterparty risk and ensuring settlement. However, Valorem is designed with higher-level margining systems in mind.
 
 ### Composable
+
 The protocol is composable. Generality is centered in the design such that it can easily be integrated into other smart contract systems as a "money lego" to structure more complex derivatives.
 
 ## Mechanism
+
 At its core, the Valorem protocol is a non-custodial engine for the underwriting and physical settlement of options. The engine is built on the [ERC-1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/) to gas-efficiently tokenize long and short positions, known as **options** and **claims** in the engine. On-chain actors — either individuals using wallets or protocols using smart contracts — can create a new option type for a given asset pair, strike price, earliest exercise time, and time to maturiy, and then write options of that type.
 
 Writing an option mints one or more fungible option tokens as well as a non-fungible claim token. A claim NFT represents a claim on the underlying asset used for writing and/or the exercise asset, if the claim is assigned exercise. The tokens can be transferred freely between actors. Option tokens can be exercised during the specified time window. Claims are assigned exercise via a fair assignment algorithm, which uses pseudorandomness and a novel bucketing mechanism.
 
-TODO VISUAL OF Fungible Option Tokens and Claim NFTs
 
 ### Creating New Option Types
+
 Actors can permissionlessly create new option types by specifying:
 
 - The **underlying** collateral token of the option; this is what the option holder receives if the option is exercised.
@@ -44,8 +51,6 @@ Actors can permissionlessly create new option types by specifying:
 - The **expiration timestamp** of the option.
 
 #### Option Data Model
-
-TODO Add struct
 
 The key of an option type is defined as the unique tuple of the option contract's properties, comprising a unique hash:
 
@@ -69,7 +74,8 @@ uint160 optionKey = uint160(
 This option key is used to determine if that type of option already exists and, if it doesn't, create it.
 
 #### Token Address Space
-The ERC-1155 standard has a 256-bit address space for sub-tokens. Valorem uses the upper 160 bits for fungible option tokens, keyed on `uint160 optionKey`, and the lower 96 bits for claim NFTs, keyed on an auto-incrementing `uint96 claimKey` starting from 1 and unique per option type, resulting in a 256-bit token address space laid out as follows:
+
+The ERC-1155 standard has a 256-bit address space for sub-tokens. Valorem uses the upper 160 bits for fungible option tokens, keyed on `uint160 optionKey`, and the lower 96 bits for claim NFTs, keyed on an auto-incrementing `uint96 claimKey` starting from one, and unique per option type. This results in a 256-bit token address space laid out as follows:
 
 ```
 MSb
@@ -85,44 +91,29 @@ MSb
                                           LSb
 ```
 
-A tokenId with a valid `optionKey` in the upper 160b will be a fungible `TokenType.Option` token is it's lower 96b is 0, and will be a `TokenType.Claim` NFT if it's lower 96b contains a valid `claimKey`.
+A tokenId with a valid `optionKey` in the upper 160 bits will be a fungible `TokenType.Option` token if it's lower 96 bits is zero, whereas it will be a `TokenType.Claim` NFT if it's lower 96 bits contains a valid `claimKey`.
 
 This token address space supports `type(uint160).max` option types and `type(uint96).max - 1` individual claims for each option type.
 
 ### Writing Options
+
 Once an option type has been created, any actor can write options of that type. Upon writing, the requisite amount of the underlying token is transferred in to the engine and the option writer receives a non-fungible claim token representing the short position, which is a claim to the underlying asset and the responsibility to accept the exercise asset on full or partial exercise assignment. In addition, the option writer receives fungible option tokens equal to the number of options they wrote, conferring the ability to exercise the option pursuant to the terms set during option type creation. Both the option tokens and the claim NFT can be transferred to other actors on the chain.
 
 Additional options can be written on existing claims — that is, an options writer can add additional underlying assets to a previously written claim by providing the claim NFT identifier when writing.
 
-Where $ S_T $ is the price of the underlying asset at expiration; and $ X $ is the exercise asset price; and $ c_0 $ is the call option premium paid; and $ p_0 $ is the put option premium paid.
-
-#### Call options
-
-The Valorem protocol can be used to create covered call options with the payoff $ max(0,S_T-X) $ for the holder, and the payoff  $ -max(0,S_T-X) $ for the writer.
-
-#### Put options
-
-The Valorem protocol can be used to create covered put options with the payoff $ max(0,X-S_T) $ for the holder, and the payoff  $ -max(0,X-S_T) $ for the writer.
-
-#### European vs. American options
-
-European options can be created by setting the exercise timestamp to the expiry timestamp less 1 day. American options can be created by setting an exercise timestamp to the current block timestamp upon creation.
-
 ### Exercising Options
+
 Holders of an option token can exercise the option pursuant to the following conditions:
 - The current block timestamp is on or after the exercise timestamp of the option type.
 - The current block timestamp is before the expiry timestamp of the option type.
 - The option token owner has enough of the exercise token as required by the terms of the option type.
 - The option token owner has granted sufficient ERC-20 approval to the engine so it can transfer in the requisite amount of the exercise token.
 
-TODO VISUAL OF exercise timestamp through expiry timestamp, range when holder can exercise
-
 ### Fair Exercise Assignment
+
 The Valorem protocol uses a claim bucketing mechanism to bound the runtime complexity of exercise assignment. This also ensures that malicious option writers cannot perform a denial of service attack on the protocol by writing large numbers of claims on an option type which, without the bucketing mechanism, could result in exercise assignment becoming prohibitively expensive.
 
 In this mechanism, a new bucket is created on the first write of a new option type. Subsequent writes of the same option type will be added to the same bucket until it is assigned an exercise. At that point, that bucket becomes partially or fully exercised, and the next write creates a new bucket.
-
-TODO VISUAL OF BUCKET LIFECYCLE
 
 The amounts written for a bucket are stored in a `Bucket` struct:
 
@@ -303,11 +294,29 @@ function _assignExercise(
 The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is the number of buckets consumed by the algorithm to fulfill the exercise. However, the average case runtime complexity is better than $ \mathcal{O}(\ln n) $, since we know the growth rate of the number of buckets, and that we are operating on a subset of buckets.
 
 ### Redeeming Claims
+
 Holders of a claim NFT can redeem their claim from the engine on or after the expiration timestamp of the option type. If their claim was assigned full or partial exercise during the lifetime of the option type, the claim holder receives the correct ratio of the underlying and exercise tokens. If the claim NFT was not assigned exercise, the claim holder will receive the underlying tokens deposited upon writing back in full.
 
-TODO VISUAL OF exercise timestamp through expiry timestamp, range when writer can redeem
-
 ## Use Cases
+
+### Vanilla Options
+
+Where:
+
+$ S_T $ is the price of the underlying asset at expiration; and $ X $ is the exercise asset price; and $ c_0 $ is the call option premium paid; and $ p_0 $ is the put option premium paid.
+
+#### Call options
+
+The Valorem protocol can be used to create covered call options with the payoff $ max(0,S_T-X) $ for the holder, and the payoff  $ -max(0,S_T-X) $ for the writer.
+
+#### Put options
+
+The Valorem protocol can be used to create covered put options with the payoff $ max(0,X-S_T) $ for the holder, and the payoff  $ -max(0,X-S_T) $ for the writer.
+
+#### European vs. American options
+
+European options can be created by setting the exercise timestamp to the expiry timestamp minus one day. American options can be created by setting an exercise timestamp to the current block timestamp upon creation.
+
 ### Trading and Market Making
 The Valorem protocol provides web3 developers with an options base layer that can be seamlessly integrated into existing and future AMMs and CLOBs. By acting as the clearinghouse and settlement service needed for options execution, Valorem allows market makers to trade options without the need to implement their own options-specific smart contract adjustments, risk management system, or collateral assignment process. This frees up MMs to focus on raising capital/liquidity, improving their pricing algorithm, decreasing their exposure to toxic order flow, and a variety of other tasks that are critical for continued success. Users of the Valorem-integrated markets will be able to buy, sell, and provide liquidity pursuant to their individual needs, which might include goals such as hedging, speculation, income generation, and diversification.
 
@@ -332,6 +341,3 @@ Although AMMs are often the first type of DeFi entity to be associated with opti
 On deposit of the collateralized stable token into the lending protocol, the lending protocol would require the collateralized stable token protocol to write put options against assets (ideally other, safer stable tokens) in the collateralized stable token protocol’s vault and transfer those put options to the lending protocol’s vault. Should the collateralized stable token’s vault not have enough free collateral to write a put capable of covering the potential deposit, the deposit could be rejected. If the collateralized stable token loses peg, rather than liquidating users who have borrowed against the stable token the lending protocol could instead exercise the put and be assigned the collateralized stable token’s collateral. This would be extremely beneficial for the collateralized stable token protocol because it would prevent the cascading market sell-off triggered by automated liquidation trades.
 
 The lending protocol would have even greater benefits: first, it would retain all TVL that would have otherwise been liquidated and captured by liquidation bots; second, its risk of financial contagion from the collateralized stable coin protocol will have been mitigated due to the availability of alternative collateral, safe in Valorem’s vault; and third, the lending protocol would increase its TVL due to being able to safely accept deposits and facilitate borrowing with new tokens that would have been excluded for risk prior to integrating the Valorem protocol. Please note that in this scenario, both the lending protocol’s vault smart contract and the collateralized token’s vault smart contract would need be designed with callbacks which may create an attack vector if not done correctly.
-
-## Conclusion
-We believe that Valorem will enable the creation of a new and better crypto-native options system. We look forward to seeing how the protocol is used and built. TODO fill out.
