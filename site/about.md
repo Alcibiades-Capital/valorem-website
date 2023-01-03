@@ -55,7 +55,7 @@ page_blocks:
         url: https://twitter.com/valoremxyz
       - heading: Github
         subheading: Build with us
-        url: https://github.com/Alcibiades-Capital/valorem-options-contracts
+        url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
     heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:
