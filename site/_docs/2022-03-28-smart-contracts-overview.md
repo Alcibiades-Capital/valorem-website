@@ -4,11 +4,11 @@ title: Smart Contracts Overview
 description: An overview of the Valorem protocol smart contracts.
 ---
 
-The Valorem Options V1 Core consists of a settlement engine which allows users to write options, exercise options, and redeem claims on assets, while handling fair assignment of exercises to claims written. It is designed to be gas efficient, minimal, and provide a secure settlement layer upon which more complex systems can be built.
+The Valorem Options V1 Core consists of a settlement engine which allows users to write options, exercise options, and redeem claims on assets, while handling fair assignment of options exercised to claims written. It is designed to be gas efficient and minimal, providing a secure settlement layer upon which more complex systems can be built.
 
 The Settlement Engine follows the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) standard. Options can be written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an options contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses like any ERC-1155 token.
 
-An option writer's claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is represented by a non-fungible option lot Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.
+An option writer's claim to the underlying assets (if not exercised) and exercise assets (if exercised) is represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.
 
 The structure of an option is as follows:
 
@@ -29,7 +29,7 @@ The core exposes an interface for users of the protocol, which is documented her
 
 ### Structs
 #### Option
-This struct contains the data about an options type associated with an ERC-1155 token.
+Data comprising the unique tuple of an option type associated with an ERC-1155 option token.
 
 ```solidity
 struct Option {
@@ -40,89 +40,51 @@ struct Option {
     uint40 exerciseTimestamp;
     uint40 expiryTimestamp;
     uint160 settlementSeed;
-    uint96 nextClaimNum;
+    uint96 nextClaimKey;
 }
 ```
 
-#### OptionLotClaim
-This struct contains the data about a lot of options written for a particular option type. When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT that represents a claim to the underlying and exercise assets of the options lot, to be claimed after expiry of the option. The amount of each (underlying asset and exercise asset) paid to the claimant upon redeeming their claim NFT depends on the option type, the amount of options written in their options lot (represented in this struct) and what portion of their lot was exercised before expiry.
+#### Claim
+Data about a claim to a short position written on an option type.
+When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT
+that represents a claim to the underlying and exercise assets, to be claimed after
+expiry of the option. The amount of each (underlying asset and exercise asset) paid to the claimant upon
+redeeming their claim NFT depends on the option type, the amount of options written, represented in this struct,
+and what portion of this claim was assigned exercise, if any, before expiry.
 
 ```solidity
 struct OptionLotClaim {
-    uint112 amountWritten;
-    bool claimed;
+    uint256 amountWritten;
+    uint256 optionId;
 }
 ```
 
-#### Underlying
-Struct used in returning data regarding positions underlying a claim or option.
+#### Position
+Data about the ERC20 assets and liabilities for a given option (long) or claim (short) token,
+in terms of the underlying and exercise ERC20 tokens.
 
 ```solidity
 struct Underlying {
     address underlyingAsset;
-    int256 underlyingPosition;
+    int256 underlyingAmount;
     address exerciseAsset;
-    int256 exercisePosition;
+    int256 exerciseAmount;
 }
 ```
 
-#### Enums
-#### Type
-This enumeration is used to determine the type of an ERC1155 subtoken in the engine.
+### Enums
+#### TokenType
+The type of an ERC1155 subtoken in the engine.
 
 ```solidity
 enum Type {
     None,
     Option,
-    OptionLotClaim
+    Claim
 }
 ```
 
 ### Events
-#### FeeSwept
-Emitted when accrued protocol fees for a given token are swept to the `feeTo` address.
-
-```solidity
-event FeeSwept(address indexed token, address indexed feeTo, uint256 amount);
-```
-
-#### NewOptionType
-Emitted when a new unique options type is created.
-
-```solidity
-event NewOptionType(
-    uint256 indexed optionId,
-    address indexed exerciseAsset,
-    address indexed underlyingAsset,
-    uint96 exerciseAmount,
-    uint96 underlyingAmount,
-    uint40 exerciseTimestamp,
-    uint40 expiryTimestamp,
-    uint96 nextClaimNum
-);
-```
-
-#### OptionsExercised
-Emitted when an option is exercised.
-
-```solidity
-event OptionsExercised(uint256 indexed optionId, address indexed exercisee, uint112 amount);
-```
-
-#### OptionsWritten
-Emitted when a new option is written.
-
-```solidity
-event OptionsWritten(uint256 indexed optionId, address indexed writer, uint256 indexed claimId, uint112 amount);
-```
-
-#### FeeAccrued
-Emitted when protocol fees are accrued for a given asset.
-
-```solidity
-event FeeAccrued(address indexed asset, address indexed payor, uint256 amount);
-```
-
 #### ClaimRedeemed
 Emitted when a claim is redeemed.
 
@@ -131,28 +93,79 @@ event ClaimRedeemed(
     uint256 indexed claimId,
     uint256 indexed optionId,
     address indexed redeemer,
-    address exerciseAsset,
-    address underlyingAsset,
-    uint96 exerciseAmount,
-    uint96 underlyingAmount
+    uint256 exerciseAmountRedeemed,
+    uint256 underlyingAmountRedeemed
 );
 ```
 
-#### ExerciseAssigned
-Emitted when an option id is exercised and assigned to a particular claim NFT.
+#### NewOptionType
+Emitted when a new option type is created.
 
 ```solidity
-event ExerciseAssigned(uint256 indexed claimId, uint256 indexed optionId, uint112 amountAssigned);
+event NewOptionType(
+    uint256 optionId,
+    address indexed exerciseAsset,
+    address indexed underlyingAsset,
+    uint96 exerciseAmount,
+    uint96 underlyingAmount,
+    uint40 exerciseTimestamp,
+    uint40 indexed expiryTimestamp
+);
+```
+
+#### OptionsWritten
+Emitted when new options contract(s) are written.
+
+```solidity
+event OptionsWritten(uint256 indexed optionId, address indexed writer, uint256 indexed claimId, uint112 amount);
+```
+
+#### OptionsExercised
+Emitted when option contract(s) are exercised.
+
+```solidity
+event OptionsExercised(uint256 indexed optionId, address indexed exerciser, uint112 amount);
+```
+
+#### FeeAccrued
+Emitted when protocol fees are accrued for a given asset.
+Dev note -- Emitted on write() when fees are accrued on the underlying asset,
+or exercise() when fees are accrued on the exercise asset.
+Will not be emitted when feesEnabled is false.
+
+```solidity
+event FeeAccrued(uint256 indexed optionId, address indexed asset, address indexed payer, uint256 amount);
+```
+
+#### FeeSwept
+Emitted when accrued protocol fees for a given ERC20 asset are swept to the feeTo address.
+
+```solidity
+event FeeSwept(address indexed asset, address indexed feeTo, uint256 amount);
+```
+
+#### FeeSwitchUpdated
+Emitted when protocol fees are enabled or disabled.
+
+```solidity
+event FeeSwitchUpdated(address feeTo, bool enabled);
+```
+
+#### FeeToUpdated
+Emitted when feeTo address is updated.
+
+```solidity
+event FeeToUpdated(address indexed newFeeTo);
+```
+
+#### TokenURIGeneratorUpdated
+Emitted when TokenURIGenerator is updated.
+
+```solidity
+event TokenURIGeneratorUpdated(address indexed newTokenURIGenerator);
 ```
 
 ### Errors
-#### TokenNotFound
-The requested token is not found.
-
-```solidity
-error TokenNotFound(uint256 token);
-```
-
 #### AccessControlViolation
 The caller doesn't have permission to access that function.
 
@@ -160,81 +173,11 @@ The caller doesn't have permission to access that function.
 error AccessControlViolation(address accessor, address permissioned);
 ```
 
-#### InvalidFeeToAddress
-Invalid fee to address.
+#### AmountWrittenCannotBeZero
+The amount of options contracts written must be greater than zero.
 
 ```solidity
-error InvalidFeeToAddress(address feeTo);
-```
-
-#### InvalidTokenURIGeneratorAddress
-Invalid TokenURIGenerator address.
-
-```solidity
-error InvalidTokenURIGeneratorAddress(address tokenURIGenerator);
-```
-
-#### OptionsTypeExists
-This options chain already exists and thus cannot be created.
-
-```solidity
-error OptionsTypeExists(uint256 optionId);
-```
-
-#### ExpiryWindowTooShort
-The expiry timestamp is less than 24 hours from now.
-
-```solidity
-error ExpiryWindowTooShort(uint40 expiry);
-```
-
-#### ExerciseWindowTooShort
-The option exercise window is less than 24 hours long.
-
-```solidity
-error ExerciseWindowTooShort(uint40 exercise);
-```
-
-#### InvalidAssets
-The assets specified are invalid or duplicate.
-
-```solidity
-error InvalidAssets(address asset1, address asset2);
-```
-
-#### InvalidOption
-The token specified is not an option.
-
-```solidity
-error InvalidOption(uint256 token);
-```
-
-#### InvalidClaim
-The token specified is not a claim.
-
-```solidity
-error InvalidClaim(uint256 token);
-```
-
-#### EncodedOptionIdInClaimIdDoesNotMatchProvidedOptionId
-Provided claimId does not match provided option id in the upper 160b encoding the corresponding option ID for which the claim was written.
-
-```solidity
-error EncodedOptionIdInClaimIdDoesNotMatchProvidedOptionId(uint256 claimId, uint256 optionId);
-```
-
-#### ExpiredOption
-The optionId specified expired at expiry.
-
-```solidity
-error ExpiredOption(uint256 optionId, uint40 expiry);
-```
-
-#### ExerciseTooEarly
-This option cannot yet be exercised.
-
-```solidity
-error ExerciseTooEarly(uint256 optionId, uint40 exercise);
+error AmountWrittenCannotBeZero();
 ```
 
 #### CallerDoesNotOwnClaimId
@@ -245,65 +188,156 @@ error CallerDoesNotOwnClaimId(uint256 claimId);
 ```
 
 #### CallerHoldsInsufficientOptions
-The caller does not have enough of the option to exercise the amount specified.
+The caller does not have enough options contracts to exercise the amount specified.
 
 ```solidity
 error CallerHoldsInsufficientOptions(uint256 optionId, uint112 amount);
 ```
 
 #### ClaimTooSoon
-You can't claim before expiry.
+Claims cannot be redeemed before expiry.
 
 ```solidity
 error ClaimTooSoon(uint256 claimId, uint40 expiry);
 ```
 
-#### AmountWrittenCannotBeZero
-The amount provided to write() must be > 0.
+#### ExerciseTooEarly
+This option cannot yet be exercised.
 
 ```solidity
-error AmountWrittenCannotBeZero();
+error ExerciseTooEarly(uint256 optionId, uint40 exercise);
+```
+
+#### ExerciseWindowTooShort
+The option exercise window is too short.
+
+```solidity
+error ExerciseWindowTooShort(uint40 exercise);
+```
+
+#### ExpiredOption
+The optionId specified expired has already expired.
+
+```solidity
+error ExpiredOption(uint256 optionId, uint40 expiry);
+```
+
+#### ExpiryWindowTooShort
+The expiry timestamp is too soon.
+
+```solidity
+error ExpiryWindowTooShort(uint40 expiry);
+```
+
+#### InvalidAddress
+Invalid (zero) address.
+
+```solidity
+error InvalidAddress(address input);
+```
+
+#### InvalidAssets
+The assets specified are invalid or duplicate.
+
+```solidity
+error InvalidAssets(address asset1, address asset2);
+```
+
+#### InvalidClaim
+The token specified is not a claim token.
+
+```solidity
+error InvalidClaim(uint256 token);
+```
+
+#### InvalidOption
+The token specified is not an option token.
+
+```solidity
+error InvalidOption(uint256 token);
+```
+
+#### OptionsTypeExists
+This option contract type already exists and thus cannot be created.
+
+```solidity
+error OptionsTypeExists(uint256 optionId);
+```
+
+#### TokenNotFound
+The token specified is not found.
+
+```solidity
+error TokenNotFound(uint256 token);
 ```
 
 ### Views
 #### option
-Returns Option struct details about a given tokenID if that token is an option.
+Gets information about an option.
 
 ```solidity
 function option(uint256 tokenId) external view returns (Option memory optionInfo);
 ```
 
 #### claim
-Returns OptionLotClaim struct details about a given tokenId if that token is a claim NFT.
+Gets information about a claim.
 
 ```solidity
-function claim(uint256 tokenId) external view returns (OptionLotClaim memory claimInfo);
+function claim(uint256 claimId) external view returns (Claim memory claimInfo);
 ```
 
-#### underlying
-Information about the position underlying a token, useful for determining value. When supplied an Option Lot Claim id, this function returns the total amounts of underlying and exercise assets currently associated with a given options lot.
+#### position
+Gets information about the ERC20 token positions of an option or claim.
 
 ```solidity
-function underlying(uint256 tokenId) external view returns (Underlying memory underlyingPositions);
+function position(uint256 tokenId) external view returns (Position memory positionInfo);
 ```
 
 #### tokenType
-Returns the token type (e.g. Option/OptionLotClaim) for a given token id.
+Gets the TokenType for a given tokenId.
 
 ```solidity
-function tokenType(uint256 tokenId) external view returns (Type);
+function tokenType(uint256 tokenId) external view returns (TokenType typeOfToken);
 ```
 
-#### isOptionInitialized
-Check to see if an option is already initialized.
+#### tokenURIGenerator
+Gets the address of the URI generator contract.
 
 ```solidity
-function isOptionInitialized(uint160 optionKey) external view returns (bool);
+function tokenURIGenerator() external view returns (ITokenURIGenerator uriGenerator);
+```
+
+#### feeBalance
+Gets the balance of protocol fees for a given token which have not been swept yet.
+
+```solidity
+function feeBalance(address token) external view returns (uint256);
+```
+
+#### feeBps
+Gets the protocol fee, expressed in basis points.
+
+```solidity
+function feeBps() external view returns (uint8 fee);
+```
+
+#### feesEnabled
+Checks if protocol fees are enabled.
+
+```solidity
+function feesEnabled() external view returns (bool enabled);
+```
+
+#### feeTo
+Gets the address to which protocol fees are swept.
+
+```solidity
+function feeTo() external view returns (address);
 ```
 
 ### Write Options
 #### newOptionType
-Create a new option type if it doesn't already exist.
+Creates a new option contract type if it doesn't already exist.
 
 ```solidity
 function newOptionType(
@@ -316,75 +350,67 @@ function newOptionType(
 ) external returns (uint256 optionId);
 ```
 
-#### write new
+#### write
 Writes a specified amount of the specified option, returning claim NFT id.
 
 ```solidity
-function write(uint256 optionId, uint112 amount) external returns (uint256 claimId);
-```
-
-#### write existing
-This override allows additional options to be written against a particular claim id.
-
-```solidity
-function write(uint256 optionId, uint112 amount, uint256 claimId) external returns (uint256);
-```
-
-### Exercise Options
-#### exercise
-Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if requirements are met. Will revert with an underflow/overflow if the user does not have the required assets.
-
-```solidity
-function exercise(uint256 optionId, uint112 amount) external;
+function write(uint256 tokenId, uint112 amount) external returns (uint256 claimId);
 ```
 
 ### Redeem Claims
 #### redeem
-Redeem a claim NFT, transfers the underlying tokens.
+Redeems a claim NFT, transfers the underlying/exercise tokens to the caller.
+Can be called after option expiry timestamp (inclusive).
 
 ```solidity
 function redeem(uint256 claimId) external;
 ```
 
+### Exercise Options
+#### exercise
+Exercises specified amount of optionId, transferring in the exercise asset,
+and transferring out the underlying asset if requirements are met. Can be called
+from exercise timestamp (inclusive), until option expiry timestamp (exclusive).
+
+```solidity
+function exercise(uint256 optionId, uint112 amount) external;
+```
+
 ### Protocol Admin
-#### feeBps
-The protocol fee, expressed in basis points.
+#### setFeesEnabled
+Enables or disables protocol fees.
 
 ```solidity
-function feeBps() external view returns (uint8);
-```
-
-#### feeBalance
-The balance of protocol fees for a given token which have not yet been swept.
-
-```solidity
-function feeBalance(address token) external view returns (uint256);
-```
-
-#### feeTo
-The address to which protocol fees are swept.
-
-```solidity
-function feeTo() external view returns (address);
+function setFeesEnabled(bool enabled) external;
 ```
 
 #### setFeeTo
-Updates the address fees can be swept to.
+Nominates a new address to which fees should be swept, requiring
+the new feeTo address to accept before the update is complete. See also
+acceptFeeTo().
 
 ```solidity
 function setFeeTo(address newFeeTo) external;
 ```
 
-#### sweepFees
-Sweeps fees to the feeTo address if there are more than 0 wei for each address in tokens.
+#### acceptFeeTo
+Accepts the new feeTo address and completes the update.
+See also setFeeTo(address newFeeTo).
 
 ```solidity
-function sweepFees(address[] memory tokens) external;
+function acceptFeeTo() external;
 ```
 
 #### setTokenURIGenerator
-Updates the contract address for generating the token URI for claim NFTs.
+Updates the contract address for generating token URIs for tokens.
 
 ```solidity
 function setTokenURIGenerator(address newTokenURIGenerator) external;
+```
+
+#### sweepFees
+Sweeps fees to the feeTo address if there is more than 1 wei for feeBalance for a given token.
+
+```solidity
+function sweepFees(address[] memory tokens) external;
 ```

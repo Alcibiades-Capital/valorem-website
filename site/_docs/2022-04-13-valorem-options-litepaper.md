@@ -84,7 +84,7 @@ window, after which the claim tokens can be redeemed.
 
 ### Creating a new option type
 
-Actors can permissionlessly create a new option type by specifying:
+Actors can permissionlessly [create a new option type]({% link _docs/2022-03-28-smart-contracts-overview.md %}#write-options) by specifying:
 
 - The **underlying asset** for the option; this is the token the option 
   holder receives if the option is exercised.
@@ -98,6 +98,22 @@ Actors can permissionlessly create a new option type by specifying:
 - The **expiry timestamp** of the option.
 
 #### Option data model
+
+A Valorem option is represented with the [following struct]({% link _docs/2022-03-28-smart-contracts-overview.md %}#option), packed into
+4 storage slots:
+
+```solidity
+struct Option {
+    address underlyingAsset;
+    uint96 underlyingAmount;
+    address exerciseAsset;
+    uint96 exerciseAmount;
+    uint40 exerciseTimestamp;
+    uint40 expiryTimestamp;
+    uint160 settlementSeed;
+    uint96 nextClaimKey;
+}
+```
 
 The key of an option type is defined as the unique tuple of the option 
 contract's properties, which comprise a unique hash:
@@ -124,7 +140,7 @@ exists and, if it doesn't, create it.
 
 #### Token address space
 
-The ERC-1155 standard has a 256-bit address space for sub-tokens. Valorem uses 
+The ERC-1155 standard has a 256-bit address space for [subtokens]({% link _docs/2022-03-28-smart-contracts-overview.md %}#tokentype). Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing `uint96 claimKey` 
@@ -135,12 +151,12 @@ follows:
 MSb
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
 0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
                                           LSb
 ```
@@ -155,7 +171,7 @@ and `type(uint96).max - 1` individual claims for each option type.
 
 ### Writing options
 
-Once an option type has been created, any actor can write options of that 
+Once an option type has been created, any actor can [write options]({% link _docs/2022-03-28-smart-contracts-overview.md %}#write) of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -171,7 +187,7 @@ providing the claim NFT identifier when writing.
 
 ### Exercising options
 
-Holders of an option token can exercise the option pursuant to the following 
+Holders of an option token can [exercise the option]({% link _docs/2022-03-28-smart-contracts-overview.md %}#exercise) pursuant to the following 
 conditions:
 
 - The current block timestamp is on or after the exercise timestamp of the 
@@ -228,6 +244,7 @@ function _assignExercise(
             if (amountAvailable <= amount) {
                 amount -= amountAvailable;
                 amountPresentlyExercised = amountAvailable;
+
                 // Perform "swap and pop" index management.
                 numUnexercisedBuckets--;
                 uint96 overwrite =
@@ -249,15 +266,16 @@ function _assignExercise(
                 exerciseIndex = (exerciseIndex + 1) % numUnexercisedBuckets;
             }
         }
-  // Update the seed for the next exercise.
-  optionRecord.settlementSeed = uint160(
-    uint256(
-      keccak256(
-        abi.encode(optionRecord.settlementSeed, exerciseIndex)
-      )
-    )
-  );
-}
+
+        // Update the seed for the next exercise.
+        optionRecord.settlementSeed = uint160(
+            uint256(
+                keccak256(
+                    abi.encode(optionRecord.settlementSeed, exerciseIndex)
+                )
+            )
+        );
+    }
 ```
 
 The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $
@@ -325,7 +343,7 @@ $$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + n $$
 
 ### Redeeming claims
 
-Holders of a claim NFT can redeem their claim from the engine when current 
+Holders of a claim NFT can [redeem their claim]({% link _docs/2022-03-28-smart-contracts-overview.md %}#redeem) from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
