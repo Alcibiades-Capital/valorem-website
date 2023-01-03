@@ -229,11 +229,11 @@
       <div class="prose">
         <h1>Smart Contracts Overview</h1>
         <hr>
-        <p>The Valorem Options V1 Core consists of a settlement engine which allows users to write options, exercise options, and redeem claims on assets, while handling fair assignment of exercises to claims written. It is designed to be gas efficient, minimal, and provide a secure settlement layer upon which more complex systems can be built.</p>
+        <p>The Valorem Options V1 Core consists of a settlement engine which allows users to write options, exercise options, and redeem claims on assets, while handling fair assignment of options exercised to claims written. It is designed to be gas efficient and minimal, providing a secure settlement layer upon which more complex systems can be built.</p>
 
 <p>The Settlement Engine follows the <a href="https://eips.ethereum.org/EIPS/eip-1155">ERC-1155 multi-token</a> standard. Options can be written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an options contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses like any ERC-1155 token.</p>
 
-<p>An option writer’s claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is represented by a non-fungible option lot Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.</p>
+<p>An option writer’s claim to the underlying assets (if not exercised) and exercise assets (if exercised) is represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.</p>
 
 <p>The structure of an option is as follows:</p>
 
@@ -256,7 +256,7 @@
 
 <h3 id="structs">Structs</h3>
 <h4 id="option">Option</h4>
-<p>This struct contains the data about an options type associated with an ERC-1155 token.</p>
+<p>Data comprising the unique tuple of an option type associated with an ERC-1155 option token.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Option</span> <span class="p">{</span>
     <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">;</span>
@@ -266,81 +266,48 @@
     <span class="kt">uint40</span> <span class="n">exerciseTimestamp</span><span class="p">;</span>
     <span class="kt">uint40</span> <span class="n">expiryTimestamp</span><span class="p">;</span>
     <span class="kt">uint160</span> <span class="n">settlementSeed</span><span class="p">;</span>
-    <span class="kt">uint96</span> <span class="n">nextClaimNum</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">nextClaimKey</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="optionlotclaim">OptionLotClaim</h4>
-<p>This struct contains the data about a lot of options written for a particular option type. When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT that represents a claim to the underlying and exercise assets of the options lot, to be claimed after expiry of the option. The amount of each (underlying asset and exercise asset) paid to the claimant upon redeeming their claim NFT depends on the option type, the amount of options written in their options lot (represented in this struct) and what portion of their lot was exercised before expiry.</p>
+<h4 id="claim">Claim</h4>
+<p>Data about a claim to a short position written on an option type.
+When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT
+that represents a claim to the underlying and exercise assets, to be claimed after
+expiry of the option. The amount of each (underlying asset and exercise asset) paid to the claimant upon
+redeeming their claim NFT depends on the option type, the amount of options written, represented in this struct,
+and what portion of this claim was assigned exercise, if any, before expiry.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">OptionLotClaim</span> <span class="p">{</span>
-    <span class="kt">uint112</span> <span class="n">amountWritten</span><span class="p">;</span>
-    <span class="kt">bool</span> <span class="n">claimed</span><span class="p">;</span>
+    <span class="kt">uint256</span> <span class="n">amountWritten</span><span class="p">;</span>
+    <span class="kt">uint256</span> <span class="n">optionId</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="underlying">Underlying</h4>
-<p>Struct used in returning data regarding positions underlying a claim or option.</p>
+<h4 id="position">Position</h4>
+<p>Data about the ERC20 assets and liabilities for a given option (long) or claim (short) token,
+in terms of the underlying and exercise ERC20 tokens.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Underlying</span> <span class="p">{</span>
     <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">;</span>
-    <span class="kt">int256</span> <span class="n">underlyingPosition</span><span class="p">;</span>
+    <span class="kt">int256</span> <span class="n">underlyingAmount</span><span class="p">;</span>
     <span class="kt">address</span> <span class="n">exerciseAsset</span><span class="p">;</span>
-    <span class="kt">int256</span> <span class="n">exercisePosition</span><span class="p">;</span>
+    <span class="kt">int256</span> <span class="n">exerciseAmount</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="enums">Enums</h4>
-<h4 id="type">Type</h4>
-<p>This enumeration is used to determine the type of an ERC1155 subtoken in the engine.</p>
+<h3 id="enums">Enums</h3>
+<h4 id="tokentype">TokenType</h4>
+<p>The type of an ERC1155 subtoken in the engine.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">enum</span> <span class="n">Type</span> <span class="p">{</span>
     <span class="n">None</span><span class="p">,</span>
     <span class="n">Option</span><span class="p">,</span>
-    <span class="n">OptionLotClaim</span>
+    <span class="n">Claim</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <h3 id="events">Events</h3>
-<h4 id="feeswept">FeeSwept</h4>
-<p>Emitted when accrued protocol fees for a given token are swept to the <code class="language-plaintext highlighter-rouge">feeTo</code> address.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeSwept</span><span class="p">(</span><span class="kt">address</span> <span class="k">indexed</span> <span class="n">token</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">feeTo</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">amount</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="newoptiontype">NewOptionType</h4>
-<p>Emitted when a new unique options type is created.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">NewOptionType</span><span class="p">(</span>
-    <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span>
-    <span class="kt">address</span> <span class="k">indexed</span> <span class="n">exerciseAsset</span><span class="p">,</span>
-    <span class="kt">address</span> <span class="k">indexed</span> <span class="n">underlyingAsset</span><span class="p">,</span>
-    <span class="kt">uint96</span> <span class="n">exerciseAmount</span><span class="p">,</span>
-    <span class="kt">uint96</span> <span class="n">underlyingAmount</span><span class="p">,</span>
-    <span class="kt">uint40</span> <span class="n">exerciseTimestamp</span><span class="p">,</span>
-    <span class="kt">uint40</span> <span class="n">expiryTimestamp</span><span class="p">,</span>
-    <span class="kt">uint96</span> <span class="n">nextClaimNum</span>
-<span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="optionsexercised">OptionsExercised</h4>
-<p>Emitted when an option is exercised.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">OptionsExercised</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">exercisee</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="optionswritten">OptionsWritten</h4>
-<p>Emitted when a new option is written.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">OptionsWritten</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">writer</span><span class="p">,</span> <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">claimId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="feeaccrued">FeeAccrued</h4>
-<p>Emitted when protocol fees are accrued for a given asset.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeAccrued</span><span class="p">(</span><span class="kt">address</span> <span class="k">indexed</span> <span class="n">asset</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">payor</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">amount</span><span class="p">);</span>
-</code></pre></div></div>
-
 <h4 id="claimredeemed">ClaimRedeemed</h4>
 <p>Emitted when a claim is redeemed.</p>
 
@@ -348,96 +315,81 @@
     <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">claimId</span><span class="p">,</span>
     <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span>
     <span class="kt">address</span> <span class="k">indexed</span> <span class="n">redeemer</span><span class="p">,</span>
-    <span class="kt">address</span> <span class="n">exerciseAsset</span><span class="p">,</span>
-    <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">,</span>
-    <span class="kt">uint96</span> <span class="n">exerciseAmount</span><span class="p">,</span>
-    <span class="kt">uint96</span> <span class="n">underlyingAmount</span>
+    <span class="kt">uint256</span> <span class="n">exerciseAmountRedeemed</span><span class="p">,</span>
+    <span class="kt">uint256</span> <span class="n">underlyingAmountRedeemed</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="exerciseassigned">ExerciseAssigned</h4>
-<p>Emitted when an option id is exercised and assigned to a particular claim NFT.</p>
+<h4 id="newoptiontype">NewOptionType</h4>
+<p>Emitted when a new option type is created.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">ExerciseAssigned</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">claimId</span><span class="p">,</span> <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amountAssigned</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">NewOptionType</span><span class="p">(</span>
+    <span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span>
+    <span class="kt">address</span> <span class="k">indexed</span> <span class="n">exerciseAsset</span><span class="p">,</span>
+    <span class="kt">address</span> <span class="k">indexed</span> <span class="n">underlyingAsset</span><span class="p">,</span>
+    <span class="kt">uint96</span> <span class="n">exerciseAmount</span><span class="p">,</span>
+    <span class="kt">uint96</span> <span class="n">underlyingAmount</span><span class="p">,</span>
+    <span class="kt">uint40</span> <span class="n">exerciseTimestamp</span><span class="p">,</span>
+    <span class="kt">uint40</span> <span class="k">indexed</span> <span class="n">expiryTimestamp</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="optionswritten">OptionsWritten</h4>
+<p>Emitted when new options contract(s) are written.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">OptionsWritten</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">writer</span><span class="p">,</span> <span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">claimId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="optionsexercised">OptionsExercised</h4>
+<p>Emitted when option contract(s) are exercised.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">OptionsExercised</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">exerciser</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feeaccrued">FeeAccrued</h4>
+<p>Emitted when protocol fees are accrued for a given asset.
+Dev note – Emitted on write() when fees are accrued on the underlying asset,
+or exercise() when fees are accrued on the exercise asset.
+Will not be emitted when feesEnabled is false.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeAccrued</span><span class="p">(</span><span class="kt">uint256</span> <span class="k">indexed</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">asset</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">payer</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">amount</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feeswept">FeeSwept</h4>
+<p>Emitted when accrued protocol fees for a given ERC20 asset are swept to the feeTo address.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeSwept</span><span class="p">(</span><span class="kt">address</span> <span class="k">indexed</span> <span class="n">asset</span><span class="p">,</span> <span class="kt">address</span> <span class="k">indexed</span> <span class="n">feeTo</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">amount</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feeswitchupdated">FeeSwitchUpdated</h4>
+<p>Emitted when protocol fees are enabled or disabled.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeSwitchUpdated</span><span class="p">(</span><span class="kt">address</span> <span class="n">feeTo</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">enabled</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feetoupdated">FeeToUpdated</h4>
+<p>Emitted when feeTo address is updated.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">FeeToUpdated</span><span class="p">(</span><span class="kt">address</span> <span class="k">indexed</span> <span class="n">newFeeTo</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="tokenurigeneratorupdated">TokenURIGeneratorUpdated</h4>
+<p>Emitted when TokenURIGenerator is updated.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">event</span> <span class="n">TokenURIGeneratorUpdated</span><span class="p">(</span><span class="kt">address</span> <span class="k">indexed</span> <span class="n">newTokenURIGenerator</span><span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="errors">Errors</h3>
-<h4 id="tokennotfound">TokenNotFound</h4>
-<p>The requested token is not found.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">TokenNotFound</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
-</code></pre></div></div>
-
 <h4 id="accesscontrolviolation">AccessControlViolation</h4>
 <p>The caller doesn’t have permission to access that function.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">AccessControlViolation</span><span class="p">(</span><span class="kt">address</span> <span class="n">accessor</span><span class="p">,</span> <span class="kt">address</span> <span class="n">permissioned</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="invalidfeetoaddress">InvalidFeeToAddress</h4>
-<p>Invalid fee to address.</p>
+<h4 id="amountwrittencannotbezero">AmountWrittenCannotBeZero</h4>
+<p>The amount of options contracts written must be greater than zero.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidFeeToAddress</span><span class="p">(</span><span class="kt">address</span> <span class="n">feeTo</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="invalidtokenurigeneratoraddress">InvalidTokenURIGeneratorAddress</h4>
-<p>Invalid TokenURIGenerator address.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidTokenURIGeneratorAddress</span><span class="p">(</span><span class="kt">address</span> <span class="n">tokenURIGenerator</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="optionstypeexists">OptionsTypeExists</h4>
-<p>This options chain already exists and thus cannot be created.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">OptionsTypeExists</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="expirywindowtooshort">ExpiryWindowTooShort</h4>
-<p>The expiry timestamp is less than 24 hours from now.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExpiryWindowTooShort</span><span class="p">(</span><span class="kt">uint40</span> <span class="n">expiry</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="exercisewindowtooshort">ExerciseWindowTooShort</h4>
-<p>The option exercise window is less than 24 hours long.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExerciseWindowTooShort</span><span class="p">(</span><span class="kt">uint40</span> <span class="n">exercise</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="invalidassets">InvalidAssets</h4>
-<p>The assets specified are invalid or duplicate.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidAssets</span><span class="p">(</span><span class="kt">address</span> <span class="n">asset1</span><span class="p">,</span> <span class="kt">address</span> <span class="n">asset2</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="invalidoption">InvalidOption</h4>
-<p>The token specified is not an option.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidOption</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="invalidclaim">InvalidClaim</h4>
-<p>The token specified is not a claim.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidClaim</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="encodedoptionidinclaimiddoesnotmatchprovidedoptionid">EncodedOptionIdInClaimIdDoesNotMatchProvidedOptionId</h4>
-<p>Provided claimId does not match provided option id in the upper 160b encoding the corresponding option ID for which the claim was written.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">EncodedOptionIdInClaimIdDoesNotMatchProvidedOptionId</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">optionId</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="expiredoption">ExpiredOption</h4>
-<p>The optionId specified expired at expiry.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExpiredOption</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint40</span> <span class="n">expiry</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="exercisetooearly">ExerciseTooEarly</h4>
-<p>This option cannot yet be exercised.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExerciseTooEarly</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint40</span> <span class="n">exercise</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">AmountWrittenCannotBeZero</span><span class="p">();</span>
 </code></pre></div></div>
 
 <h4 id="callerdoesnotownclaimid">CallerDoesNotOwnClaimId</h4>
@@ -447,57 +399,135 @@
 </code></pre></div></div>
 
 <h4 id="callerholdsinsufficientoptions">CallerHoldsInsufficientOptions</h4>
-<p>The caller does not have enough of the option to exercise the amount specified.</p>
+<p>The caller does not have enough options contracts to exercise the amount specified.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">CallerHoldsInsufficientOptions</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">);</span>
 </code></pre></div></div>
 
 <h4 id="claimtoosoon">ClaimTooSoon</h4>
-<p>You can’t claim before expiry.</p>
+<p>Claims cannot be redeemed before expiry.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ClaimTooSoon</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">,</span> <span class="kt">uint40</span> <span class="n">expiry</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="amountwrittencannotbezero">AmountWrittenCannotBeZero</h4>
-<p>The amount provided to write() must be &gt; 0.</p>
+<h4 id="exercisetooearly">ExerciseTooEarly</h4>
+<p>This option cannot yet be exercised.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">AmountWrittenCannotBeZero</span><span class="p">();</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExerciseTooEarly</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint40</span> <span class="n">exercise</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="exercisewindowtooshort">ExerciseWindowTooShort</h4>
+<p>The option exercise window is too short.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExerciseWindowTooShort</span><span class="p">(</span><span class="kt">uint40</span> <span class="n">exercise</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="expiredoption">ExpiredOption</h4>
+<p>The optionId specified expired has already expired.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExpiredOption</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint40</span> <span class="n">expiry</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="expirywindowtooshort">ExpiryWindowTooShort</h4>
+<p>The expiry timestamp is too soon.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">ExpiryWindowTooShort</span><span class="p">(</span><span class="kt">uint40</span> <span class="n">expiry</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="invalidaddress">InvalidAddress</h4>
+<p>Invalid (zero) address.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidAddress</span><span class="p">(</span><span class="kt">address</span> <span class="n">input</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="invalidassets">InvalidAssets</h4>
+<p>The assets specified are invalid or duplicate.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidAssets</span><span class="p">(</span><span class="kt">address</span> <span class="n">asset1</span><span class="p">,</span> <span class="kt">address</span> <span class="n">asset2</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="invalidclaim">InvalidClaim</h4>
+<p>The token specified is not a claim token.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidClaim</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="invalidoption">InvalidOption</h4>
+<p>The token specified is not an option token.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">InvalidOption</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="optionstypeexists">OptionsTypeExists</h4>
+<p>This option contract type already exists and thus cannot be created.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">OptionsTypeExists</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="tokennotfound">TokenNotFound</h4>
+<p>The token specified is not found.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span> <span class="n">TokenNotFound</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">token</span><span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="views">Views</h3>
 <h4 id="option-1">option</h4>
-<p>Returns Option struct details about a given tokenID if that token is an option.</p>
+<p>Gets information about an option.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">option</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Option</span> <span class="k">memory</span> <span class="n">optionInfo</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="claim">claim</h4>
-<p>Returns OptionLotClaim struct details about a given tokenId if that token is a claim NFT.</p>
+<h4 id="claim-1">claim</h4>
+<p>Gets information about a claim.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">claim</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">OptionLotClaim</span> <span class="k">memory</span> <span class="n">claimInfo</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">claim</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Claim</span> <span class="k">memory</span> <span class="n">claimInfo</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="underlying-1">underlying</h4>
-<p>Information about the position underlying a token, useful for determining value. When supplied an Option Lot Claim id, this function returns the total amounts of underlying and exercise assets currently associated with a given options lot.</p>
+<h4 id="position-1">position</h4>
+<p>Gets information about the ERC20 token positions of an option or claim.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">underlying</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Underlying</span> <span class="k">memory</span> <span class="n">underlyingPositions</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">position</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Position</span> <span class="k">memory</span> <span class="n">positionInfo</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="tokentype">tokenType</h4>
-<p>Returns the token type (e.g. Option/OptionLotClaim) for a given token id.</p>
+<h4 id="tokentype-1">tokenType</h4>
+<p>Gets the TokenType for a given tokenId.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">tokenType</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Type</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">tokenType</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">TokenType</span> <span class="n">typeOfToken</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="isoptioninitialized">isOptionInitialized</h4>
-<p>Check to see if an option is already initialized.</p>
+<h4 id="tokenurigenerator">tokenURIGenerator</h4>
+<p>Gets the address of the URI generator contract.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">isOptionInitialized</span><span class="p">(</span><span class="kt">uint160</span> <span class="n">optionKey</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">bool</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">tokenURIGenerator</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="n">ITokenURIGenerator</span> <span class="n">uriGenerator</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feebalance">feeBalance</h4>
+<p>Gets the balance of protocol fees for a given token which have not been swept yet.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeBalance</span><span class="p">(</span><span class="kt">address</span> <span class="n">token</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feebps">feeBps</h4>
+<p>Gets the protocol fee, expressed in basis points.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeBps</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint8</span> <span class="n">fee</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feesenabled">feesEnabled</h4>
+<p>Checks if protocol fees are enabled.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feesEnabled</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">bool</span> <span class="n">enabled</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="feeto">feeTo</h4>
+<p>Gets the address to which protocol fees are swept.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeTo</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">address</span><span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="write-options">Write Options</h3>
 <h4 id="newoptiontype-1">newOptionType</h4>
-<p>Create a new option type if it doesn’t already exist.</p>
+<p>Creates a new option contract type if it doesn’t already exist.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">newOptionType</span><span class="p">(</span>
     <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">,</span>
@@ -509,67 +539,61 @@
 <span class="p">)</span> <span class="k">external</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h4 id="write-new">write new</h4>
+<h4 id="write">write</h4>
 <p>Writes a specified amount of the specified option, returning claim NFT id.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">)</span> <span class="k">external</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="write-existing">write existing</h4>
-<p>This override allows additional options to be written against a particular claim id.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">,</span> <span class="kt">uint256</span> <span class="n">claimId</span><span class="p">)</span> <span class="k">external</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h3 id="exercise-options">Exercise Options</h3>
-<h4 id="exercise">exercise</h4>
-<p>Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if requirements are met. Will revert with an underflow/overflow if the user does not have the required assets.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">exercise</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">write</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">tokenId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">)</span> <span class="k">external</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="redeem-claims">Redeem Claims</h3>
 <h4 id="redeem">redeem</h4>
-<p>Redeem a claim NFT, transfers the underlying tokens.</p>
+<p>Redeems a claim NFT, transfers the underlying/exercise tokens to the caller.
+Can be called after option expiry timestamp (inclusive).</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">redeem</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">claimId</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
 </code></pre></div></div>
 
+<h3 id="exercise-options">Exercise Options</h3>
+<h4 id="exercise">exercise</h4>
+<p>Exercises specified amount of optionId, transferring in the exercise asset,
+and transferring out the underlying asset if requirements are met. Can be called
+from exercise timestamp (inclusive), until option expiry timestamp (exclusive).</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">exercise</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">optionId</span><span class="p">,</span> <span class="kt">uint112</span> <span class="n">amount</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
+</code></pre></div></div>
+
 <h3 id="protocol-admin">Protocol Admin</h3>
-<h4 id="feebps">feeBps</h4>
-<p>The protocol fee, expressed in basis points.</p>
+<h4 id="setfeesenabled">setFeesEnabled</h4>
+<p>Enables or disables protocol fees.</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeBps</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint8</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="feebalance">feeBalance</h4>
-<p>The balance of protocol fees for a given token which have not yet been swept.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeBalance</span><span class="p">(</span><span class="kt">address</span> <span class="n">token</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h4 id="feeto">feeTo</h4>
-<p>The address to which protocol fees are swept.</p>
-
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">feeTo</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">address</span><span class="p">);</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">setFeesEnabled</span><span class="p">(</span><span class="kt">bool</span> <span class="n">enabled</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h4 id="setfeeto">setFeeTo</h4>
-<p>Updates the address fees can be swept to.</p>
+<p>Nominates a new address to which fees should be swept, requiring
+the new feeTo address to accept before the update is complete. See also
+acceptFeeTo().</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">setFeeTo</span><span class="p">(</span><span class="kt">address</span> <span class="n">newFeeTo</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
 </code></pre></div></div>
 
-<h4 id="sweepfees">sweepFees</h4>
-<p>Sweeps fees to the feeTo address if there are more than 0 wei for each address in tokens.</p>
+<h4 id="acceptfeeto">acceptFeeTo</h4>
+<p>Accepts the new feeTo address and completes the update.
+See also setFeeTo(address newFeeTo).</p>
 
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">sweepFees</span><span class="p">(</span><span class="kt">address</span><span class="p">[]</span> <span class="k">memory</span> <span class="n">tokens</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">acceptFeeTo</span><span class="p">()</span> <span class="k">external</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h4 id="settokenurigenerator">setTokenURIGenerator</h4>
-<p>Updates the contract address for generating the token URI for claim NFTs.</p>
+<p>Updates the contract address for generating token URIs for tokens.</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">setTokenURIGenerator</span><span class="p">(</span><span class="kt">address</span> <span class="n">newTokenURIGenerator</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="sweepfees">sweepFees</h4>
+<p>Sweeps fees to the feeTo address if there is more than 1 wei for feeBalance for a given token.</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="n">sweepFees</span><span class="p">(</span><span class="kt">address</span><span class="p">[]</span> <span class="k">memory</span> <span class="n">tokens</span><span class="p">)</span> <span class="k">external</span><span class="p">;</span>
 </code></pre></div></div>
 
       </div>
@@ -577,7 +601,7 @@
     <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
       <div class="sticky top-20">
         <div class="label mb-6">On this page</div>
-        <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#ioptionsettlementengine" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">IOptionSettlementEngine</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#structs" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structs</a></li><li class=""><a href="#events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Events</a></li><li class=""><a href="#errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors</a></li><li class=""><a href="#views" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Views</a></li><li class=""><a href="#write-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write Options</a></li><li class=""><a href="#exercise-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise Options</a></li><li class=""><a href="#redeem-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem Claims</a></li><li class=""><a href="#protocol-admin" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol Admin</a></li></ol></li></ol>
+        <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#ioptionsettlementengine" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">IOptionSettlementEngine</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#structs" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structs</a></li><li class=""><a href="#enums" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Enums</a></li><li class=""><a href="#events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Events</a></li><li class=""><a href="#errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors</a></li><li class=""><a href="#views" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Views</a></li><li class=""><a href="#write-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write Options</a></li><li class=""><a href="#redeem-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem Claims</a></li><li class=""><a href="#exercise-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise Options</a></li><li class=""><a href="#protocol-admin" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol Admin</a></li></ol></li></ol>
       </div>
     </nav>
   </div>

@@ -307,7 +307,7 @@ window, after which the claim tokens can be redeemed.</p>
 
 <h3 id="creating-a-new-option-type">Creating a new option type</h3>
 
-<p>Actors can permissionlessly create a new option type by specifying:</p>
+<p>Actors can permissionlessly <a href="/docs/smart-contracts-overview/#write-options">create a new option type</a> by specifying:</p>
 
 <ul>
   <li>The <strong>underlying asset</strong> for the option; this is the token the option 
@@ -323,6 +323,21 @@ option.</li>
 </ul>
 
 <h4 id="option-data-model">Option data model</h4>
+
+<p>A Valorem option is represented with the <a href="/docs/smart-contracts-overview/#option">following struct</a>, packed into
+4 storage slots:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Option</span> <span class="p">{</span>
+    <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">underlyingAmount</span><span class="p">;</span>
+    <span class="kt">address</span> <span class="n">exerciseAsset</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">exerciseAmount</span><span class="p">;</span>
+    <span class="kt">uint40</span> <span class="n">exerciseTimestamp</span><span class="p">;</span>
+    <span class="kt">uint40</span> <span class="n">expiryTimestamp</span><span class="p">;</span>
+    <span class="kt">uint160</span> <span class="n">settlementSeed</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">nextClaimKey</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>The key of an option type is defined as the unique tuple of the option 
 contract’s properties, which comprise a unique hash:</p>
@@ -348,7 +363,7 @@ exists and, if it doesn’t, create it.</p>
 
 <h4 id="token-address-space">Token address space</h4>
 
-<p>The ERC-1155 standard has a 256-bit address space for sub-tokens. Valorem uses 
+<p>The ERC-1155 standard has a 256-bit address space for <a href="/docs/smart-contracts-overview/#tokentype">sub-tokens</a>. Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing <code class="language-plaintext highlighter-rouge">uint96 claimKey</code> 
@@ -378,7 +393,7 @@ and <code class="language-plaintext highlighter-rouge">type(uint96).max - 1</cod
 
 <h3 id="writing-options">Writing options</h3>
 
-<p>Once an option type has been created, any actor can write options of that 
+<p>Once an option type has been created, any actor can <a href="/docs/smart-contracts-overview/#write">write options</a> of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -394,7 +409,7 @@ providing the claim NFT identifier when writing.</p>
 
 <h3 id="exercising-options">Exercising options</h3>
 
-<p>Holders of an option token can exercise the option pursuant to the following 
+<p>Holders of an option token can <a href="/docs/smart-contracts-overview/#exercise">exercise the option</a> pursuant to the following 
 conditions:</p>
 
 <ul>
@@ -452,6 +467,7 @@ options without either party being able to influence the outcome.</p>
             <span class="k">if</span> <span class="p">(</span><span class="n">amountAvailable</span> <span class="o">&lt;=</span> <span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
                 <span class="n">amount</span> <span class="o">-=</span> <span class="n">amountAvailable</span><span class="p">;</span>
                 <span class="n">amountPresentlyExercised</span> <span class="o">=</span> <span class="n">amountAvailable</span><span class="p">;</span>
+
                 <span class="c1">// Perform "swap and pop" index management.
 </span>                <span class="n">numUnexercisedBuckets</span><span class="o">--</span><span class="p">;</span>
                 <span class="kt">uint96</span> <span class="n">overwrite</span> <span class="o">=</span>
@@ -473,15 +489,16 @@ options without either party being able to influence the outcome.</p>
                 <span class="n">exerciseIndex</span> <span class="o">=</span> <span class="p">(</span><span class="n">exerciseIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">numUnexercisedBuckets</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
-  <span class="c1">// Update the seed for the next exercise.
-</span>  <span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span> <span class="o">=</span> <span class="kt">uint160</span><span class="p">(</span>
-    <span class="kt">uint256</span><span class="p">(</span>
-      <span class="nb">keccak256</span><span class="p">(</span>
-        <span class="n">abi</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span><span class="p">,</span> <span class="n">exerciseIndex</span><span class="p">)</span>
-      <span class="p">)</span>
-    <span class="p">)</span>
-  <span class="p">);</span>
-<span class="p">}</span>
+
+        <span class="c1">// Update the seed for the next exercise.
+</span>        <span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span> <span class="o">=</span> <span class="kt">uint160</span><span class="p">(</span>
+            <span class="kt">uint256</span><span class="p">(</span>
+                <span class="nb">keccak256</span><span class="p">(</span>
+                    <span class="n">abi</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">optionRecord</span><span class="p">.</span><span class="n">settlementSeed</span><span class="p">,</span> <span class="n">exerciseIndex</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
 </code></pre></div></div>
 
 <p>The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $
@@ -549,7 +566,7 @@ division. Resulting in the following summations:</p>
 
 <h3 id="redeeming-claims">Redeeming claims</h3>
 
-<p>Holders of a claim NFT can redeem their claim from the engine when current 
+<p>Holders of a claim NFT can <a href="/docs/smart-contracts-overview/#redeem">redeem their claim</a> from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
