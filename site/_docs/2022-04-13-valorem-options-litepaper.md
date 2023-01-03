@@ -140,7 +140,7 @@ exists and, if it doesn't, create it.
 
 #### Token address space
 
-The ERC-1155 standard has a 256-bit address space for [subtokens]({% link _docs/2022-03-28-smart-contracts-overview.md %}#tokentype). Valorem uses 
+The ERC-1155 standard has a 256-bit address space for [sub-tokens]({% link _docs/2022-03-28-smart-contracts-overview.md %}#tokentype). Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing `uint96 claimKey` 
