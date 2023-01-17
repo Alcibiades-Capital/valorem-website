@@ -61,8 +61,8 @@ page_blocks:
         url: https://app.valorem.xyz/
   - _id: partner_featured
     label: In partnership with
-    image_path: /assets/images/partners/ac.svg
-    image_alt: Alcibiades Capital
+    image_path: /assets/images/partners/DACM.png
+    image_alt: DACM 
     button:
       text: See more partners
       url: /about/
