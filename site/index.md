@@ -6,54 +6,50 @@ hero:
   heading: Permissionless physically settled options, on any ERC20 token.
   text_markdown:
   buttons:
-    - text: Launch app
-      url: https://app.valorem.xyz/
+    - text: Learn more
+      url: /docs/valorem-options/
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
 page_blocks:
-  - _id: use_cases
+  - _id: use_cases 
     cards:
-      - heading: Vesting protocol options
+      - heading: Flexible and composable
         text_markdown: |
-          Presently, protocols give away token grants. Valorem enables traditional strike option equity grants on ERC-20 Tokens.
+          Our option clearinghouse takes a unique approach to time specificity, strike price, and premium, enabling American, Bermudan, European and exotic options with no pricing assumptions. 
         icon: sl-vest
-      - heading: Uniswap V3 liquidity hedging
+      - heading: Permissionless and efficient
         text_markdown: |
-          Use a long straddle to hedge Uniswap V3 liquidity pools. This strategy is a suitable hedge for remaining in position at either end of a concentrated LP.
+          The Valorem clearinghouse is permissionless. Write options on any ERC20 token, and transact with anyone. Our options use the ERC-1155 standard, lowering the viscosity of risk settlement.
         icon: sl-hedge
-      - heading: Principal protected notes
+      - heading: Fair and secure
         text_markdown: |
-          Use Alchemix to borrow against future yield, buy a Valorem call option with the yield, and voila, a principal protected note.
+          Valorem options are settled physically via a novel fair settlement algorithm, and they are fully collateralized. The clearinghouse is audited, and it's open source.  
         icon: sl-ppn
-    heading: This, and much more, is possible with Valorem.
+    heading: Valorem is a foundation for DeFi derivatives.
     text_markdown: |
-      We’re building Valorem to unlock advanced hedging strategies in DeFi and enable more efficient yield on-chain. This flexible primitive can be leveraged to create new defi components.
+      We’re building Valorem to unlock advanced hedging strategies in DeFi, and enable more mature financial markets for digital assets.
     buttons:
       - text: Launch app
         url: https://app.valorem.xyz/
-      - text: Read docs
-        url: /docs/
+      - text: Learn more
+        url: /docs/valorem-options/
   - _id: roadmap
-    heading: Lots to look forward to.
+    heading: When can I use Valorem? 
     text_markdown: |
-      No DeFi protocol is complete without a roadmap. Here’s ours.
+      We’re already in beta on Görli, and will launch our options settlement layer to production in Q1. Here's what's coming next. 
     events:
-      - heading: Mainnet launch
+      - heading: Settlement
         text_markdown: |
-          The option settlement engine will launch on mainnet with documentation, user interface and ability for users to write, hold and transfer options and claims.
-        eta: Q3 2022
-      - heading: Contributor token options
+          The Valorem option underwriting system and clearinghouse will launch with documentation, user interface and ability for users to write, hold and transfer options positions.
+        eta: Q1 2023
+      - heading: Trading 
         text_markdown: |
-          We will build partnerships with protocols to use Valorem Contibutor Token Options to incentivize protocol contributors throughout DeFi. This will build a diverse income for the protocol from writing and exercise fees.
-        eta: Q3 2022
-      - heading: Options market 
+          Valorem has developed a decentralized exchange with order book, RFQ, and OTC capabilities. We will integrate this with the option settlement layer to enable peer-to-peer options trading.
+        eta: Q2 2023
+      - heading: Margin and Ecosystem 
         text_markdown: |
-          Valorem will build or use an existing limit order book to allow the decentralized trading of options.
-        eta: Q4 2022
-      - heading: Structured products 
-        text_markdown: |
-          Valorem will continue to build and integrate other structured products to increase notational volume and revenue.
-        eta: Q4 2022 and beyond
+          Valorem will continue to build and integrate oracles, margining, and other DeFi primitives to enable more sophisticated and capital efficient options strategies. 
+        eta: Q3 2023 and beyond
   - _id: cta
     heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
     buttons:

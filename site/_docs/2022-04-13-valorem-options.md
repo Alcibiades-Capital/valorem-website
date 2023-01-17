@@ -1,9 +1,9 @@
 ---
 date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-12-22 00:00:00 +01
-title: Valorem Options Litepaper
+title: Valorem Options
 usemathjax: true
-description: This paper outlines the Valorem Options protocol, an oracle-free, permissionless, underwriter and clearinghouse for ERC20 token options. 
+description: This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options. 
 ---
 
 ## Introduction
