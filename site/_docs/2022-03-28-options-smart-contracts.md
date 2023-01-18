@@ -1,31 +1,22 @@
 ---
 date: 2022-11-30 00:00:00 +02
-title: Smart Contracts Overview
-description: An overview of the Valorem protocol smart contracts.
+title: Options Smart Contracts 
+description: Developer documentation for the Valorem Options smart contracts and related interfaces.
 ---
 
-The Valorem Options V1 Core consists of a settlement engine which allows users to write options, exercise options, and redeem claims on assets, while handling fair assignment of options exercised to claims written. It is designed to be gas efficient and minimal, providing a secure settlement layer upon which more complex systems can be built.
+[Valorem Options](/docs/options-litepaper/#mechanism) is implemented as a set 
+of persistent, non-upgradable smart contracts. The contracts are designed to 
+prioritize censorship resistance, security, self-custody, and to function 
+without any intermediaries who may restrict access. The source code may be found 
+[here](https://github.com/valorem-labs-inc/valorem-core).
 
-The Settlement Engine follows the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) standard. Options can be written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an options contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses like any ERC-1155 token.
+## OptionSettlementEngine
 
-An option writer's claim to the underlying assets (if not exercised) and exercise assets (if exercised) is represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.
-
-The structure of an option is as follows:
-
-- **Underlying asset:** the ERC-20 address of the asset to be received upon exercise.
-- **Underlying amount:** the amount of the underlying asset contained within an option of this type.
-- **Exercise asset:** the ERC-20 address of the asset needed for exercise.
-- **Exercise amount:** the amount of the exercise asset required to exercise this option.
-- **Exercise timestamp:** the timestamp after which this option can be exercised and physically settled.
-- **Expiry timestamp:** the timestamp before which this option can be exercised.
-
-The Core is unopinionated on the type of option (call vs. put), where, when, or for how much an option is bought/sold, and whether or not the option is profitable when exercised. Because all options written with Valorem are fully collateralized, physical settlement at exercise or redeem time is instant and gas-efficient.
-
-[Core Contracts Source Code](https://github.com/valorem-labs-inc/valorem-core)
+The `OptionSettlementEngine` implements the core underwriting and settlement 
+of Valorem Options. It implements  the `IOptionSettlementEngine` and 
+`IERC1155MetadataURI` interfaces.
 
 ## IOptionSettlementEngine
-
-The core exposes an interface for users of the protocol, which is documented here and in the codebase with NatSpec.
 
 ### Structs
 #### Option

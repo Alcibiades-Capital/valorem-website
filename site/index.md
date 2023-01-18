@@ -7,7 +7,7 @@ hero:
   text_markdown:
   buttons:
     - text: Learn more
-      url: /docs/valorem-options/
+      url: /docs/options-litepaper/
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
 page_blocks:
@@ -15,24 +15,24 @@ page_blocks:
     cards:
       - heading: Flexible and composable
         text_markdown: |
-          Our option clearinghouse takes a unique approach to time specificity, strike price, and premium, enabling American, Bermudan, European and exotic options with no pricing assumptions. 
+          Our options settlement layer takes a unique approach to time specificity, strike price, and premium, enabling American, Bermudan, European and exotic options with no pricing assumptions. 
         icon: sl-vest
       - heading: Permissionless and efficient
         text_markdown: |
-          The Valorem clearinghouse is permissionless. Write options on any ERC20 token, and transact with anyone. Our options use the ERC-1155 standard, lowering the viscosity of risk settlement.
+          Valorem options are permissionless. Write options on any ERC20 token, and transact with anyone. Our options use the ERC-1155 standard, lowering the viscosity of risk settlement.
         icon: sl-hedge
       - heading: Fair and secure
         text_markdown: |
-          Valorem options are settled physically via a novel fair settlement algorithm, and they are fully collateralized. The clearinghouse is audited, and it's open source.  
+          Our clearinghouse settles options physically via a novel fair settlement algorithm, and they are fully collateralized. This minimizes counterparty risk, so you can securely hedge your risk. 
         icon: sl-ppn
-    heading: Valorem is a foundation for DeFi derivatives.
+    heading: Valorem is building a foundation for DeFi derivatives.
     text_markdown: |
       We’re building Valorem to unlock advanced hedging strategies in DeFi, and enable more mature financial markets for digital assets.
     buttons:
       - text: Launch app
         url: https://app.valorem.xyz/
       - text: Learn more
-        url: /docs/valorem-options/
+        url: /docs/options-litepaper/
   - _id: roadmap
     heading: When can I use Valorem? 
     text_markdown: |

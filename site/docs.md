@@ -2,9 +2,9 @@
 title: Documentation
 description:
 hero:
-  heading: Get started with Valorem
+  heading: Valorem Protocol Documentation 
   text_markdown: |
-    Docs to get you started with Valorem. If you have any questions that are not addressed here, feel free to reach out for help through Discord.
+    Valorem is a decentralized options protocol which acts as a permissionless option contract underwriting system and clearinghouse.
 page_blocks:
   - _id: docs_feed
 ---

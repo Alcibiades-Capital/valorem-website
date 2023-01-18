@@ -1,7 +1,7 @@
 ---
 date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-12-22 00:00:00 +01
-title: Valorem Options
+title: Valorem Options Litepaper
 usemathjax: true
 description: This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options. 
 ---
@@ -56,7 +56,7 @@ any operation that the protocol supports.
 
 Options written via the protocol are fully collateralized, reducing
 counterparty risk and ensuring settlement. This leaves the opportunity for
-higher level margining systems, with risk, to implemented atop the protocol, 
+higher level margining systems, with risk, to be implemented atop the protocol, 
 whilst remaining un-opinionated at the base layer.
 
 ### Composable
@@ -67,7 +67,7 @@ that it can easily be integrated into other smart contract systems as a
 
 ## Mechanism
 
-The Valorem protocol, at it's core, is a non-custodial engine for the
+The Valorem Options protocol, at it's core, is a non-custodial engine for the
 underwriting and physical settlement of options, consisting of a set of
 smart contracts. The engine utilizes the
 [ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
@@ -84,7 +84,7 @@ window, after which the claim tokens can be redeemed.
 
 ### Creating a new option type
 
-Actors can permissionlessly [create a new option type]({% link _docs/2022-03-28-smart-contracts-overview.md %}#write-options) by specifying:
+Actors can permissionlessly [create a new option type](/docs/options-smart-contracts#write-options) by specifying:
 
 - The **underlying asset** for the option; this is the token the option 
   holder receives if the option is exercised.
@@ -99,7 +99,7 @@ Actors can permissionlessly [create a new option type]({% link _docs/2022-03-28-
 
 #### Option data model
 
-A Valorem option is represented with the [following struct]({% link _docs/2022-03-28-smart-contracts-overview.md %}#option), packed into
+A Valorem option is represented with the [following struct](/docs/options-smart-contracts#option), packed into
 4 storage slots:
 
 ```solidity
@@ -115,7 +115,7 @@ struct Option {
 }
 ```
 
-The key of an option type is defined as the unique tuple of the option 
+The key of an option type is defined as the unique tuple with regard to the option 
 contract's properties, which comprise a unique hash:
 
 ```solidity
@@ -140,7 +140,7 @@ exists and, if it doesn't, create it.
 
 #### Token address space
 
-The ERC-1155 standard has a 256-bit address space for [sub-tokens]({% link _docs/2022-03-28-smart-contracts-overview.md %}#tokentype). Valorem uses 
+The ERC-1155 standard has a 256-bit address space for [sub-tokens](/docs/options-smart-contracts#tokentype). Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing `uint96 claimKey` 
@@ -171,7 +171,7 @@ and `type(uint96).max - 1` individual claims for each option type.
 
 ### Writing options
 
-Once an option type has been created, any actor can [write options]({% link _docs/2022-03-28-smart-contracts-overview.md %}#write) of that 
+Once an option type has been created, any actor can [write options](/docs/options-smart-contracts#write) of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -187,7 +187,7 @@ providing the claim NFT identifier when writing.
 
 ### Exercising options
 
-Holders of an option token can [exercise the option]({% link _docs/2022-03-28-smart-contracts-overview.md %}#exercise) pursuant to the following 
+Holders of an option token can [exercise the option](/docs/options-smart-contracts#exercise) pursuant to the following 
 conditions:
 
 - The current block timestamp is on or after the exercise timestamp of the 
@@ -215,71 +215,9 @@ lifecycle algorithm.
 
 Exercise assignment is performed using a deterministic algorithm seeded by
 the `uint160 optionKey`, with entropy from actors who write and exercise
-options without either party being able to influence the outcome.
-
-The assignment algorithm is as follows:
-
-```solidity
-function _assignExercise(
-        OptionTypeState storage optionTypeState,
-        Option storage optionRecord,
-        uint112 amount
-    ) private {
-        // Setup pointers to buckets and buckets with collateral available for exercise.
-        Bucket[] storage buckets = optionTypeState.bucketInfo.buckets;
-        uint96[] storage unexercisedBucketIndices =
-            optionTypeState.bucketInfo.unexercisedBucketIndices;
-        uint96 numUnexercisedBuckets = uint96(unexercisedBucketIndices.length);
-        uint96 exerciseIndex =
-            uint96(optionRecord.settlementSeed % numUnexercisedBuckets);
-
-        while (amount > 0) {
-            // Get the claim bucket to assign exercise to.
-            uint96 bucketIndex = unexercisedBucketIndices[exerciseIndex];
-            Bucket storage bucketInfo = buckets[bucketIndex];
-
-            uint112 amountAvailable =
-                bucketInfo.amountWritten - bucketInfo.amountExercised;
-            uint112 amountPresentlyExercised = 0;
-            if (amountAvailable <= amount) {
-                amount -= amountAvailable;
-                amountPresentlyExercised = amountAvailable;
-
-                // Perform "swap and pop" index management.
-                numUnexercisedBuckets--;
-                uint96 overwrite =
-                    unexercisedBucketIndices[numUnexercisedBuckets];
-                unexercisedBucketIndices[exerciseIndex] = overwrite;
-                unexercisedBucketIndices.pop();
-
-                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
-                    BucketExerciseState.Exercised;
-            } else {
-                amountPresentlyExercised = amount;
-                amount = 0;
-                optionTypeState.bucketInfo.bucketExerciseStates[bucketIndex] =
-                    BucketExerciseState.PartiallyExercised;
-            }
-            bucketInfo.amountExercised += amountPresentlyExercised;
-
-            if (amount != 0) {
-                exerciseIndex = (exerciseIndex + 1) % numUnexercisedBuckets;
-            }
-        }
-
-        // Update the seed for the next exercise.
-        optionRecord.settlementSeed = uint160(
-            uint256(
-                keccak256(
-                    abi.encode(optionRecord.settlementSeed, exerciseIndex)
-                )
-            )
-        );
-    }
-```
-
-The runtime complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $
-is the number of buckets consumed by the algorithm to fulfill the exercise.
+options without either party being able to influence the outcome. The runtime 
+complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is the number 
+of buckets consumed by the algorithm to fulfill the exercise.
 
 However, because the probability of an exercise assignment to 
 the most recently created bucket is $ 1 \over n $, where $ n $ is the number 
@@ -297,7 +235,7 @@ partial exercise which occur.
 
 Because of the bucketing mechanism and ability to add additional options to
 an existing claim, Valorem claims are comprised of claim index data structures
-which are stored for each bucket $ i $ the claim is written into as $ I_wi $, 
+which are stored for each bucket $ i $ the claim is written into as $ I_{wi} $, 
 the amount of options written by that claim to bucket $ i $. Thus, calculating
 a claim position involves summations over the claim's member buckets. 
 
@@ -310,20 +248,20 @@ bucket $ i $, we can calculate $ C_e $, the amount of options exercised for a cl
 and $ C_u $ the amount of options unexercised for a claim using the following 
 summations:
 
-$$ C_e = \sum_{i=1}^n C_{ei} = {B_{ei} I_{wi} \over B_{wi}} + \ldots + n $$
+$$ C_e = \sum_{i=1}^n C_{ei} = {B_{ei} I_{wi} \over B_{wi}} + \ldots + {B_{en} I_{wn} \over B_{wn}} $$
 
 and,
 
-$$ C_u = \sum_{i=1}^n C_{ui} = {B_{ui} I_{wi} \over B_{wi}} + \ldots + n $$
+$$ C_u = \sum_{i=1}^n C_{ui} = {B_{ui} I_{wi} \over B_{wi}} + \ldots + {B_{un} I_{wn} \over B_{wn}} $$
 
 and we can verify that $ C_e + C_u = C_w $, options written for a given claim 
 $ C $,
 
-$$ C_w = \sum_{i=1}^n C_{wi} = ({B_{ei} I_{wi} \over B_{wi}} + {B_{ui} I_{wi} \over B_{wi}}) + \ldots + n $$
+$$ C_w = \sum_{i=1}^n C_{wi} = ({B_{ei} I_{wi} \over B_{wi}} + {B_{ui} I_{wi} \over B_{wi}}) + \ldots + ({B_{en} I_{wn} \over B_{wn}} + {B_{un} I_{wn} \over B_{wn}}) $$
 
 which simplifies to,
 
-$$ C_w = \sum_{i=1}^n C_{wi} = I_{wi} + \ldots + n $$
+$$ C_w = \sum_{i=1}^n C_{wi} = I_{wi} + \ldots + I_{wn} $$
 
 which is the sum of options written by a claim to each of it's member buckets. 
 
@@ -335,15 +273,15 @@ tokens collateralizing a claim by multiplying the amount of the exercise
 asset, $ O_e $, and the underlying asset, $ O_u $, before performing any 
 division. Resulting in the following summations: 
 
-$$ P_e = \sum_{i=1}^n P_{ei} = {B_{ei} O_e I_{wi} \over B_{wi}} + \ldots + n $$
+$$ P_e = \sum_{i=1}^n P_{ei} = {B_{ei} O_e I_{wi} \over B_{wi}} + \ldots + {B_{en} O_e I_{wn} \over B_{wn}} $$
 
 and 
 
-$$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + n $$
+$$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + {B_{un} O_u I_{wn} \over B_{wn}} $$
 
 ### Redeeming claims
 
-Holders of a claim NFT can [redeem their claim]({% link _docs/2022-03-28-smart-contracts-overview.md %}#redeem) from the engine when current 
+Holders of a claim NFT can [redeem their claim](/docs/options-smart-contracts#redeem) from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
