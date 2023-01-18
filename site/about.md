@@ -1,13 +1,53 @@
 ---
 title: About us
-description: We are building infrastructure for a more robust derivatives ecosystem in DeFi.
+description: We are building infrastructure for a more robust options ecosystem in DeFi.
 hero:
-  heading: Valorem is a protocol for writing physically settled options.
+  heading: Valorem develops decentralized options.
   text_markdown: |
-    We are building infrastructure for a more robust derivatives ecosystem in DeFi. Find out more about our partners and contributors below.
+    We are building infrastructure for a more robust options ecosystem in DeFi. Find out more about our contributors, advisors, and investors below.
 page_blocks:
   - _id: partners_all
     cards:
+      - label: Contributor
+        image_path: /assets/images/partners/alcibiades.jpg
+        image_alt: "Alcibiades’ profile picture"
+        heading: Alcibiades
+        subheading: "@0xAlcibiades"
+        url: https://twitter.com/0xAlcibiades
+      - label: Contributor
+        image_path: /assets/images/partners/neodaoist.png
+        image_alt: "Neodaoist’s profile picture"
+        heading: Neodaoist
+        subheading: "@neodaoist"
+        url: https://twitter.com/neodaoist
+      - label: Contributor
+        image_path: /assets/images/partners/flip.jpg
+        image_alt: "Flip’s profile picture"
+        heading: Flip
+        subheading: "@flip_liquide"
+        url: https://twitter.com/flip_liquide
+      - label: Contributor
+        image_path: /assets/images/partners/nick.png
+        image_alt: "Nick’s profile picture"
+        heading: Nick
+        subheading: "@nickadams0n"
+        url: https://twitter.com/nickadams0n
+      - label: Advisor
+        image_path: /assets/images/partners/thogard.jpg
+        image_alt: "Thogard’s profile picture"
+        heading: Thogard
+        subheading: "@ThogardPvP"
+        url: https://twitter.com/ThogardPvP
+      - label: Advisor
+        image_path: /assets/images/partners/tom_howard.jpg
+        image_alt: "Tom Howard’s profile picture"
+        heading: Tom Howard
+        subheading: "@_TomHoward"
+        url: https://twitter.com/_TomHoward
+      - label: Investor
+        logo_path: /assets/images/partners/DACM.png
+        logo_alt: DACM logo
+        url: https://www.dacm.io/
       - label: Investor
         logo_path: /assets/images/partners/cogitent_ventures.png
         logo_alt: Cogitent Ventures logo
@@ -16,36 +56,10 @@ page_blocks:
         logo_path: /assets/images/partners/ac.svg
         logo_alt: Alcibiades Capital logo
         url: https://alcibiades.capital
-      - label: Grant Sponsor
-        logo_path: /assets/images/partners/harmony.png
-        logo_alt: Harmony logo
-        url: https://talk.harmony.one/t/valorem-options-flexible-derivatives-defi-primitive-for-harmony-blockchain/12733
-      - label: Advisor
-        image_path: /assets/images/partners/amadeo.jpg
-        image_alt: "Amadeo Brands’ profile picture"
-        heading: Amadeo Brands
-        subheading: "@amadeobrands"
-        url: https://twitter.com/amadeobrands
-      - label: Advisor
-        image_path: /assets/images/partners/tom_howard.jpg
-        image_alt: "Tom Howard’s profile picture"
-        heading: Tom Howard
-        subheading: "@_TomHoward"
-        url: https://twitter.com/_TomHoward
-      - label: Advisor
-        image_path: /assets/images/partners/bandit.jpg
-        image_alt: "bandit.eth’s profile picture"
-        heading: bandit.eth
-        subheading: "@mevbandit"
-        url: https://twitter.com/mevbandit
-      - label: Branding and App Design
-        logo_path: /assets/images/partners/cultmethod.svg
-        logo_alt: CultMethod logo
-        url: https://cultmethod.com
   - _id: connect
     heading: Want to get involved?
     text_markdown: |
-      Help us enable more efficient on-chain derivatives. Join our Discord server, get involved in the conversation, or make direct contributions to the project.
+      Help us enable more flexible on-chain options. Join our Discord server, get involved in the conversation, or make direct contributions to the protocol.
     links:
       - heading: Discord
         subheading: Join the conversation

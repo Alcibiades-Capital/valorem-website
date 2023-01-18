@@ -55,16 +55,12 @@ footer_groups:
   - social
 
 navigation_links_docs:
-  - url: /docs/what-is-valorem/
-    name: What is Valorem?
+  - url: /docs/options-smart-contracts/
+    name: Options Smart Contracts
     group:
       - documentation
-  - url: /docs/smart-contracts-overview/
-    name: Smart Contracts Overview
-    group:
-      - documentation
-  - url: /docs/valorem-options-litepaper/
-    name: Valorem Options Litepaper
+  - url: /docs/options-litepaper/
+    name: Options Litepaper
     group:
       - documentation
 
