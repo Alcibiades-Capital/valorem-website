@@ -21,7 +21,7 @@ navigation_links:
     group:
       - main
   - url: https://valorem.xyz/docs/options-litepaper/
-    name: Read Litepaper
+    name: Read litepaper
     visible:
       - header
     group:
