@@ -20,8 +20,8 @@ navigation_links:
       - footer
     group:
       - main
-  - url: https://app.valorem.xyz/
-    name: Launch app
+  - url: https://valorem.xyz/docs/options-litepaper/
+    name: Read litepaper
     visible:
       - header
     group:
