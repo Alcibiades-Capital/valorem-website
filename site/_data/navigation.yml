@@ -55,14 +55,56 @@ footer_groups:
   - social
 
 navigation_links_docs:
-  - url: /docs/options-smart-contracts/
-    name: Options Smart Contracts
-    group:
-      - documentation
   - url: /docs/options-litepaper/
     name: Options Litepaper
     group:
-      - documentation
+      - research
+        
+  - url: /docs/clearinghouse-overview/
+    name: Clearinghouse Overview
+    group:
+      - clearinghouse          
+  - url: /docs/clearinghouse-contracts/
+    name: Smart Contract ABI
+    group:
+      - clearinghouse  
+  - url: /docs/clearinghouse-subgraph/
+    name: Querying the Subgraph
+    group:
+      - clearinghouse
+  - url: /docs/clearinghouse-addresses/
+    name: Deployed Addresses
+    group:
+      - clearinghouse
+
+  # - url: /docs/clearinghouse-subgraph/
+  #   name: Exchange Overview
+  #   group:
+  #     - exchange
+  # - url: /docs/clearinghouse-subgraph/
+  #   name: Order Book API
+  #   group:
+  #     - exchange
+  # - url: /docs/clearinghouse-subgraph/
+  #   name: Integrating with the Exchange
+  #   group:
+  #     - exchange
+
+  - url: /docs/dev-guide-write-physically-settled/
+    name: How to write physically settled options
+    group:
+      - developer guides
+  - url: /docs/dev-guide-write-cash-settled/
+    name: How to write cash settled options
+    group:
+      - developer guides   
+  - url: /docs/dev-guide-write-option-chains-longtail/
+    name: How to write option chains on longtail assets
+    group:
+      - developer guides
 
 docs_groups:
-  - documentation
+  - research
+  - clearinghouse
+  # - exchange
+  - developer guides
