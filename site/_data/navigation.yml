@@ -91,17 +91,21 @@ navigation_links_docs:
   #     - exchange
 
   - url: /docs/dev-guide-write-physically-settled/
-    name: How to write physically settled options
+    name: Write physically settled options
     group:
       - developer guides
   - url: /docs/dev-guide-write-cash-settled/
-    name: How to write cash settled options
-    group:
-      - developer guides   
-  - url: /docs/dev-guide-write-option-chains-longtail/
-    name: How to write option chains on longtail assets
+    name: Write cash settled options
     group:
       - developer guides
+  - url: /docs/dev-guide-exercise-leveraged-long-flash-swap/
+    name: Exercise a leveraged long using a flash swap
+    group:
+      - developer guides
+  - url: /docs/dev-guide-write-option-chains-longtail/
+    name: Write option chains on longtail assets
+    group:
+      - developer guides    
 
 docs_groups:
   - research
