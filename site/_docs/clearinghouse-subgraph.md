@@ -4,7 +4,7 @@ title: Querying the Subgraph
 description: Developer documentation for the Valorem Options Clearinghouse subgraph.
 ---
 
-- TODO review and revise examples (feel free to add additional or remove extraneous)
+- TODO Nick review and revise examples (feel free to add additional or remove extraneous)
 
 The Clearinghouse Subgraph indexes data on the Valorem Options Clearinghouse smart contract using a GraphQL interface. It updates data in response to contract ABI function calls and events. The Subgraph can be used to power frontend apps and integration use cases.
 
