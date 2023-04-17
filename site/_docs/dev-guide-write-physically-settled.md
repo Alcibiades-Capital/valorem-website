@@ -144,7 +144,7 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$BOB_PRIVATE_KEY "exerc
 
 ## Redeeming a Claim
 
-Finally, we will redeem our claim NFT (using the Claim token ID returned from [`write`](/docs/clearinghouse-contracts/#redeem)), which is done by calling the [`redeem`](/docs/clearinghouse-contracts/#write) function. This function transfers out either one or both of the underlying and exercise assets, depending on the exercise assignment status of the Claim:
+Finally, we will redeem our claim NFT (using the Claim token ID returned from [`write`](/docs/clearinghouse-contracts/#write)), which is done by calling the [`redeem`](/docs/clearinghouse-contracts/#redeem) function. This function transfers out either one or both of the underlying and exercise assets, depending on the exercise assignment status of the Claim:
 - For unexercised positions, solely the `underlyingAsset`
 - For fully exercised positions, solely the `exerciseAsset`
 - For partially exercised positions, a mix of both assets in the correct proportions
@@ -182,4 +182,4 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "redeem(ui
 
 There we have it, a physically settled American option using the Valorem Clearinghouse. We learned how to setup our environment, create a new option type, transfer the long position to another address, exercise this long position, and finally redeem our claim over the collateral of the short position.
 
-Please get in touch on our [Discord server](#) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
+Please get in touch on our TODO [Discord server](#) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!

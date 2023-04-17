@@ -86,7 +86,7 @@ enum TokenType {
 
 ## Events
 ### Write events
-#### NewOptionType
+#### newOptionType
 Emitted when a new option type is created.
 
 - `optionId`: The token id of the new option type created.

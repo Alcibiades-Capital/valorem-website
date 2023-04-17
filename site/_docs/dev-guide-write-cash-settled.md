@@ -133,4 +133,4 @@ $ cast TODO
 
 There we have it, a cash settled American option using the Valorem Clearinghouse. We picked up from the [physical settlement developer guide](/docs/dev-guide-write-asset-settled) and learned how to exercise a long position and redeem a short position into cash.
 
-Please get in touch on our [Discord server](#) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
+Please get in touch on our TODO [Discord server](#) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
