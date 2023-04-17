@@ -100,7 +100,12 @@ html {
   }
   /* Label styling */
   label, .label {
-    @apply tracking-wider uppercase text-sm;
+  table {
+    border-collapse: collapse;
+  }
+  table, th, td {
+    @apply px-2 border border-gray-900;
+  }
   }
 }
 @layer components {
