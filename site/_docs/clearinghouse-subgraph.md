@@ -23,117 +23,85 @@ The following example queries can be used to retrieve useful data from the subgr
 
 ### Option tokens for an address
 ```graphql
-
+query OptionTokensForAddress($address: ID!) {
+  account(id: $address) {
+    ERC1155balances(where: { valueExact_gt: "0" }) {
+      token {
+        id
+        type
+        optionType {
+          id
+          underlyingAsset {
+            id
+            symbol
+            name
+            decimals
+          }
+          underlyingAmount
+          exerciseAsset {
+            id
+            symbol
+            name
+            decimals
+          }
+          exerciseAmount
+          exerciseTimestamp
+          expiryTimestamp
+          amountWritten
+          amountExercised
+        }
+      }
+      value
+    }
+  }
+}
 ```
 
 ### Claim NFTs for an address
 ```graphql
 
-```
-
-### Addresses writing options
-
-```graphql
-{
-  optionTypes(first: 5, orderBy: totalUnderlyingAmount, orderDirection: desc) {
-    id
-    totalUnderlyingAmount
-    totalExerciseAmount
-    totalOptions
-  }
-}
-```
-
-### Addresses exercising options
-
-```graphql
-{
-  optionExercises(first: 5, orderBy: amountExercised, orderDirection: desc) {
-    id
-    amountExercised
-    amountExercisedUnderlying
-    amountExercisedExercise
-  }
-}
-```
-
-### Popular underlying assets
-
-```graphql
-{
-  optionTypes(first: 5, orderBy: totalUnderlyingAmount, orderDirection: desc) {
-    id
-    underlyingAsset
-    totalUnderlyingAmount
-    totalExerciseAmount
-    totalOptions
-  }
-}
-```
-
-### Popular exercise assets
-
-```graphql
-{
-  optionTypes(first: 5, orderBy: totalExerciseAmount, orderDirection: desc) {
-    id
-    exerciseAsset
-    totalUnderlyingAmount
-    totalExerciseAmount
-    totalOptions
-  }
-}
-```
-
-### Recently created option types
-
-```graphql
-{
-  optionTypes(first: 5, orderBy: createdAt, orderDirection: desc) {
-    id
-    createdAt
-    updatedAt
-    creator
-    underlyingAsset
-    underlyingAmount
-    exerciseAsset
-    exerciseAmount
-    exerciseTimestamp
-    expiryTimestamp
-    settlementSeed
-    nextClaimKey
-  }
-}
-```
-
-### Recently exercised options
-
-```graphql
-{
-  optionExercises(first: 5, orderBy: timestamp, orderDirection: desc) {
-    id
-    timestamp
-    optionId
-    amount
-    amountExercised
-    amountExercisedUnderlying
-    amountExercisedExercise
-    amountRemaining
-    amountRemainingUnderlying
-    amountRemainingExercise
-  }
-}
-```
-
-### Recently redeemed claims
-
-```graphql
-{
-  claims(first: 5, orderBy: lastRedeem, orderDirection: desc) {
-    id
-    lastRedeem
-    lastRedeemAmount
-    lastRedeemPrice
+query ClaimNFTsForAddress($address: ID!) {
+  account(id: $address) {
+    ERC1155balances(where: { valueExact_gt: "0" }) {
+      token {
+        id
+        type
+        claim {
+          id
+          writer {
+            id
+          }
+          writeTx {
+            id
+          }
+          redeemed
+          redeemer {
+            id
+          }
+          redeemTx {
+            id
+          }
+          optionType {
+            id
+            underlyingAsset {
+              id
+              symbol
+            }
+            underlyingAmount
+            exerciseAsset {
+              id
+              symbol
+            }
+            exerciseAmount
+            exerciseTimestamp
+            expiryTimestamp
+            amountWritten
+            amountExercised
+          }
+        }
+      }
+      value
+    }
   }
 }
 ```
