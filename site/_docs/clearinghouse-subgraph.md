@@ -4,8 +4,6 @@ title: Querying the Subgraph
 description: Developer documentation for the Valorem Options Clearinghouse subgraph.
 ---
 
-- TODO Nick review and revise examples (feel free to add additional or remove extraneous)
-
 The Clearinghouse Subgraph indexes data on the Valorem Options Clearinghouse smart contract using a GraphQL interface. It updates data in response to contract ABI function calls and events. The Subgraph can be used to power frontend apps and integration use cases.
 
 The GraphQL schema for the subgraph is defined at [/schema.graphql](https://github.com/valorem-labs-inc/valorem-subgraph/blob/master/schema.graphql)
