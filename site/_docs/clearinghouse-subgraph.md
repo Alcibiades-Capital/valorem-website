@@ -15,7 +15,7 @@ The GraphQL schema for the subgraph is defined at [/schema.graphql](https://gith
 | Network            | Subgraph URL |
 | ------------------ | ------------ |
 | Arbitrum           | [/valorem-options-clearinghouse-arbitrum](https://thegraph.com/legacy-explorer/subgraph/valorem-labs/valorem-options-clearinghouse-arbitrum)        |
-| Arbitrum Goerli    | [/valorem-options-clearinghouse-arbitrum-goerli](https://thegraph.com/legacy-explorer/subgraph/balancer-labs/valorem-options-clearinghouse-arbitrum-goerli) |
+| Arbitrum Goerli    | [/valorem-options-clearinghouse-arbitrum-goerli](https://thegraph.com/hosted-service/subgraph/nickadamson/ch-arb-goerli) |
 
 ## Example Queries
 
