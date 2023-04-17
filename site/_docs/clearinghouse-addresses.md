@@ -8,5 +8,4 @@ The following are the deployed addresses for the Valorem Options Clearinghouse.
 
 | Network            | Address              |
 | ------------------ | -------------------- |
-| Arbitrum           | `0xDEADCAFE`         |
-| Arbitrum Goerli    | `0xDEADCAFE`         |
+| Arbitrum Goerli    | `0x7513F78472606625A9B505912e3C80762f6C9Efb` |
