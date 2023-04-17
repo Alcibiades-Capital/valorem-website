@@ -100,6 +100,8 @@ html {
   }
   /* Label styling */
   label, .label {
+    @apply text-sm tracking-wider uppercase;
+  }
   table {
     border-collapse: collapse;
   }
