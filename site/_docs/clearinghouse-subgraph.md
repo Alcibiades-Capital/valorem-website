@@ -105,3 +105,46 @@ query ClaimNFTsForAddress($address: ID!) {
   }
 }
 ```
+
+### Addresses writing options
+
+```graphql
+{
+  claims(first: 5, orderBy: amountWritten, orderDirection: desc) {
+    id
+    writer {
+      id
+    }
+  }
+}
+```
+
+### Popular underlying assets
+
+```graphql
+query PopularUnderlyingAssets {
+  optionTypes(orderBy: amountWritten, orderDirection: desc) {
+    id
+    amountWritten
+    underlyingAsset {
+      id
+      symbol
+      name
+    }
+  }
+}
+```
+
+### Popular exercise assets
+
+```graphql
+query PopularExerciseAssets {
+  optionTypes(orderBy: amountExercised, orderDirection: desc) {
+    exerciseAsset {
+      id
+      symbol
+      name
+    }
+  }
+}
+```
