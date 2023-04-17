@@ -5,6 +5,7 @@
     padding: 0;
     list-style: none;
     position: relative;
+    align-items: center;
 }
 
 .tab>* {
