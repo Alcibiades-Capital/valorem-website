@@ -25,8 +25,6 @@ The structure of an option is as follows:
 
 The Clearinghouse is unopinionated on the type of option (call vs. put), where, when, or for how much an option is bought/sold, and whether or not the option is profitable when exercised. Because all options written with Valorem are fully collateralized, physical settlement at exercise or redeem time is instant and gas-efficient.
 
-Read the [litepaper](/docs/options-litepaper) for more insight into the business use cases that Valorem enables.
-
 ## Trust Model
 ### Actors
 There are 3 main actors in the core protocol:
