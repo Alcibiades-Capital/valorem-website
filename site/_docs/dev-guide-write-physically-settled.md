@@ -115,9 +115,9 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "safeTrans
 
 ## Exercising an option
 
-Now that we have transferred some of our options to Bob, as long as it is within the exercise window defined on the option type (on or after `exerciseTimestamp`, before `expiryTimestamp`), holders of these Option tokens can exercise their position.
+We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for the option type (on or after `exerciseTimestamp`, before `expiryTimestamp`), he can exercise his position.
 
-Let's imagine for this example that the position is finishing in-the-money, and Bob wants to exercise his options. This is done by calling the [`exercise`](/docs/clearinghouse-contracts/#exercise) function. The result is that Bob's 4 Option tokens are burned, the required amount of the exercise asset is transferred into the Clearinghouse (4 * 2100e18 LUSD), and the correct amount of the underlying asset (4 * 1 ether WETH) is transferred to Bob.
+Let's imagine for this example that the position is finishing in-the-money, and Bob wants to exercise his options. This is done by calling the [`exercise`](/docs/clearinghouse-contracts/#exercise) function. The result is that Bob's 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e18 LUSD) is transferred to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1 ether WETH) is transferred from the Clearinghouse to Bob.
 
 Note again that sufficient ERC20 approval must be granted to the Clearinghouse contract before calling this function (although in this case, for the exercise asset, LUSD).
 
@@ -144,7 +144,7 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$BOB_PRIVATE_KEY "exerc
 
 ## Redeeming a Claim
 
-Finally, we will redeem our claim NFT (using the Claim token ID returned from [`write`](/docs/clearinghouse-contracts/#write)), which is done by calling the [`redeem`](/docs/clearinghouse-contracts/#redeem) function. This function transfers out either one or both of the underlying and exercise assets, depending on the exercise assignment status of the Claim:
+Finally, we will redeem our Claim NFT (using the Claim token ID returned from [`write`](/docs/clearinghouse-contracts/#write)), which is done by calling the [`redeem`](/docs/clearinghouse-contracts/#redeem) function. This function transfers out either one or both of the underlying and exercise assets, depending on the exercise assignment status of the Claim:
 - For unexercised positions, solely the `underlyingAsset`
 - For fully exercised positions, solely the `exerciseAsset`
 - For partially exercised positions, a mix of both assets in the correct proportions
@@ -180,6 +180,6 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "redeem(ui
 
 ## Conclusion
 
-There we have it, a physically settled American option using the Valorem Clearinghouse. We learned how to setup our environment, create a new option type, transfer the long position to another address, exercise this long position, and finally redeem our claim over the collateral of the short position.
+There we have it, a physically settled American option using the Valorem Options Clearinghouse. We learned how to create a new option type and write options, transfer a long position to another address, exercise this long position, and finally redeem our claim over the collateral of the short position.
 
-Please get in touch on our TODO [Discord server](#) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
+Please get in touch on our [Discord server](https://discord.gg/5jZdPuY9kR) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!

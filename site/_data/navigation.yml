@@ -77,19 +77,6 @@ navigation_links_docs:
     group:
       - clearinghouse
 
-  # - url: /docs/clearinghouse-subgraph/
-  #   name: Exchange Overview
-  #   group:
-  #     - exchange
-  # - url: /docs/clearinghouse-subgraph/
-  #   name: Order Book API
-  #   group:
-  #     - exchange
-  # - url: /docs/clearinghouse-subgraph/
-  #   name: Integrating with the Exchange
-  #   group:
-  #     - exchange
-
   - url: /docs/dev-guide-write-physically-settled/
     name: Write physically settled options
     group:
@@ -102,5 +89,4 @@ navigation_links_docs:
 docs_groups:
   - research
   - clearinghouse
-  # - exchange
   - developer guides
