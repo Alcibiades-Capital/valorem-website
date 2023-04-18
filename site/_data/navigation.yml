@@ -55,14 +55,29 @@ footer_groups:
   - social
 
 navigation_links_docs:
-  - url: /docs/options-smart-contracts/
-    name: Options Smart Contracts
-    group:
-      - documentation
   - url: /docs/options-litepaper/
     name: Options Litepaper
     group:
-      - documentation
+      - research
+        
+  - url: /docs/clearinghouse-overview/
+    name: Clearinghouse Overview
+    group:
+      - clearinghouse          
+  - url: /docs/clearinghouse-contracts/
+    name: Smart Contract ABI
+    group:
+      - clearinghouse  
+  - url: /docs/clearinghouse-subgraph/
+    name: Querying the Subgraph
+    group:
+      - clearinghouse
+  - url: /docs/clearinghouse-addresses/
+    name: Deployed Addresses
+    group:
+      - clearinghouse
 
 docs_groups:
-  - documentation
+  - research
+  - clearinghouse
+  - developer guides

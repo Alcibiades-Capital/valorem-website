@@ -58,6 +58,7 @@ plugins:
   - jekyll-last-modified-at
   - jekyll-paginate-v2
   - jekyll-analytics
+  - jekyll-tabs
 
 # Plugin settings
 responsive_image:
