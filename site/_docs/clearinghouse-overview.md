@@ -79,7 +79,5 @@ What can each actor do, when and with how much, of each asset?
 
 ## Security Info
 
-TODO medium issues
-
 - Audits: [PDF reports](https://github.com/valorem-labs-inc/valorem-core/tree/master/audits)
 - Security contact: info(at)valorem(dot)xyz
