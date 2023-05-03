@@ -50,9 +50,9 @@
 " />
 <meta name="author" content="Alcibiades" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options.
+<meta name="description" content="This paper outlines Valorem Options, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 " />
-<meta property="og:description" content="This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options.
+<meta property="og:description" content="This paper outlines Valorem Options, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 " />
 <link rel="canonical" href="https://valorem.xyz/docs/options-litepaper/" />
 <meta property="og:url" content="https://valorem.xyz/docs/options-litepaper/" />
@@ -69,7 +69,7 @@
         "@context":"https://schema.org",
         "@type":"WebPage",
         "name":"Valorem Options Litepaper",
-        "description":"This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options.
+        "description":"This paper outlines Valorem Options, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ",
         "publisher":{
             "@type":"Organization",
@@ -90,7 +90,7 @@
     
     <section class="sticky top-0 z-[99] s-xxs bg-gradient-default from-purple-400 to-white">
   <div class="max-w-screen-md mx-auto text-center text-xs lg:text-sm prose">
-    Open beta available now! Help shape the future of ERC20 options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+    Invite-only beta coming soon! Help shape the future of on-chain options.
 
   </div>
 </section>
@@ -275,17 +275,16 @@
                 <hr>
                 <h2 id="introduction">Introduction</h2>
 
-<p>In this paper, we present <a href="https://valorem.xyz/">Valorem</a> Options, an option 
-contract underwriting system and clearinghouse implemented for the 
+<p>In this paper, we present <a href="https://valorem.xyz/">Valorem</a> Options, an option contract clearing and settling system implemented for the 
 <a href="https://ethereum.github.io/yellowpaper/paper.pdf">Ethereum Virtual Machine</a>.
 The design of the Valorem Options protocol aims to provide superior 
-flexibility when compared with existing options protocols, by removing price 
+flexibility and execution costs when compared with existing options protocols, by removing price 
 oracles, reliance on existing DeFi primitives, and premium value assumptions. 
 Valorem Options are settled physically using a novel fair settlement 
 algorithm. The protocol can interact directly with any pair of non-rebasing, 
 non-fee-on-transfer, 
 <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-20/">ERC-20</a> 
-tokens to enable the transfer, and settlement of long and short put and call 
+tokens to enable the transfer and settlement of long and short put and call 
 option positions in a permissionless and non-custodial manner.</p>
 
 <h2 id="motivation">Motivation</h2>
@@ -299,7 +298,7 @@ past year — both centralized exchanges, such as Deribit, and on-chain protocol
 
 <p>There are already a number of on-chain options market making protocols. While
 most of these trade products which emulate traditional options structures, the
-reliance on price oracles and assumptions around option premiums via models
+reliance on price oracles and assumptions around option premia via models
 such as Black-Scholes make them inflexible and subject to toxic orderflow.
 Recently, protocols synthesizing options via single tick Uniswap V3 LPs have
 emerged, but they are restricted by the lack of Uniswap V3 deployment across
@@ -319,12 +318,24 @@ by allowing new use cases to evolve.</p>
 ability to restrict who can or cannot use it. Any potential user can perform
 any operation that the protocol supports.</p>
 
+<h3 id="physically-settled">Physically settled</h3>
+
+<p>Valorem options are physically settled, with transfer of the underlying assets on
+settlement. This simplifies the core mechanism and smart contract design, while 
+still supporting cash settlement through flash loans and swaps.</p>
+
 <h3 id="fully-collateralized">Fully collateralized</h3>
 
 <p>Options written via the protocol are fully collateralized, reducing
 counterparty risk and ensuring settlement. This leaves the opportunity for
 higher level margining systems, with risk, to be implemented atop the protocol, 
 whilst remaining un-opinionated at the base layer.</p>
+
+<h3 id="minimal">Minimal</h3>
+
+<p>Valorem’s protocol design is minimal, with a single smart contract for clearing
+and settling business logic. This enables superb execution costs to write and
+exercise options, along with an ergonomic developer experience.</p>
 
 <h3 id="composable">Composable</h3>
 
@@ -335,13 +346,13 @@ that it can easily be integrated into other smart contract systems as a
 <h2 id="mechanism">Mechanism</h2>
 
 <p>The Valorem Options protocol, at it’s core, is a non-custodial engine for the
-underwriting and physical settlement of options, consisting of a set of
+clearing and physical settlement of options, consisting of a set of
 smart contracts. The engine utilizes the
 <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/">ERC1155 multi-token standard</a>
 to gas-efficiently tokenize long and short positions, or <strong>options</strong> and 
 <strong>claims</strong>. On-chain actors — either individuals using wallets, or protocols 
 using smart contracts — can create a new option type, defined as the
-unique tuple with regard option contract properties. They can then write
+unique tuple with regard to the option contract’s properties. They can then write
 options of that type. Writing issues one or more fungible option tokens, and 
 a non-fungible claim token, representing a claim to the collateral used for 
 writing, or the exercise asset if that claim is assigned exercise via a 
@@ -351,7 +362,7 @@ window, after which the claim tokens can be redeemed.</p>
 
 <h3 id="creating-a-new-option-type">Creating a new option type</h3>
 
-<p>Actors can permissionlessly <a href="/docs/options-smart-contracts#write-options">create a new option type</a> by specifying:</p>
+<p>Actors can permissionlessly <a href="/docs/clearinghouse-contracts#write-options">create a new option type</a> by specifying:</p>
 
 <ul>
   <li>The <strong>underlying asset</strong> for the option; this is the token the option 
@@ -368,7 +379,7 @@ option.</li>
 
 <h4 id="option-data-model">Option data model</h4>
 
-<p>A Valorem option is represented with the <a href="/docs/options-smart-contracts#option">following struct</a>, packed into
+<p>A Valorem option is represented with the following <a href="/docs/clearinghouse-contracts#option">data structure</a>, packed into
 4 storage slots:</p>
 
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Option</span> <span class="p">{</span>
@@ -405,9 +416,21 @@ contract’s properties, which comprise a unique hash:</p>
 <p>This <code class="language-plaintext highlighter-rouge">uint160 optionKey</code> is used to determine if that type of option already 
 exists and, if it doesn’t, create it.</p>
 
+<h4 id="claim-data-model">Claim data model</h4>
+
+<p>A Valorem claim is represented with the following virtual <a href="/docs/clearinghouse-contracts#claim">data structure</a>, which is not represented directly in storage:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    <span class="k">struct</span> <span class="n">Claim</span> <span class="p">{</span>
+        <span class="kt">uint256</span> <span class="n">amountWritten</span><span class="p">;</span>
+        <span class="kt">uint256</span> <span class="n">amountExercised</span><span class="p">;</span>
+        <span class="kt">uint256</span> <span class="n">optionId</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
 <h4 id="token-address-space">Token address space</h4>
 
-<p>The ERC-1155 standard has a 256-bit address space for <a href="/docs/options-smart-contracts#tokentype">sub-tokens</a>. Valorem uses 
+<p>The ERC-1155 standard has a 256-bit address space for <a href="/docs/clearinghouse-contracts/#tokentype">sub-tokens</a>. Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing <code class="language-plaintext highlighter-rouge">uint96 claimKey</code> 
@@ -417,12 +440,12 @@ follows:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MSb
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
 0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
                                           LSb
 </code></pre></div></div>
@@ -437,7 +460,7 @@ and <code class="language-plaintext highlighter-rouge">type(uint96).max - 1</cod
 
 <h3 id="writing-options">Writing options</h3>
 
-<p>Once an option type has been created, any actor can <a href="/docs/options-smart-contracts#write">write options</a> of that 
+<p>Once an option type has been created, any actor can <a href="/docs/clearinghouse-contracts#write">write options</a> of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -453,7 +476,7 @@ providing the claim NFT identifier when writing.</p>
 
 <h3 id="exercising-options">Exercising options</h3>
 
-<p>Holders of an option token can <a href="/docs/options-smart-contracts#exercise">exercise the option</a> pursuant to the following 
+<p>Holders of an option token can <a href="/docs/clearinghouse-contracts#exercise">exercise the option</a> pursuant to the following 
 conditions:</p>
 
 <ul>
@@ -482,21 +505,21 @@ exercised, and the next write creates a new bucket. This defines the bucket
 lifecycle algorithm.</p>
 
 <p>Exercise assignment is performed using a deterministic algorithm seeded by
-the <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, with entropy from actors who write and exercise
-options without either party being able to influence the outcome. The runtime 
+the <code class="language-plaintext highlighter-rouge">uint160 optionKey</code>, without actors who write and exercise
+being able to influence the outcome. The runtime 
 complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is the number 
 of buckets consumed by the algorithm to fulfill the exercise.</p>
 
 <p>However, because the probability of an exercise assignment to 
 the most recently created bucket is $ 1 \over n $, where $ n $ is the number 
-of buckets, and because $ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $, 
+of buckets, and because $ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $ is the <a href="https://mathworld.wolfram.com/HarmonicSeries.html">harmonic series</a>, 
 and since 
-$ \sum_{n=1}^k {1 \over n} = H_k $, and $ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and $ \gamma \approx 0.5772156649 $, 
+$ \sum_{n=1}^k {1 \over n} = H_k $, and $ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and <a href="https://mathworld.wolfram.com/Euler-MascheroniConstant.html">Euler’s constant</a> $ \gamma \approx 0.57721 $, 
 the average case growth rate of the number of buckets for an option type 
 is $ \mathcal{O}(\ln n) $. This makes it prohibitively expensive for a
 malicious writer to perform a denial of service attack on options exercisers,
 and generally keeps the runtime complexity to exercise an option type bounded
-by $ \mathcal{O}(\ln n) $ where $ n $ is the number of writes followed by a 
+by $ \mathcal{O}(\ln n) $, where $ n $ is the number of writes followed by a 
 partial exercise which occur.</p>
 
 <h4 id="what-comprises-a-claim">What comprises a claim?</h4>
@@ -549,7 +572,7 @@ division. Resulting in the following summations:</p>
 
 <h3 id="redeeming-claims">Redeeming claims</h3>
 
-<p>Holders of a claim NFT can <a href="/docs/options-smart-contracts#redeem">redeem their claim</a> from the engine when current 
+<p>Holders of a claim NFT can <a href="/docs/clearinghouse-contracts#redeem">redeem their claim</a> from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
@@ -579,12 +602,11 @@ payoff $ max(0,X-S_T) $ for the holder, and the payoff  $ -max(0,X-S_T) $
 for the writer. This can be accomplished by writing a call option with the 
 exercise and underlying asset order swapped. An ETH/DAI call is a DAI/ETH put.</p>
 
-<h4 id="european-american-and-bermudan-options">European, American, and Bermudan options</h4>
+<h4 id="european-and-american-options">European and American options</h4>
 
 <p>European options can be created by setting the exercise timestamp to the 
 expiry timestamp minus one day. American options can be created by setting 
-an exercise timestamp to the current block timestamp upon creation. Bermudan
-options can be created by setting an exercise timestamp to a future timestamp.</p>
+an exercise timestamp to the current block timestamp upon creation.</p>
 
 <h3 id="trading-and-market-making">Trading and market making</h3>
 
@@ -693,7 +715,7 @@ an attack vector if not done correctly.</p>
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Introduction</a></li><li class=""><a href="#motivation" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Motivation</a></li><li class=""><a href="#guiding-principles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Guiding principles</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#permissionless" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Permissionless</a></li><li class=""><a href="#fully-collateralized" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fully collateralized</a></li><li class=""><a href="#composable" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Composable</a></li></ol></li><li class=""><a href="#mechanism" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mechanism</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#creating-a-new-option-type" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Creating a new option type</a></li><li class=""><a href="#writing-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Writing options</a></li><li class=""><a href="#exercising-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercising options</a></li><li class=""><a href="#fair-exercise-assignment" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fair exercise assignment</a></li><li class=""><a href="#redeeming-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeeming claims</a></li></ol></li><li class=""><a href="#use-cases" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Use cases</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#simple-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Simple options</a></li><li class=""><a href="#trading-and-market-making" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trading and market making</a></li><li class=""><a href="#structured-products" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structured products</a></li><li class=""><a href="#vesting-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Vesting options</a></li><li class=""><a href="#mitigation-of-cross-protocol-financial-contagion" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mitigation of cross-protocol financial contagion</a></li></ol></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Introduction</a></li><li class=""><a href="#motivation" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Motivation</a></li><li class=""><a href="#guiding-principles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Guiding principles</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#permissionless" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Permissionless</a></li><li class=""><a href="#physically-settled" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Physically settled</a></li><li class=""><a href="#fully-collateralized" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fully collateralized</a></li><li class=""><a href="#minimal" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Minimal</a></li><li class=""><a href="#composable" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Composable</a></li></ol></li><li class=""><a href="#mechanism" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mechanism</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#creating-a-new-option-type" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Creating a new option type</a></li><li class=""><a href="#writing-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Writing options</a></li><li class=""><a href="#exercising-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercising options</a></li><li class=""><a href="#fair-exercise-assignment" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fair exercise assignment</a></li><li class=""><a href="#redeeming-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeeming claims</a></li></ol></li><li class=""><a href="#use-cases" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Use cases</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#simple-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Simple options</a></li><li class=""><a href="#trading-and-market-making" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trading and market making</a></li><li class=""><a href="#structured-products" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structured products</a></li><li class=""><a href="#vesting-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Vesting options</a></li><li class=""><a href="#mitigation-of-cross-protocol-financial-contagion" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Mitigation of cross-protocol financial contagion</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
@@ -727,7 +749,7 @@ TeX: {
     <div class="max-w-screen-xl mx-auto flex flex-col space-y-8 items-start justify-between lg:flex-row lg:space-y-0">
         <div class="space-y-4 max-w-md mx-auto ml-0">
           <a href="/" aria-label="Home page" class="inline-block text-purple-500"><svg width="258" height="58" viewBox="0 0 258 58" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-8 w-auto"><path d="M69.3577 14.5031H29.7265L39.6312 0H0L19.8156 29L29.7265 14.5031L39.6312 29H19.8156H0L19.8156 58L39.6312 29L49.5421 43.5031L69.3577 14.5031Z"/><path d="M101.3 18.6619H105.601L95.1249 41.5752H91.7861L81.1243 18.6619H85.7911L93.5672 36.0199L101.3 18.6619ZM126.055 18.6619H130.22V41.1673H126.055V37.2928C125.416 38.4298 123.219 41.7111 118.05 41.7111C112.104 41.7111 107.022 37.3361 107.022 29.9146C107.022 22.6229 112.098 18.1181 118.05 18.1181C123.033 18.1181 125.46 21.1707 126.055 22.4004V18.6619ZM126.142 29.9146C126.142 25.4036 123.213 21.9432 118.819 21.9432C114.245 21.9432 111.316 25.4036 111.316 29.9146C111.316 34.4256 114.245 37.8861 118.819 37.8861C123.219 37.8861 126.142 34.4256 126.142 29.9146ZM135.706 41.1673H139.87V7.63782H135.706V41.1673ZM168.374 29.9146C168.374 36.6131 163.204 41.7111 156.477 41.7111C149.706 41.7111 144.58 36.6069 144.58 29.9146C144.58 23.2223 149.706 18.1181 156.477 18.1181C163.204 18.1119 168.374 23.2161 168.374 29.9146ZM164.073 29.9146C164.073 25.4036 161.007 21.9432 156.477 21.9432C151.947 21.9432 148.881 25.4963 148.881 29.9146C148.881 34.3329 151.947 37.8861 156.477 37.8861C161.007 37.8861 164.073 34.4256 164.073 29.9146ZM177.155 22.8083V18.6619H172.991V41.1673H177.155V28.4563C177.155 24.4458 179.122 22.6229 184.931 22.6229H190.697V18.4765H185.024C179.718 18.4765 177.801 21.1646 177.155 22.8083ZM215.316 30.4151H196.512C196.741 34.6048 199.757 37.8861 204.201 37.8861C208.731 37.8861 210.562 35.4699 210.928 34.7407H215.049C214.683 36.6996 211.803 41.7111 204.207 41.7111C197.207 41.7111 192.31 36.5204 192.31 29.9146C192.31 23.1296 197.207 18.1181 203.791 18.1181C210.419 18.1119 215.316 23.0369 215.316 30.4151ZM210.692 26.9547C209.637 23.5375 207.217 21.6713 203.785 21.6713C200.123 21.6713 197.653 23.6734 196.785 26.9547H210.692V26.9547ZM248.35 18.1614C243.546 18.1614 240.983 21.4426 240.021 23.6301C238.557 20.3056 235.491 18.1614 231.463 18.1614C227.299 18.1614 224.736 20.9854 223.867 22.8083V18.6619H219.703V41.1673H223.867V29.0001C223.867 24.9464 226.474 21.9864 230.458 21.9864C234.3 21.9864 236.726 24.8104 236.726 29.0001V41.1612H240.934V29.0001C240.934 24.9464 243.54 21.9864 247.524 21.9864C251.366 21.9864 253.792 24.8104 253.792 29.0001V41.1612H258V28.2276C258 22.3943 254.065 18.1614 248.35 18.1614Z"/></svg></a>
-          <div><p>Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing their own physically settled options permissionlessly on any ERC20 token pair.</p>
+          <div><p>Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing physically settled options permissionlessly on any ERC20 token pair.</p>
 </div>
         </div>
         <nav class="max-w-md flex flex-wrap gap-10 md:gap-20 md:justify-start" aria-label="Footer">
