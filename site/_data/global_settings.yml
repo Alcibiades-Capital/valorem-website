@@ -2,7 +2,7 @@ site:
   title: Valorem Protocol
   copyright: Valorem Labs Inc
   description: |
-  Write permissionless physically settled options on any ERC20 token pair.
+    Write permissionless physically settled options on any ERC20 token pair.
 banner_markdown: |
   Invite beta coming soon! Help shape the future of on-chain options.
 footer_markdown: |
