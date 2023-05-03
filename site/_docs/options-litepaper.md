@@ -66,9 +66,9 @@ whilst remaining un-opinionated at the base layer.
 
 ### Minimal
 
-Valorem protocol is minimal, with a single smart contract for clearing and settling 
-business logic. This enables superb execution costs to write and exercise options,
-along with an ergonomic developer experience.
+Valorem's protocol design is minimal, with a single smart contract for clearing
+and settling business logic. This enables superb execution costs to write and
+exercise options, along with an ergonomic developer experience.
 
 ### Composable
 
@@ -110,7 +110,7 @@ Actors can permissionlessly [create a new option type](/docs/options-smart-contr
 
 #### Option data model
 
-A Valorem option is represented with the [following struct](/docs/options-smart-contracts#option), packed into
+A Valorem option is represented with the [following data structure](/docs/options-smart-contracts#option), packed into
 4 storage slots:
 
 ```solidity
@@ -151,7 +151,7 @@ exists and, if it doesn't, create it.
 
 #### Claim data model
 
-A Valorem claim is represented with the following struct, which is virtual and not stored directly in storage:
+A Valorem claim is represented with the following virtual data structure, which is not represented directly in storage:
 
 ```solidity
 

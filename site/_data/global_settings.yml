@@ -4,11 +4,11 @@ site:
   description: |
     Write permissionless physically settled options on any ERC20 token pair.
 banner_markdown: |
-  Invite beta coming soon! Help shape the future of on-chain options.
+  Invite-only beta coming soon! Help shape the future of on-chain options.
 footer_markdown: |
-  Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing physically settled options on any ERC20 token pair.
+  Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing physically settled options permissionlessly on any ERC20 token pair.
 default_cta:
-  heading: Mainnet is coming soon. In the meantime, join our Discord server and join our beta.
+  heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
   buttons:
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
