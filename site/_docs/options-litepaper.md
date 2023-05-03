@@ -66,7 +66,7 @@ whilst remaining un-opinionated at the base layer.
 
 ### Minimal
 
-The protocol is minimal, with a single smart contract for clearing and settling 
+Valorem protocol is minimal, with a single smart contract for clearing and settling 
 business logic. This enables superb execution costs to write and exercise options,
 along with an ergonomic developer experience.
 
