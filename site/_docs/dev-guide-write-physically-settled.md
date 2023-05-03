@@ -37,9 +37,9 @@ The simplicity of this *Asset A In, Asset B Out* mechanism is how Valorem is abl
 IValoremOptionsClearinghouse clearinghouse = new IValoremOptionsClearinghouse(CLEARINGHOUSE_ADDRESS);
 
 // Setup option parameters.
-address WETH_ADDRESS = 0xTODO;
+address WETH_ADDRESS = 0x...;
 uint96 underlyingAmount = 1 ether;
-address LUSD_ADDRESS = 0xTODO;
+address LUSD_ADDRESS = 0x...;
 uint96 exercisePrice = 2100e18;
 uint40 earliestExercise = block.timestamp;
 uint40 expiry = earliestExercise + 1 weeks;
@@ -58,7 +58,7 @@ uint256 optionId = clearinghouse.newOptionType({
 
 {% tab log bash %}
 ```bash
-$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "newOptionType(address,uint96,address,uint96,uint40,uin40) (uint256)" "0xTODO" 1e18 "0xTODO" 2100e18 TODONOW TODONOWPLUSONEWEEK
+$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "newOptionType(address,uint96,address,uint96,uint40,uin40) (uint256)" "$WETH" 1e18 "$LUSD" 2100e18 1681488000 1682092800
 ```
 {% endtab %}
 
@@ -107,7 +107,7 @@ clearinghouse.safeTransferFrom(address(this), BOB, optionId, 4, "");
 
 {% tab log bash %}
 ```bash
-$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "safeTransferFrom(address,address,uint256,bytes32TODO)" "$ALICE_ADDRESS" "$BOB_ADDRESS" $OPTION_ID 4 ""
+$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "safeTransferFrom(address,address,uint256,bytes)" "$ALICE_ADDRESS" "$BOB_ADDRESS" $OPTION_ID 4 ""
 ```
 {% endtab %}
 
@@ -149,24 +149,27 @@ Finally, we will redeem our Claim NFT (using the Claim token ID returned from [`
 - For fully exercised positions, solely the `exerciseAsset`
 - For partially exercised positions, a mix of both assets in the correct proportions
 
-In our example, TODO. And we can always use the [`claim`](/docs/clearinghouse-contracts/#claim) function to check the exercise status of our Claim NFT before redeeming.
+In our example, we will redeem the WETH and LUSD remaining in the position. And we can always use the [`claim`](/docs/clearinghouse-contracts/#claim) function to check the exercise status of our Claim NFT before redeeming.
 
 {% tabs log %}
 
 {% tab log solidity %}
 ```solidity
+
 // Warp to the expiry timestamp.
 vm.warp(expiry);
+
+// Check out claim position
+(, int256 underlyingAmount,, int256 exerciseAmount) = clearinghouse.position(claimId);
 
 // Redeem our claim.
 clearinghouse.redeem(claimId);
 
 // Log the amount of WETH and LUSD we received upon redemption.
-TODO
+uint256 wethBalance = WETH.balanceOf(address(this));
 uint256 lusdBalance = LUSD.balanceOf(address(this));
-emit LogUint("LUSD received from swap", lusdBalance);
-emit LogUint("LUSD received from claim", uint256(exerciseAmount));
-emit LogUint("Total LUSD received", lusdBalance + uint256(exerciseAmount));
+emit log_named_uint("WETH received", lusdBalance);
+emit log_named_uint("LUSD received", uint256(exerciseAmount));
 ```
 {% endtab %}
 

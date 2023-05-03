@@ -8,8 +8,6 @@ Picking up from where we left off in the previous guide to writing [physically s
 
 ## Writing an option 
 
-XYZ
-
 {% tabs log %}
 
 {% tab log solidity %}
@@ -28,7 +26,8 @@ uint256 optionId = clearinghouse.newOptionType({
 uint256 claimId = clearinghouse.write(optionId, 10);
 
 // Transfer 5 options to Bob.
-clearinghouse.transferFrom(address(this), bob, optionId, 5);
+address BOB = address(0xB0B);
+clearinghouse.safeTransferFrom(address(this), BOB, optionId, 5, "");
 ```
 {% endtab %}
 
@@ -41,8 +40,6 @@ $ cast TODO
 {% endtabs %}
 
 ## Exercising a long position with cash settlement
-
-XYZ
 
 {% tabs log %}
 
@@ -82,8 +79,6 @@ $ cast TODO
 
 ## Redeeming a short position with cash settlement
 
-XYZ
-
 {% tabs log %}
 
 {% tab log solidity %}
@@ -114,10 +109,9 @@ ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleP
 
 // Log the amount of LUSD we received for cash settled writing.
 uint256 lusdBalance = LUSD.balanceOf(address(this));
-TODO incorrect logging syntax
-emit LogUint("LUSD received from swap", lusdBalance);
-emit LogUint("LUSD received from claim", uint256(exerciseAmount));
-emit LogUint("Total LUSD received", lusdBalance + uint256(exerciseAmount));
+emit log_named_uint("LUSD received from swap", lusdBalance);
+emit log_named_uint("LUSD received from claim", uint256(exerciseAmount));
+emit log_named_uint("Total LUSD received", lusdBalance + uint256(exerciseAmount));
 ```
 {% endtab %}
 
