@@ -2,13 +2,13 @@ site:
   title: Valorem Protocol
   copyright: Valorem Labs Inc
   description: |
-    Write permissionless physically settled options on any ERC20 token.
+  Write permissionless physically settled options on any ERC20 token pair.
 banner_markdown: |
-  Open beta available now! Help shape the future of ERC20 options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+  Invite beta coming soon! Help shape the future of on-chain options.
 footer_markdown: |
-  Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing their own physically settled options permissionlessly on any ERC20 token pair.
+  Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing physically settled options on any ERC20 token pair.
 default_cta:
-  heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
+  heading: Mainnet is coming soon. In the meantime, join our Discord server and join our beta.
   buttons:
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57

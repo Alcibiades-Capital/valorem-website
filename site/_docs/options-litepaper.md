@@ -3,16 +3,15 @@ date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-12-22 00:00:00 +01
 title: Valorem Options Litepaper
 usemathjax: true
-description: This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options. 
+description: This paper outlines Valorem Options, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ---
 
 ## Introduction
 
-In this paper, we present [Valorem](https://valorem.xyz/) Options, an option 
-contract underwriting system and clearinghouse implemented for the 
+In this paper, we present [Valorem](https://valorem.xyz/) Options, an option contract clearing and settling system implemented for the 
 [Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf).
 The design of the Valorem Options protocol aims to provide superior 
-flexibility when compared with existing options protocols, by removing price 
+flexibility and execution costs when compared with existing options protocols, by removing price 
 oracles, reliance on existing DeFi primitives, and premium value assumptions. 
 Valorem Options are settled physically using a novel fair settlement 
 algorithm. The protocol can interact directly with any pair of non-rebasing, 
@@ -52,12 +51,20 @@ The Valorem protocol is permissionless. It is open to public use with no
 ability to restrict who can or cannot use it. Any potential user can perform
 any operation that the protocol supports.
 
+### Physically settled
+
+XYZ
+
 ### Fully collateralized
 
 Options written via the protocol are fully collateralized, reducing
 counterparty risk and ensuring settlement. This leaves the opportunity for
 higher level margining systems, with risk, to be implemented atop the protocol, 
 whilst remaining un-opinionated at the base layer.
+
+### Minimal
+
+XYZ, with 5–10x cheaper to buy an option, 20–50x cheaper to write an option, transaction costs compared with similar on-chain protocols.
 
 ### Composable
 
@@ -68,13 +75,13 @@ that it can easily be integrated into other smart contract systems as a
 ## Mechanism
 
 The Valorem Options protocol, at it's core, is a non-custodial engine for the
-underwriting and physical settlement of options, consisting of a set of
+clearing and physical settlement of options, consisting of a set of
 smart contracts. The engine utilizes the
 [ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
 to gas-efficiently tokenize long and short positions, or **options** and 
 **claims**. On-chain actors — either individuals using wallets, or protocols 
 using smart contracts — can create a new option type, defined as the
-unique tuple with regard option contract properties. They can then write
+unique tuple with regard to the option contract's properties. They can then write
 options of that type. Writing issues one or more fungible option tokens, and 
 a non-fungible claim token, representing a claim to the collateral used for 
 writing, or the exercise asset if that claim is assigned exercise via a 
@@ -138,9 +145,32 @@ uint160 optionKey = uint160(
 This `uint160 optionKey` is used to determine if that type of option already 
 exists and, if it doesn't, create it.
 
+#### Claim data model
+
+something something
+
+```solidity
+    /**
+     * @notice Data about a claim to a short position written on an option type.
+     * When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT
+     * that represents a claim to the underlying and exercise assets, to be claimed after
+     * expiry of the option. The amount of each (underlying asset and exercise asset) paid to the claimant upon
+     * redeeming their claim NFT depends on the option type, the amount of options written, represented in this struct,
+     * and what portion of this claim was assigned exercise, if any, before expiry.
+     */
+    struct Claim {
+        /// @custom:member amountWritten The number of option contracts written against this claim expressed as a 1e18 scalar value.
+        uint256 amountWritten;
+        /// @custom:member amountExercised The amount of option contracts exercised against this claim expressed as a 1e18 scalar value.
+        uint256 amountExercised;
+        /// @custom:member optionId The option ID of the option type this claim is for.
+        uint256 optionId;
+    }
+```
+
 #### Token address space
 
-The ERC-1155 standard has a 256-bit address space for [sub-tokens](/docs/options-smart-contracts#tokentype). Valorem uses 
+The ERC-1155 standard has a 256-bit address space for TODO BROKEN LINK [sub-tokens](/docs/options-smart-contracts#tokentype). Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing `uint96 claimKey` 
@@ -151,12 +181,12 @@ follows:
 MSb
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
 0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
                                           LSb
 ```
@@ -213,11 +243,15 @@ and $ B_e > 0 $. At that point, that bucket becomes partially or fully
 exercised, and the next write creates a new bucket. This defines the bucket 
 lifecycle algorithm.
 
+TODO insert graphic
+
 Exercise assignment is performed using a deterministic algorithm seeded by
 the `uint160 optionKey`, with entropy from actors who write and exercise
 options without either party being able to influence the outcome. The runtime 
 complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is the number 
 of buckets consumed by the algorithm to fulfill the exercise.
+
+TODO check if this is still accurate wording "with entropy from actors who write and exercise options without either party being able to influence the outcome"
 
 However, because the probability of an exercise assignment to 
 the most recently created bucket is $ 1 \over n $, where $ n $ is the number 
@@ -311,7 +345,7 @@ payoff $ max(0,X-S_T) $ for the holder, and the payoff  $ -max(0,X-S_T) $
 for the writer. This can be accomplished by writing a call option with the 
 exercise and underlying asset order swapped. An ETH/DAI call is a DAI/ETH put.
 
-#### European, American, and Bermudan options
+#### European and American options
 
 European options can be created by setting the exercise timestamp to the 
 expiry timestamp minus one day. American options can be created by setting 
