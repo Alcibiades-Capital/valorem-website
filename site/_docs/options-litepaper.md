@@ -95,7 +95,7 @@ window, after which the claim tokens can be redeemed.
 
 ### Creating a new option type
 
-Actors can permissionlessly [create a new option type](/docs/options-smart-contracts#write-options) by specifying:
+Actors can permissionlessly [create a new option type](/docs/clearinghouse-contracts#write-options) by specifying:
 
 - The **underlying asset** for the option; this is the token the option 
   holder receives if the option is exercised.
@@ -110,7 +110,7 @@ Actors can permissionlessly [create a new option type](/docs/options-smart-contr
 
 #### Option data model
 
-A Valorem option is represented with the [following data structure](/docs/options-smart-contracts#option), packed into
+A Valorem option is represented with the following [data structure](/docs/clearinghouse-contracts#option), packed into
 4 storage slots:
 
 ```solidity
@@ -151,7 +151,7 @@ exists and, if it doesn't, create it.
 
 #### Claim data model
 
-A Valorem claim is represented with the following virtual data structure, which is not represented directly in storage:
+A Valorem claim is represented with the following virtual [data structure](/docs/clearinghouse-contracts#claim), which is not represented directly in storage:
 
 ```solidity
 
@@ -195,7 +195,7 @@ and `type(uint96).max - 1` individual claims for each option type.
 
 ### Writing options
 
-Once an option type has been created, any actor can [write options](/docs/options-smart-contracts#write) of that 
+Once an option type has been created, any actor can [write options](/docs/clearinghouse-contracts#write) of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -211,7 +211,7 @@ providing the claim NFT identifier when writing.
 
 ### Exercising options
 
-Holders of an option token can [exercise the option](/docs/options-smart-contracts#exercise) pursuant to the following 
+Holders of an option token can [exercise the option](/docs/clearinghouse-contracts#exercise) pursuant to the following 
 conditions:
 
 - The current block timestamp is on or after the exercise timestamp of the 
@@ -305,7 +305,7 @@ $$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + {B_{u
 
 ### Redeeming claims
 
-Holders of a claim NFT can [redeem their claim](/docs/options-smart-contracts#redeem) from the engine when current 
+Holders of a claim NFT can [redeem their claim](/docs/clearinghouse-contracts#redeem) from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
