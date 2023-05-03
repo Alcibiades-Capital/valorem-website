@@ -53,7 +53,9 @@ any operation that the protocol supports.
 
 ### Physically settled
 
-XYZ
+Valorem options are physically settled, with transfer of the underlying assets on
+settlement. This simplifies the core mechanism, while also supporting cash settlement
+through flash loans or flash swaps.
 
 ### Fully collateralized
 
@@ -64,7 +66,9 @@ whilst remaining un-opinionated at the base layer.
 
 ### Minimal
 
-XYZ, with 5–10x cheaper to buy an option, 20–50x cheaper to write an option, transaction costs compared with similar on-chain protocols.
+The protocol is minimal, with a single contract for clearing and settling. This
+enables superb execution costs to write and exercise options, along with
+an ergonomic developer experience.
 
 ### Composable
 
