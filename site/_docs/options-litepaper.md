@@ -51,22 +51,17 @@ The Valorem protocol is permissionless. It is open to public use with no
 ability to restrict who can or cannot use it. Any potential user can perform
 any operation that the protocol supports.
 
-### Physically settled
+### Risk-aware
 
-Valorem options are physically settled, with transfer of the underlying assets on
-settlement. This simplifies the core mechanism and smart contract design, while 
-still supporting cash settlement through flash loans and swaps.
-
-### Fully collateralized
-
-Options written via the protocol are fully collateralized, reducing
-counterparty risk and ensuring settlement. This leaves the opportunity for
-higher level margining systems, with risk, to be implemented atop the protocol, 
+Options written via the protocol are physically settled and fully collateralized, reducing
+counterparty risk and ensuring settlement. Physical settlement simplifies the core mechanism,
+while supporting cash settlement through flash loans and swaps. Full collaterilization leaves
+the opportunity for higher level margining systems, with risk, to be implemented atop the protocol, 
 whilst remaining un-opinionated at the base layer.
 
-### Minimal
+### Minimalist
 
-Valorem's protocol design is minimal, with a single smart contract for clearing
+Valorem's protocol design is minimalist, with a single smart contract for clearing
 and settling business logic. This enables superb execution costs to write and
 exercise options, along with an ergonomic developer experience.
 
