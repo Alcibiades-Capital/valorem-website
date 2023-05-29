@@ -7,7 +7,7 @@ hero:
   text_markdown:
   buttons:
     - text: Learn more
-      url: /docs/options-litepaper/
+      url: /docs/clear-litepaper/
     - text: Join Discord
       url: https://discord.gg/jRNGhTef57
 page_blocks:
@@ -32,7 +32,7 @@ page_blocks:
       - text: Launch app
         url: https://app.valorem.xyz/
       - text: Learn more
-        url: /docs/options-litepaper/
+        url: /docs/clear-litepaper/
   - _id: roadmap
     heading: When can I use Valorem? 
     text_markdown: |

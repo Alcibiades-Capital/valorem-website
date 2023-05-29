@@ -14,7 +14,7 @@ protocol tokenomics.
 
 ![Writing Contributor Token Options with Valorem](/assets/images/posts/contributor-token-options.png)
 
-In our [litepaper](https://valorem.xyz/docs/valorem-options-litepaper/#vesting-options),
+In our [litepaper](https://valorem.xyz/docs/clear-litepaper#vesting-options),
 we outlined an alternative; Valorem contributor token optionsg. Although our 
 options primitive is not on mainnet yet, our UI is at a point where it's easy to 
 show how simple it is to create token options for contributors with Valorem. Let's 
