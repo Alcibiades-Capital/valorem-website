@@ -4,9 +4,9 @@ site:
   description: |
     Write permissionless physically settled options on any ERC20 token pair.
 banner_markdown: |
-  Invite-only beta coming soon! Help shape the future of on-chain options.
+  Open beta available now! Help shape the future of ERC20 options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
 footer_markdown: |
-  Valorem helps DeFi power users pursue advanced derivatives and hedging strategies by writing physically settled options permissionlessly on any ERC20 token pair.
+  Valorem helps DeFi power users pursue advanced options strategies by permissionlessly on any ERC20 token pair.
 default_cta:
   heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
   buttons:
