@@ -77,6 +77,19 @@ navigation_links_docs:
     group:
       - clear
 
+  - url: /docs/trade-overview/
+    name: Overview
+    group:
+      - trade
+  - url: /docs/trade-api-reference/
+    name: API Reference
+    group:
+      - trade
+  - url: /docs/SIWE-authentication/
+    name: SIWE Authentication
+    group:
+      - trade
+
 docs_groups:
   - research
   - clear
