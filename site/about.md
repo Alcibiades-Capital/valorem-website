@@ -8,30 +8,29 @@ hero:
 page_blocks:
   - _id: partners_all
     cards:
-      - label: Contributor
+      - label: CEO and protocol architect
         image_path: /assets/images/partners/alcibiades.jpg
         image_alt: "Alcibiades’ profile picture"
         heading: Alcibiades
         subheading: "@0xAlcibiades"
         url: https://twitter.com/0xAlcibiades
-      - label: Contributor
+      - label: Head of product
         image_path: /assets/images/partners/neodaoist.png
         image_alt: "Neodaoist’s profile picture"
         heading: Neodaoist
         subheading: "@neodaoist"
         url: https://twitter.com/neodaoist
-      - label: Contributor
+      - label: Frontend Developer
+        image_path: /assets/images/partners/nick.png
+        image_alt: "Nick’s profile picture"
+        heading: Nick
+        subheading: "@nickadams0n"
+      - label: Protocol Developer
         image_path: /assets/images/partners/flip.jpg
         image_alt: "Flip’s profile picture"
         heading: Flip
         subheading: "@flip_liquide"
         url: https://twitter.com/flip_liquide
-      - label: Contributor
-        image_path: /assets/images/partners/nick.png
-        image_alt: "Nick’s profile picture"
-        heading: Nick
-        subheading: "@nickadams0n"
-        url: https://twitter.com/nickadams0n
       - label: Advisor
         image_path: /assets/images/partners/thogard.jpg
         image_alt: "Thogard’s profile picture"
@@ -44,14 +43,20 @@ page_blocks:
         heading: Tom Howard
         subheading: "@_TomHoward"
         url: https://twitter.com/_TomHoward
+      - label: Advisor
+        image_path: /assets/images/partners/bandit.jpg
+        image_alt: "Bandits’s profile picture"
+        heading: Bandit.eth
+        subheading: "@mevbandit"
+        url: https://twitter.com/mevbandit
       - label: Investor
         logo_path: /assets/images/partners/DACM.png
         logo_alt: DACM logo
         url: https://www.dacm.io/
       - label: Investor
-        logo_path: /assets/images/partners/cogitent_ventures.png
-        logo_alt: Cogitent Ventures logo
-        url: https://cogitent.ventures
+        logo_path: /assets/images/partners/grug.jpg
+        logo_alt: Grug Capital logo
+        url: https://twitter.com/grugcapital
       - label: Investor
         logo_path: /assets/images/partners/ac.svg
         logo_alt: Alcibiades Capital logo
