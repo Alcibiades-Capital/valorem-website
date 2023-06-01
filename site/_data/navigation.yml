@@ -85,10 +85,7 @@ navigation_links_docs:
     name: API Reference
     group:
       - trade
-  - url: /docs/SIWE-authentication/
-    name: SIWE Authentication
-    group:
-      - trade
+
 
 docs_groups:
   - research
