@@ -30,3 +30,9 @@ performs the requisite asset transfers.
 
 This design allows options price discovery to occur off chain, while providing 
 the security of on chain settlement.
+
+### MEV Resistant
+
+Our RFQs are sealed, meaning that nobody except the maker can see the request 
+for quote, and nobody except the taker can see the quote, and the quote is made 
+specifically for the taker, making the RFQ MEV-resistant.
