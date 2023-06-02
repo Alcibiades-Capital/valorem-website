@@ -319,12 +319,18 @@ performs the requisite asset transfers.</p>
 <p>This design allows options price discovery to occur off chain, while providing 
 the security of on chain settlement.</p>
 
+<h3 id="mev-resistant">MEV Resistant</h3>
+
+<p>Our RFQs are sealed, meaning that nobody except the maker can see the request 
+for quote, and nobody except the taker can see the quote, and the quote is made 
+specifically for the taker, making the RFQ MEV-resistant.</p>
+
             </div>
         </article>
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#how-it-works" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">How it works</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#off-chain-price-discovery" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Off chain price discovery</a></li></ol></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#how-it-works" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">How it works</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#off-chain-price-discovery" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Off chain price discovery</a></li><li class=""><a href="#mev-resistant" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">MEV Resistant</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
