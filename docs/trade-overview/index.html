@@ -45,22 +45,22 @@
     <link rel="alternate" type="application/atom+xml" title="Valorem Protocol" href="/feed.xml" title="Valorem Protocol">
 
     
-    <title>Clear overview | Valorem Protocol</title>
-<meta property="og:title" content="Clear overview
+    <title>Trade overview | Valorem Protocol</title>
+<meta property="og:title" content="Trade overview
 " />
 <meta name="author" content="Alcibiades" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+<meta name="description" content="Overview of Valorem Trade, a decentralized exchange for DeFi options.
 " />
-<meta property="og:description" content="Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+<meta property="og:description" content="Overview of Valorem Trade, a decentralized exchange for DeFi options.
 " />
-<link rel="canonical" href="https://valorem.xyz/docs/clear-overview/" />
-<meta property="og:url" content="https://valorem.xyz/docs/clear-overview/" />
+<link rel="canonical" href="https://valorem.xyz/docs/trade-overview/" />
+<meta property="og:url" content="https://valorem.xyz/docs/trade-overview/" />
 <meta property="og:site_name" content="Valorem Protocol" />
-<meta property="og:image" content="" /><meta property="og:type" content="website" /><meta property="article:published_time" content="2022-11-29T19:00:00-05:00" />
+<meta property="og:image" content="" /><meta property="og:type" content="website" /><meta property="article:published_time" content="2023-06-01T20:00:00-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="" />
-<meta property="twitter:title" content="Clear overview
+<meta property="twitter:title" content="Trade overview
 " />
 <meta name="google-site-verification" content="" />
 
@@ -68,8 +68,8 @@
     {
         "@context":"https://schema.org",
         "@type":"WebPage",
-        "name":"Clear overview",
-        "description":"Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+        "name":"Trade overview",
+        "description":"Overview of Valorem Trade, a decentralized exchange for DeFi options.
 ",
         "publisher":{
             "@type":"Organization",
@@ -249,7 +249,7 @@
                     
                     <li>
                         <a href="/docs/clear-overview/"
-                            class="block py-3 px-6 rounded-md text-gray-900 bg-gray-cool">Overview</a>
+                            class="block py-3 px-6 rounded-md hover:bg-gray-200">Overview</a>
                     </li>
                     
                     <li>
@@ -275,7 +275,7 @@
                     
                     <li>
                         <a href="/docs/trade-overview/"
-                            class="block py-3 px-6 rounded-md hover:bg-gray-200">Overview</a>
+                            class="block py-3 px-6 rounded-md text-gray-900 bg-gray-cool">Overview</a>
                     </li>
                     
                 </ol>
@@ -290,161 +290,41 @@
         </nav>
         <article class="lg:flex-grow">
             <div class="prose">
-                <h1>Clear overview</h1>
+                <h1>Trade overview</h1>
                 <hr>
-                <p><a href="https://valorem.xyz/">Valorem</a> Clear is a DeFi money lego, enabling writing covered calls and cash-secured puts, physically
-settled or cash settled, American, European, and Exotic options.</p>
+                <p><a href="https://valorem.xyz/">Valorem</a> Trade is a decentralized exchange for
+Valorem Clear options, settled on chain via
+<a href="https://github.com/ProjectOpenSea/seaport">Seaport</a>. With Valorem Trade, users
+can access professional market maker liquidity via an off chain
+request-for-quote (RFQ) system. This professional market maker liquidity
+allows users to trade options with low price impact and low fees. Valorem Trade
+presents both a web interface and a gRPC API for interacting with the exchange.
+It functions primarily as a signature relay between makers and takers in a given 
+market.</p>
 
-<h2 id="protocol-introduction">Protocol introduction</h2>
+<p>The public endpoint for the exchange is <code class="language-plaintext highlighter-rouge">https://exchange.valorem.xyz</code>.</p>
 
-<p>The Valorem Clear V1 consists of a clearing and settling engine which allows users to write options,
-exercise options, and redeem claims on assets, while handling fair assignment of exercises to claims written. It is
-designed to be gas efficient, minimal, and provide a secure settlement layer upon which more complex systems can be
-built.</p>
+<h2 id="how-it-works">How it works</h2>
 
-<p>Clear follows the <a href="https://eips.ethereum.org/EIPS/eip-1155">ERC-1155 multi-token</a> standard. Options can be
-written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an
-option contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses
-like any ERC-1155 token.</p>
+<p>Users connect to Valorem Trade via a web interface or gRPC API. They can then
+act as a maker or taker. Takers sends requests for quotes (RFQs) to
+makers, who then optionally respond with a signed offer, with some period of
+validity, providing a look-back option for execution to the taker. The taker
+then has the option to execute the offer, which is accomplished by submitting
+the offer to the Seaport smart contract. The Seaport smart contract then
+performs the requisite asset transfers.</p>
 
-<p>An option writer’s claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is
-represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus
-exercise assets, based on currently exercised.</p>
+<h3 id="off-chain-price-discovery">Off chain price discovery</h3>
 
-<p>The structure of an option is as follows:</p>
-
-<ul>
-  <li><strong>Underlying asset:</strong> the ERC-20 address of the asset to be received upon exercise.</li>
-  <li><strong>Underlying amount:</strong> the amount of the underlying asset contained within an option of this type.</li>
-  <li><strong>Exercise asset:</strong> the ERC-20 address of the asset needed for exercise.</li>
-  <li><strong>Exercise amount:</strong> the amount of the exercise asset required to exercise this option.</li>
-  <li><strong>Exercise timestamp:</strong> the timestamp after which this option can be exercised and physically settled.</li>
-  <li><strong>Expiry timestamp:</strong> the timestamp before which this option can be exercised.</li>
-</ul>
-
-<p>Clear is unopinionated on the type of option (call vs. put), where, when, or for how much an option is
-bought/sold, and whether or not the option is profitable when exercised. Because all options written with Valorem are
-fully collateralized, physical settlement at exercise or redeem time is instant and gas-efficient.</p>
-
-<h2 id="trust-model">Trust model</h2>
-
-<h3 id="actors">Actors</h3>
-
-<p>There are 3 main actors in the core protocol:</p>
-
-<ul>
-  <li>Protocol Admin</li>
-  <li>Option Writer</li>
-  <li>Option Holder</li>
-</ul>
-
-<p>The <strong>Protocol Admin</strong> is the address to which protocol fees are swept. This address can update the Protocol Admin
-address, update the contract address of the TokenURIGenerator, enable/disable protocol fees, and sweep accrued fees. No
-other permissioned actions are possible.</p>
-
-<p><strong>Option Writers</strong> can create new option types and write options for any valid ERC-20 asset pair (excluding rebasing,
-fee-on-transfer, and ERC-777 tokens). Sufficient approval must be granted for Clear to transfer in the
-requisite amount of the underlying asset. Once an option expires, the writer can redeem their Claim NFT for their share
-of the underlying and/or exercise assets.</p>
-
-<p><strong>Option Holders</strong> can transfer and exercise options that have been written. This is accomplished via a standard
-ERC-1155 transfer of the desired amount of option contracts from writer to holder. When exercising an option, they must
-have enough of the exercise asset, and similarly to when writing an option, they must have granted sufficient approval
-for Clear on the ERC20 exercise asset.</p>
-
-<h3 id="assets">Assets</h3>
-
-<p>When an option is written, Clear transfers in the requisite amount of the underlying asset. When an option
-is exercised, Clear transfers in the requisite amount of the exerise asset and transfers out the underlying
-asset. When a claim is redeemed, Clear transfers out that claimant’s share of the exercise asset and any
-remaining, unexercised underlying asset.</p>
-
-<h3 id="actions">Actions</h3>
-
-<p>What can each actor do, when and with how much, of each asset?</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">ERC1155</code>
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">anyone</code> can
-        <ul>
-          <li>check token balances of any address</li>
-          <li>check ownership of any token</li>
-          <li>check transfer approvals</li>
-          <li>check supported interfaces (ERC165 and ERC1155)</li>
-          <li>render the URI of any token</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">ValoremOptionsClearinghouse</code>
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">anyone</code> can
-        <ul>
-          <li>get info for any Option fungible token ID</li>
-          <li>get info for any Claim non-fungible token ID</li>
-          <li>check position of the underlying and exercise assets of any token</li>
-          <li>check whether any token ID is a fungible Option or a non-fungible Claim</li>
-          <li>view the contract address of the TokenURIGenerator</li>
-          <li>check fee balance of any ERC20 asset</li>
-          <li>view protocol fee (expressed in basis points)</li>
-          <li>check if protocol fees are enabled</li>
-          <li>view Protocol Admin (“feeTo”) address</li>
-          <li>create an Option Type which does not exist yet</li>
-          <li>write a new Claim for a given Option Type</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">ERC1155 Claim NFT holders</code> (i.e., Option Writers) can
-        <ul>
-          <li>write new options to a given Claim which they hold, before the expiry timestamp</li>
-          <li>redeem a Claim NFT which they hold for their share of the underlying and/or exercise assets, on or after the
-expiry timestamp</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">ERC1155 Option fungible token holders</code> (i.e., Option Holders) can
-        <ul>
-          <li>transfer (up to their amount held) Option fungible tokens to another address</li>
-          <li>exercise (up to their amount held) Option fungible tokens, on or after the earliest exercise timestamp, and
-before the expiry timestamp</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">Protocol Admin</code> can
-        <ul>
-          <li>enable/disable protocol fees</li>
-          <li>nominate a new Protocol Admin (“feeTo”) address</li>
-          <li>accept a new Protocol Admin (“feeTo”) address</li>
-          <li>update the contract address of the TokenURIGenerator</li>
-          <li>sweep accrued fees for any ERC20 asset to the Protocol Admin (“feeTo”) address</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="security-info">Security info</h2>
-
-<p>Valorem Clear v1.0.0 contains one unresolved medium severity audit finding.</p>
-
-<p>The probability of an options bucket being chosen for exercise is not correlated
-with the number of options contained in that bucket. Thus, individual option
-contracts in smaller buckets have a higher probability of being selected for
-assignment.</p>
-
-<p>This probabilistic imperfection will be remediated in a future version. Discrete
-probability mass functions with dynamic weighting are an unsolved issue in
-solidity. Work on the remediation is underway with <a href="https://github.com/valorem-labs-inc/LibDDRV">LibDDRV</a>.</p>
-
-<ul>
-  <li>Audits: <a href="https://github.com/valorem-labs-inc/valorem-core/tree/master/audits">PDF reports</a></li>
-  <li>Security contact: info(at)valorem(dot)xyz</li>
-</ul>
+<p>This design allows options price discovery to occur off chain, while providing 
+the security of on chain settlement.</p>
 
             </div>
         </article>
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#protocol-introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol introduction</a></li><li class=""><a href="#trust-model" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trust model</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#actors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Actors</a></li><li class=""><a href="#assets" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Assets</a></li><li class=""><a href="#actions" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Actions</a></li></ol></li><li class=""><a href="#security-info" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Security info</a></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#how-it-works" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">How it works</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#off-chain-price-discovery" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Off chain price discovery</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
