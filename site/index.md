@@ -15,7 +15,7 @@ page_blocks:
     cards:
       - heading: Flexible and composable
         text_markdown: |
-          Clear, our options settlement layer, takes a unique approach to time specificity, strike price, and premium, enabling American, Bermudan, European and exotic options with no pricing assumptions. 
+          Clear, our options settlement layer, takes a unique approach to time specificity, strike price, and premium, enabling American and European options with no pricing assumptions. 
         icon: sl-vest
       - heading: Permissionless and efficient
         text_markdown: |
