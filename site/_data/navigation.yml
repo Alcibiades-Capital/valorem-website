@@ -77,6 +77,11 @@ navigation_links_docs:
     group:
       - clear
 
+  - url: /docs/trade-overview/
+    name: Overview
+    group:
+      - trade
+
 docs_groups:
   - research
   - clear
