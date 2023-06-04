@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-us"
+    class="font-primary antialiased text-base text-gray-800 bg-white">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/css/tabs.css">
+    <link rel="preconnect" href="https://use.typekit.net">
+    <link rel="stylesheet" href="https://use.typekit.net/rnm5bax.css">
+
+    
+    <link rel="shortcut icon" href="/assets/icons/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+
+    
+    <link rel="alternate" type="application/atom+xml" title="Valorem Protocol" href="/feed.xml" title="Valorem Protocol">
+
+    
+    <title>Building a dynamic PMF random variate generator for on-chain games</title>
+<meta property="og:title" content="Building a dynamic PMF random variate generator for on-chain games
+" />
+<meta name="author" content="Alcibiades" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+" />
+<meta property="og:description" content="Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+" />
+<link rel="canonical" href="https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/" />
+<meta property="og:url" content="https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/" />
+<meta property="og:site_name" content="Valorem Protocol" />
+<meta property="og:image" content="https://valorem.xyz/assets/images/posts/blackjack.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-06-02T19:00:00-04:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://valorem.xyz/assets/images/posts/blackjack.jpg" />
+<meta property="twitter:title" content="Building a dynamic PMF random variate generator for on-chain games
+" />
+<meta name="google-site-verification" content="" />
+
+    <script type="application/ld+json">
+    {
+        "@context":"https://schema.org",
+        "@type":"BlogPosting",
+        "headline":"Building a dynamic PMF random variate generator for on-chain games
+",
+        "image":"https://valorem.xyz/assets/images/posts/blackjack.jpg",
+        "author":{
+            "@type":"Person",
+            "name":"Alcibiades",
+            "url":"https://valorem.xyz/about"
+        },
+        "datePublished":"2023-06-02T19:00:00-04:00",
+        "dateCreated":"2023-06-02T19:00:00-04:00",
+        "dateModified":"2023-06-03T23:40:12-04:00",
+        "description":"Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+",
+        "url":"https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/",
+        "publisher":{
+            "@type":"Organization",
+            "logo":{
+                "@type":"ImageObject",
+                "url":""
+            },
+            "name":"Valorem Protocol"
+        }
+    }
+    </script>
+
+
+    <script defer type="text/javascript" src="/assets/js/alpine.js"></script>
+<script async defer data-domain="valorem.xyz" src="https://plausible.io/js/script.js"></script></head>
+
+
+<body class=" mx-auto text-lg tracking-wide">
+
+    <a id="skip-nav" class="sr-only" href="#main-content">Skip to content</a>
+
+    
+    <section class="sticky top-0 z-[99] s-xxs bg-gradient-default from-purple-400 to-white">
+  <div class="max-w-screen-md mx-auto text-center text-xs lg:text-sm prose">
+    Open beta available now! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+
+  </div>
+</section>
+
+
+
+
+
+<header
+  class="s-xxs py-0 absolute w-full mt-8 z-50 transition-default"
+  x-data="{showMenu: false}">
+  <div class="bg-white rounded-xl lg:rounded-2xl s-xs max-w-screen-xl mx-auto transition-default"
+  :class="{'shadow-md rounded-b-none': showMenu}">
+    <nav class="flex justify-between items-center relative" aria-label="Main">
+      <a href="/" aria-label="Home page" class="text-purple-500"><svg width="258" height="58" viewBox="0 0 258 58" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="h-6 lg:h-8 w-auto"><path d="M69.3577 14.5031H29.7265L39.6312 0H0L19.8156 29L29.7265 14.5031L39.6312 29H19.8156H0L19.8156 58L39.6312 29L49.5421 43.5031L69.3577 14.5031Z"/><path d="M101.3 18.6619H105.601L95.1249 41.5752H91.7861L81.1243 18.6619H85.7911L93.5672 36.0199L101.3 18.6619ZM126.055 18.6619H130.22V41.1673H126.055V37.2928C125.416 38.4298 123.219 41.7111 118.05 41.7111C112.104 41.7111 107.022 37.3361 107.022 29.9146C107.022 22.6229 112.098 18.1181 118.05 18.1181C123.033 18.1181 125.46 21.1707 126.055 22.4004V18.6619ZM126.142 29.9146C126.142 25.4036 123.213 21.9432 118.819 21.9432C114.245 21.9432 111.316 25.4036 111.316 29.9146C111.316 34.4256 114.245 37.8861 118.819 37.8861C123.219 37.8861 126.142 34.4256 126.142 29.9146ZM135.706 41.1673H139.87V7.63782H135.706V41.1673ZM168.374 29.9146C168.374 36.6131 163.204 41.7111 156.477 41.7111C149.706 41.7111 144.58 36.6069 144.58 29.9146C144.58 23.2223 149.706 18.1181 156.477 18.1181C163.204 18.1119 168.374 23.2161 168.374 29.9146ZM164.073 29.9146C164.073 25.4036 161.007 21.9432 156.477 21.9432C151.947 21.9432 148.881 25.4963 148.881 29.9146C148.881 34.3329 151.947 37.8861 156.477 37.8861C161.007 37.8861 164.073 34.4256 164.073 29.9146ZM177.155 22.8083V18.6619H172.991V41.1673H177.155V28.4563C177.155 24.4458 179.122 22.6229 184.931 22.6229H190.697V18.4765H185.024C179.718 18.4765 177.801 21.1646 177.155 22.8083ZM215.316 30.4151H196.512C196.741 34.6048 199.757 37.8861 204.201 37.8861C208.731 37.8861 210.562 35.4699 210.928 34.7407H215.049C214.683 36.6996 211.803 41.7111 204.207 41.7111C197.207 41.7111 192.31 36.5204 192.31 29.9146C192.31 23.1296 197.207 18.1181 203.791 18.1181C210.419 18.1119 215.316 23.0369 215.316 30.4151ZM210.692 26.9547C209.637 23.5375 207.217 21.6713 203.785 21.6713C200.123 21.6713 197.653 23.6734 196.785 26.9547H210.692V26.9547ZM248.35 18.1614C243.546 18.1614 240.983 21.4426 240.021 23.6301C238.557 20.3056 235.491 18.1614 231.463 18.1614C227.299 18.1614 224.736 20.9854 223.867 22.8083V18.6619H219.703V41.1673H223.867V29.0001C223.867 24.9464 226.474 21.9864 230.458 21.9864C234.3 21.9864 236.726 24.8104 236.726 29.0001V41.1612H240.934V29.0001C240.934 24.9464 243.54 21.9864 247.524 21.9864C251.366 21.9864 253.792 24.8104 253.792 29.0001V41.1612H258V28.2276C258 22.3943 254.065 18.1614 248.35 18.1614Z"/></svg></a>
+      <div class="z-10 hidden lg:flex items-center justify-end space-x-8 group">
+        
+        <a href="/about/"
+          class="p-2 rounded bg-white hover:bg-gray-200">About</a>
+        
+        <a href="/blog/"
+          class="p-2 rounded bg-white hover:bg-gray-200">Blog</a>
+        
+        <a href="/docs/clear-litepaper/"
+          class="p-2 rounded bg-white hover:bg-gray-200">Docs</a>
+        
+        
+        <a href="https://app.valorem.xyz/"
+          class="btn btn-purple-500 text-base px-5 py-2 rounded-xl" data-analytics='"CTA", {"props":{"location":"header"}}'>Launch app</a>
+        
+      </div>
+      
+<div class="flex lg:hidden items-center justify-end space-x-8">
+  <button
+    aria-label="Navigation menu"
+    type="button"
+    class="inline-flex items-center justify-center p-1 hover:text-purple-500 focus:outline-none transition-default"
+    x-on:click="showMenu = !showMenu"
+    :class="{'text-gray-900': showMenu}">
+    <svg x-show="!showMenu" class="h-8 w-8" viewBox="0 0 32 32" fill="none" stroke="currentColor">
+      <line y1="10.5" x2="32" y2="10.5" stroke-width="3"/>
+      <line y1="21.5" x2="32" y2="21.5" stroke-width="3"/>
+    </svg>
+    <svg x-show="showMenu" class="h-8 w-8" fill="none" viewbox="0 0 32 32" stroke="currentColor">
+      <line x1="4.81066" y1="4.43934" x2="27.4381" y2="27.0668" stroke-width="3"/>
+      <line x1="4.68934" y1="27.4393" x2="27.3168" y2="4.81192" stroke-width="3"/>
+    </svg>
+  </button>
+</div>
+
+    </nav>
+  </div>
+  
+<div class="lg:hidden absolute left-0 right-0 w-full s-xs py-0 z-50">
+  <div
+    class="transform origin-top shadow-lg rounded-b-xl lg:rounded-b-2xl bg-white"
+    x-show="showMenu"
+    x-transition:enter="transition-default"
+    x-transition:enter-start="opacity-0 -translate-y-3"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition-default"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 -translate-y-3">
+    <nav class="s-sm py-10 text-center flex flex-col space-y-6" aria-label="Main">
+      
+      <a href="/about/" class="focus:text-purple-500 focus:outline-none">About</a>
+      
+      <a href="/blog/" class="focus:text-purple-500 focus:outline-none">Blog</a>
+      
+      <a href="/docs/clear-litepaper/" class="focus:text-purple-500 focus:outline-none">Docs</a>
+      
+      
+      <a href="https://app.valorem.xyz/"
+        class="btn btn-purple-500 text-base px-5 py-2 rounded-xl mx-auto" data-analytics='"CTA", {"props":{"location":"header"}}'>Launch app</a>
+      
+    </nav>
+  </div>
+</div>
+
+</header>
+
+
+    
+    <div aria-role="main">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="s-hero bg-gradient-default from-purple-500 to-white">
+  <div class="max-w-screen-lg mx-auto space-y-16 text-center">
+    <div class="inline-block label text-white py-2 px-3 rounded-md bg-purple-500 bg-opacity-25">Jun 02, 2023</div>
+    <h1 class="text-gray-900">Building a dynamic PMF random variate generator for on-chain games</h1>
+    
+    <div class="text-xl lg:text-2xl"><p>Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.</p>
+</div>
+    
+    <div>
+      
+    </div>
+  </div>
+</section>
+
+<section class="s-md">
+  <article class="max-w-screen-xl mx-auto prose text-base sm:text-lg">
+    <p>In late February, Valorem was deep in an
+<a href="https://github.com/valorem-labs-inc/valorem-core/blob/master/audits/Valorem_April_2023_-_Zellic_Audit_Report.pdf">audit of Valorem Clear with Zellic</a>,
+while simultaneously preparing for the
+<a href="https://www.ethdenver.com/">ETH Denver 2023 Hackathon</a>. During our
+audit, one issue regarding the fairness of our option exercise assignment
+algorithm emerged as a challenging problem. We managed to get launch-ready by
+making the algorithm deterministic, ensuring fair play for both players, writer
+and exerciser, involved in the option. Yet, we were convinced we could
+enhance it further.</p>
+
+<p>Ahead of the hackathon, we delved into a more comprehensive solution. It became
+clear that we needed a mechanism for generating random variates fitting a
+dynamically weighted discrete probability mass function (PMF). We aimed to
+leverage this unique type of random number to equalize the probability of
+<a href="(/docs/clear-litepaper/#fair-exercise-assignment)">option exercise assignment across various buckets</a>.</p>
+
+<h2 id="a-random-forest-in-solidity">A random forest in Solidity</h2>
+
+<p>A simple implementation of dynamic PMF random variate generation could be
+easily implemented but, unfortunately, runs in linear time, making it
+unsuitable for the Ethereum Virtual Machine (EVM). Our research led us to a
+1993 research paper by Matias, Vitter, and Ni, referenced in Knuth’s The Art
+of Computer Programming.
+<a href="https://kuscholarworks.ku.edu/bitstream/handle/1808/7224/MVN03.dynamic_rv_gen.pdf">This paper</a>
+proposed an innovative approach that operates in log n time, using a forest of
+trees data structure, and takes a uniform random variate (URV) as input. This
+URV can be sourced from a reliable oracle like Chainlink VRF, a randomness
+beacon like RANDAO, or a pseudorandom source like a collaborative entropy queue.</p>
+
+<p><img src="/assets/images/posts/metaverse-coworking.jpg" alt="Working on LibDDRV in the metaverse" /></p>
+
+<p>This research was the basis for our new randomness library for the Solidity
+ecosystem, <a href="https://github.com/valorem-labs-inc/LibDDRV">LibDDRV</a>.
+The library enables the generation of random variates conforming to a
+dynamically weighted discrete PMF. It required considerable effort in the
+Metaverse, as well as with traditional pen and paper, to devise pseudocode
+that would later be transformed into Solidity. Our generator thrives
+in the dynamic case, facilitating weight updates and generating random variates
+efficiently.</p>
+
+<p><img src="/assets/images/posts/pencil-and-paper.jpg" alt="Working on LibDDRV with pencil and paper" /></p>
+
+<p>With the library still under development going into the hackathon, we sought
+on-chain games that could benefit from it. Our decision was to continue with
+the library implementation while competing in the hackathon gaming track.
+After some consideration, we realized we could utilize the library to
+construct a European no-hole-card blackjack game without zero-knowledge proofs.</p>
+
+<h2 id="a-blackjack-shoe-in-solidity">A blackjack shoe in Solidity</h2>
+
+<p>Historically, static methods such as Walker’s Alias Method have been
+employed to generate random variates with a constant set of weights. However,
+these methods are inadequate in a dynamic context like a Blackjack game,
+where the odds of drawing a specific card change with every dealt card.
+Blackjack is a game of chance, but it’s also a game of skill. The skill comes in
+understanding the probabilities of the game, and how they dynamically change
+based on the cards which have already been drawn. This translates almost
+perfectly into a dynamically weighted discrete probability mass function (PMF).</p>
+
+<p>Thus, we integrated LibDDRV into a Solidity smart contract for a game of
+<a href="https://github.com/valorem-labs-inc/evm-blackjack">EVM Blackjack</a>,
+which implements game rules and provides players with the ability to place
+bets, receive cards, hit, or stand. Along with a
+<a href="https://github.com/valorem-labs-inc/evm-blackjack-ui">user interface</a> so that
+users could play the game. All of this was a bit ambitious for a hackathon, but
+we did get pretty far along, particularly with the library.</p>
+
+<h2 id="doubling-down-a-dynamic-future">Doubling-down: A dynamic future</h2>
+
+<p>The hackathon was a whirlwind of coding and innovation, and we have much more
+to explore. The ability to generate dynamic random variates could greatly
+improve blockchain-based prediction markets or gaming scenarios where each event
+influences the odds of subsequent events. Potential applications range from
+NFTs, GameFi, DeFi, and DAOs to more technical uses like fuzz testing inputs
+for real-world scenario modeling and consensus algorithms.</p>
+
+<h2 id="wrapping-up">Wrapping up</h2>
+
+<p>ETH Denver 2023 served as a fantastic platform to connect theoretical
+probability concepts with their practical on-chain implementations. Our journey
+continues as we strive to refine our implementation, contributing to the
+evolving landscape of randomness in the EVM ecosystem, and beyond.</p>
+
+<p>What other on-chain problems could LibDDRV solve? 🤔</p>
+
+<p><strong>Credit to <a href="https://twitter.com/neodaoist">Neodaoist</a>,
+<a href="https://twitter.com/nickadams0n">Nick Adamson</a>,
+<a href="https://twitter.com/flip_liquide">Flip</a>, and
+<a href="https://twitter.com/0xAlcibiades">0xAlcibiades</a> for their contributions during
+the hackathon.</strong></p>
+
+
+  </article>
+</section>
+
+
+<section class="s-lg bg-gradient-default from-purple-400 to-white">
+  <div class="max-w-4xl mx-auto text-center space-y-12">
+    <h2 class="text-gray-900">Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.</h2>
+    <div>
+      
+      <a href="https://discord.gg/jRNGhTef57" class="btn btn-purple-500 btn--large even:btn--outlined">Join Discord</a>
+      
+    </div>
+  </div>
+</section></div>
+
+    
+    <footer class="bg-gray-200">
+  <section class="s-sm">
+    <div class="max-w-screen-xl mx-auto flex flex-col space-y-8 items-start justify-between lg:flex-row lg:space-y-0">
+        <div class="space-y-4 max-w-md mx-auto ml-0">
+          <a href="/" aria-label="Home page" class="inline-block text-purple-500"><svg width="258" height="58" viewBox="0 0 258 58" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-8 w-auto"><path d="M69.3577 14.5031H29.7265L39.6312 0H0L19.8156 29L29.7265 14.5031L39.6312 29H19.8156H0L19.8156 58L39.6312 29L49.5421 43.5031L69.3577 14.5031Z"/><path d="M101.3 18.6619H105.601L95.1249 41.5752H91.7861L81.1243 18.6619H85.7911L93.5672 36.0199L101.3 18.6619ZM126.055 18.6619H130.22V41.1673H126.055V37.2928C125.416 38.4298 123.219 41.7111 118.05 41.7111C112.104 41.7111 107.022 37.3361 107.022 29.9146C107.022 22.6229 112.098 18.1181 118.05 18.1181C123.033 18.1181 125.46 21.1707 126.055 22.4004V18.6619ZM126.142 29.9146C126.142 25.4036 123.213 21.9432 118.819 21.9432C114.245 21.9432 111.316 25.4036 111.316 29.9146C111.316 34.4256 114.245 37.8861 118.819 37.8861C123.219 37.8861 126.142 34.4256 126.142 29.9146ZM135.706 41.1673H139.87V7.63782H135.706V41.1673ZM168.374 29.9146C168.374 36.6131 163.204 41.7111 156.477 41.7111C149.706 41.7111 144.58 36.6069 144.58 29.9146C144.58 23.2223 149.706 18.1181 156.477 18.1181C163.204 18.1119 168.374 23.2161 168.374 29.9146ZM164.073 29.9146C164.073 25.4036 161.007 21.9432 156.477 21.9432C151.947 21.9432 148.881 25.4963 148.881 29.9146C148.881 34.3329 151.947 37.8861 156.477 37.8861C161.007 37.8861 164.073 34.4256 164.073 29.9146ZM177.155 22.8083V18.6619H172.991V41.1673H177.155V28.4563C177.155 24.4458 179.122 22.6229 184.931 22.6229H190.697V18.4765H185.024C179.718 18.4765 177.801 21.1646 177.155 22.8083ZM215.316 30.4151H196.512C196.741 34.6048 199.757 37.8861 204.201 37.8861C208.731 37.8861 210.562 35.4699 210.928 34.7407H215.049C214.683 36.6996 211.803 41.7111 204.207 41.7111C197.207 41.7111 192.31 36.5204 192.31 29.9146C192.31 23.1296 197.207 18.1181 203.791 18.1181C210.419 18.1119 215.316 23.0369 215.316 30.4151ZM210.692 26.9547C209.637 23.5375 207.217 21.6713 203.785 21.6713C200.123 21.6713 197.653 23.6734 196.785 26.9547H210.692V26.9547ZM248.35 18.1614C243.546 18.1614 240.983 21.4426 240.021 23.6301C238.557 20.3056 235.491 18.1614 231.463 18.1614C227.299 18.1614 224.736 20.9854 223.867 22.8083V18.6619H219.703V41.1673H223.867V29.0001C223.867 24.9464 226.474 21.9864 230.458 21.9864C234.3 21.9864 236.726 24.8104 236.726 29.0001V41.1612H240.934V29.0001C240.934 24.9464 243.54 21.9864 247.524 21.9864C251.366 21.9864 253.792 24.8104 253.792 29.0001V41.1612H258V28.2276C258 22.3943 254.065 18.1614 248.35 18.1614Z"/></svg></a>
+          <div><p>Valorem helps DeFi power users pursue advanced options strategies permissionlessly on any ERC20 token pair.</p>
+</div>
+        </div>
+        <nav class="max-w-md flex flex-wrap gap-10 md:gap-20 md:justify-start" aria-label="Footer">
+          
+            <div class="flex flex-col space-y-4">
+              <div class="label">Main</div>
+              
+              
+              <a href="/about/" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500">
+              About
+              </a>
+              
+              <a href="/blog/" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500">
+              Blog
+              </a>
+              
+              <a href="/docs/clear-litepaper/" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500">
+              Docs
+              </a>
+              
+            </div>
+          
+            <div class="flex flex-col space-y-4">
+              <div class="label">Social</div>
+              
+              
+              <a href="https://twitter.com/valoremxyz" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500" data-analytics='"Social", {"props":{"location":"footer"}}'>
+              
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+Twitter
+              </a>
+              
+              <a href="https://discord.gg/5jZdPuY9kR" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500" data-analytics='"Social", {"props":{"location":"footer"}}'>
+              
+  <svg width="24" height="20" viewBox="0 0 24 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+<path d="M20.317 2.19197C18.7873 1.47467 17.147 0.946193 15.4319 0.643512C15.4007 0.63767 15.3695 0.652269 15.3534 0.681467C15.1424 1.06493 14.9087 1.56518 14.7451 1.95837C12.9004 1.67614 11.0652 1.67614 9.25832 1.95837C9.09465 1.55644 8.85248 1.06493 8.64057 0.681467C8.62449 0.653243 8.59328 0.638645 8.56205 0.643512C6.84791 0.945225 5.20756 1.4737 3.67693 2.19197C3.66368 2.19781 3.65233 2.20755 3.64479 2.22019C0.533392 6.97068 -0.31895 11.6044 0.0991801 16.1807C0.101072 16.2031 0.11337 16.2245 0.130398 16.2381C2.18321 17.7787 4.17171 18.7141 6.12328 19.334C6.15451 19.3438 6.18761 19.3321 6.20748 19.3058C6.66913 18.6615 7.08064 17.9822 7.43348 17.2678C7.4543 17.2259 7.43442 17.1763 7.39186 17.1598C6.73913 16.9067 6.1176 16.5982 5.51973 16.2478C5.47244 16.2196 5.46865 16.1505 5.51216 16.1174C5.63797 16.021 5.76382 15.9208 5.88396 15.8196C5.90569 15.8011 5.93598 15.7972 5.96153 15.8089C9.88928 17.6415 14.1415 17.6415 18.023 15.8089C18.0485 15.7962 18.0788 15.8001 18.1015 15.8186C18.2216 15.9198 18.3475 16.021 18.4742 16.1174C18.5177 16.1505 18.5149 16.2196 18.4676 16.2478C17.8697 16.605 17.2482 16.9067 16.5945 17.1588C16.552 17.1753 16.533 17.2259 16.5538 17.2678C16.9143 17.9812 17.3258 18.6605 17.7789 19.3048C17.7978 19.3321 17.8319 19.3438 17.8631 19.334C19.8241 18.7141 21.8126 17.7787 23.8654 16.2381C23.8834 16.2245 23.8948 16.204 23.8967 16.1816C24.3971 10.891 23.0585 6.29525 20.3482 2.22116C20.3416 2.20755 20.3303 2.19781 20.317 2.19197ZM8.02002 13.3942C6.8375 13.3942 5.86313 12.2847 5.86313 10.9221C5.86313 9.55955 6.8186 8.45005 8.02002 8.45005C9.23087 8.45005 10.1958 9.56929 10.1769 10.9221C10.1769 12.2847 9.22141 13.3942 8.02002 13.3942ZM15.9947 13.3942C14.8123 13.3942 13.8379 12.2847 13.8379 10.9221C13.8379 9.55955 14.7933 8.45005 15.9947 8.45005C17.2056 8.45005 18.1705 9.56929 18.1516 10.9221C18.1516 12.2847 17.2056 13.3942 15.9947 13.3942Z"/>
+</svg>
+Discord
+              </a>
+              
+              <a href="https://github.com/valorem-labs-inc" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500" data-analytics='"Social", {"props":{"location":"footer"}}'>
+              
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+Github
+              </a>
+              
+              <a href="mailto:info@valorem.xyz" class="inline-flex items-center gap-2 hover:text-purple-500 focus:outline-none focus:text-purple-500" data-analytics='"Social", {"props":{"location":"footer"}}'>
+              Contact
+              </a>
+              
+            </div>
+          
+        </nav>
+    </div>
+  </section>
+  <section class="s-xs mt-6">
+    <div class="max-w-screen-xl mx-auto flex flex-col space-y-2 text-center md:text-left md:space-y-0 md:flex-row md:justify-between">
+      <div>© 2023, Valorem Labs Inc. All rights reserved.</div>
+      <nav class="flex divide-x divide-gray-500 divide-opacity-25 justify-center md:text-right md:justify-end" aria-label="Subfooter">
+        
+      </nav>
+    </div>
+  </section>
+</footer>
+
+    
+    <script>
+        let links = document.querySelectorAll("a[data-analytics]");
+        for (var i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', handleLinkEvent);
+            links[i].addEventListener('auxclick', handleLinkEvent);
+        }
+
+        function handleLinkEvent(event) {
+            var link = event.target;
+            var middle = event.type == "auxclick" && event.which == 2;
+            var click = event.type == "click";
+            while (link && (typeof link.tagName == 'undefined' || link.tagName.toLowerCase() != 'a' || !link.href)) {
+                link = link.parentNode;
+            }
+            if (middle || click) {
+                let attributes = link.getAttribute('data-analytics').split(/,(.+)/);
+                let events = [JSON.parse(attributes[0]), JSON.parse(attributes[1] || '{}')];
+                plausible(...events);
+            }
+            if (!link.target) {
+                if (!(event.ctrlKey || event.metaKey || event.shiftKey) && click) {
+                    setTimeout(function () {
+                        location.href = link.href;
+                    }, 150);
+                    event.preventDefault();
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
