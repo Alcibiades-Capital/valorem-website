@@ -30,7 +30,8 @@ We will use [Connect-Node](https://connect.build/docs/node/getting-started) to m
 
 ### Starting Out
 
-Install the neccessary dependencies outlined in this package.json.
+Install the neccessary dependencies outlined in this [package.json](https://github.com/valorem-labs-inc/exchange-proto/blob/rfq-api-usage-examples/package.json).
+
 ```bash
 yarn install
 ```
@@ -57,32 +58,41 @@ npx buf generate proto
 
 #### 1. Connect and authenticate with Valorem Trade
 
-We use [sign-in with ethereum](https://docs.login.xyz/)  for authenticating users.
-Replace `walletPrivateKey` with the account that will be used or signing.
+We use [sign-in with ethereum](https://docs.login.xyz/) for authenticating users.
+Replace `privateKey` with the account that will be used for signing.
 
 ```typescript
-import { SiweMessage } from 'siwe';
-import { createPromiseClient } from '@bufbuild/connect';  
-import { createGrpcTransport } from '@bufbuild/connect-node';
-import { Session } from '../gen/session_connect';
+import { createPromiseClient } from "@bufbuild/connect";
+import { createGrpcTransport } from "@bufbuild/connect-node";
+import { SiweMessage } from "siwe";
+import * as ethers from "ethers";
+import { Session } from "../gen/session_connect";
 
-const NODE_ENDPOINT = 'https://rpc.ankr.com/arbitrum';
-const walletPrivateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 
 const CHAIN_ID = 42161; // Arbitrum One
 const gRPC_ENDPOINT = 'https://exchange.valorem.xyz';
-const DOMAIN = 'exchange.valorem.xyz';
+const DOMAIN = "exchange.valorem.xyz";
 
+var lastResponse: any;
+const trackResponse = (next: any) => async (req: any) => {
+  const res = await next(req);
+  lastResponse = res;
+  return res
+};
 const transport = createGrpcTransport({
   baseUrl: gRPC_ENDPOINT,
-  httpVersion: '2',
+  httpVersion: "2",
+  interceptors: [trackResponse]
 });
 
 async function main() {
   const sessionClient = createPromiseClient(Session, transport);
   const { nonce } = await sessionClient.nonce({});
+  const cookie = lastResponse.header.get('set-cookie').split(';')[0];
+  const wallet = new ethers.Wallet(privateKey);
 
-  const siweMessage = new SiweMessage({
+  const message = new SiweMessage({
     domain: DOMAIN,
     address: wallet.address,
     uri: gRPC_ENDPOINT,
@@ -90,32 +100,33 @@ async function main() {
     chainId: CHAIN_ID,
     nonce,
     issuedAt: new Date().toISOString(),
-  });
+  }).toMessage();
 
-  const message = siweMessage.toMessage();
-  const wallet = new ethers.Wallet(walletPrivateKey);
   const signature = await wallet.signMessage(message);
-  const body = JSON.stringify({ 
-    message: message, 
-    signature: signature, 
-  });
 
-  const verifyResponse = await sessionClient.verify({ body });
-  const authResponse = await sessionClient.authenticate({
-    nonce: nonce,
-    address: wallet.address,
-    signature: signature,
-    verifiedMessage: verifyResponse,
-  });
+  await sessionClient.verify(
+    {
+      body: JSON.stringify({
+        message: message,
+        signature: signature,
+      })
+    },
+    {headers: [['cookie', cookie]]},
+  );
 
-  console.log('Client has authenticated with Quay');
+  await sessionClient.authenticate({}, {headers: [['cookie', cookie]]});
+
+  console.log('Client has authenticated with Valorem Trade!');
 }
 
-main()
+main();
 ```
 
 #### 2. Request a buy quote from the Maker
 
+```typescript
+
+```
 
 #### 3. If the Maker offers a quote:
 
