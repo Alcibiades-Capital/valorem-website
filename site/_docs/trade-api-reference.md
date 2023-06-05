@@ -54,10 +54,64 @@ npx buf generate proto
 
 ### RFQ Taker
 
-#### 1. Connect and authenticate with Quay
+
+#### 1. Connect and authenticate with Valorem Trade
+
+We use [sign-in with ethereum](https://docs.login.xyz/)  for authenticating users.
+Replace `walletPrivateKey` with the account that will be used or signing.
 
 ```typescript
+import { SiweMessage } from 'siwe';
+import { createPromiseClient } from '@bufbuild/connect';  
+import { createGrpcTransport } from '@bufbuild/connect-node';
+import { Session } from '../gen/session_connect';
 
+const NODE_ENDPOINT = 'https://rpc.ankr.com/arbitrum';
+const walletPrivateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+
+const CHAIN_ID = 42161; // Arbitrum One
+const gRPC_ENDPOINT = 'https://exchange.valorem.xyz';
+const DOMAIN = 'exchange.valorem.xyz';
+
+const transport = createGrpcTransport({
+  baseUrl: gRPC_ENDPOINT,
+  httpVersion: '2',
+});
+
+async function main() {
+  const sessionClient = createPromiseClient(Session, transport);
+  const { nonce } = await sessionClient.nonce({});
+
+  const siweMessage = new SiweMessage({
+    domain: DOMAIN,
+    address: wallet.address,
+    uri: gRPC_ENDPOINT,
+    version: '1',
+    chainId: CHAIN_ID,
+    nonce,
+    issuedAt: new Date().toISOString(),
+  });
+
+  const message = siweMessage.toMessage();
+  const wallet = new ethers.Wallet(walletPrivateKey);
+  const signature = await wallet.signMessage(message);
+  const body = JSON.stringify({ 
+    message: message, 
+    signature: signature, 
+  });
+
+  const verifyResponse = await sessionClient.verify({ body });
+  const authResponse = await sessionClient.authenticate({
+    nonce: nonce,
+    address: wallet.address,
+    signature: signature,
+    verifiedMessage: verifyResponse,
+  });
+
+  console.log('Client has authenticated with Quay');
+}
+
+main()
 ```
 
 #### 2. Request a buy quote from the Maker
