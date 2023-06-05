@@ -6,12 +6,11 @@ description: Developer documentation for the Valorem Exchange API.
 
 ## Introduction
 
-Valorem Trade is an expanding ecosystem of high-performance options trading infrastructure. The API currently supports RFQ (Request for Quote) services and returns signed offers for execution on [Seaport](https://docs.opensea.io/reference/seaport-overview). We utilise the [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) framework and use protocol buffers for data serialization for fast and efficient communication.
+Valorem Trade has an expanding ecosystem of high-performance options trading infrastructure. The API currently supports RFQ (Request for Quote) services and returns signed offers for execution on [Seaport](https://docs.opensea.io/reference/seaport-overview). We utilise the [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) framework and use protocol buffers for data serialization for fast and efficient communication.
 
 ### API Endpoint
 
 `https://exchange.valorem.xyz/`
-
 
 ### Proto Files
 
@@ -29,111 +28,51 @@ Valorem Trade is an expanding ecosystem of high-performance options trading infr
 
 We will use [Connect-Node](https://connect.build/docs/node/getting-started) to make requests to the gRPC API in the following examples.
 
+### Starting Out
 
-## RFQ Taker
+Install the neccessary dependencies outlined in this package.json.
+```bash
+yarn install
+```
+Then generate the code from the protobuf service definitions. We will use [Buf](https://www.npmjs.com/package/@bufbuild/buf), a modern replacement for Google's protobuf compiler, using the following config file.
 
+`buf.gen.yaml`
+```yaml
+version: v1
+plugins:
+  - plugin: es
+    opt: target=ts,import_extension=none
+    out: gen
+  - plugin: connect-es
+    opt: target=ts,import_extension=none
+    out: gen
+```
+Then generate the code from the proto definitions stored in the `proto` directory.
+```
+npx buf generate proto
+```
 
+### RFQ Taker
 
-### 1. Connect and authenticate with Quay
+#### 1. Connect and authenticate with Quay
 
-
-
-
-
-```javascript
-
-
-  const client = new quay.session.SessionClient(
-    new tonic.transport.Channel(quay_uri, {
-      transport: tonic.transport.HttpTransport
-      })
-  );
-  const nonce_response = await client.nonce(new quay.session.Empty());
-
-  // Fetch the session cookie for all future requests
-  const session_cookie = nonce_response.metadata[settings.session_cookie_key];
-  const nonce = nonce_response.nonce;
-
-  // Verify & authenticate with Quay before connecting to RFQ endpoint.
-  const client_auth = new quay.session.SessionClient(
-    new tonic.transport.Channel(quay_uri, {
-      transport: tonic.transport.HttpTransport
-    }),
-    new quay.utils.session_interceptor.SessionInterceptor(session_cookie)
-  );
-
-  // Create a sign in with ethereum message
-  const message = new siwe.Message({
-    domain: new siwe.Domain('localhost.com'),
-    address: wallet.address,
-    statement: null,
-    uri: new siwe.Uri('http://localhost/'),
-    version: siwe.Version.V1,
-    chain_id: provider.getNetwork().chainId,
-    nonce,
-    issued_at: siwe.TimeStamp.fromDate(new Date()),
-    expiration_time: null,
-    not_before: null,
-    request_id: null,
-    resources: [],
-  });
-
-  // Generate a signature
-  const message_string = message.toString();
-  const signature = await wallet.signMessage(message_string);
-
-  // Create the SignedMessage
-  const signature_string = signature.toString();
-  const signed_message = {
-    signature: signature_string,
-    message: message_string,
-  };
-
-  // Verify the session with Quay
-  try {
-    await client_auth.verify(new quay.session.VerifyText({ body: JSON.stringify(signed_message) }));
-  } catch (error) {
-    console.error('Error: Unable to verify client. Reported error:');
-    console.error(error);
-    process.exit(1);
-  }
-
-  // Check that we have an authenticated session
-  try {
-    await client_auth.authenticate(new quay.session.Empty());
-  } catch (error) {
-    console.error('Error: Unable to check authentication with Quay. Reported error:');
-    console.error(error);
-    process.exit(1);
-  }
+```typescript
 
 ```
 
-
-### 2. Create an Option Type
-
-```
+#### 2. Request a buy quote from the Maker
 
 
-```
+#### 3. If the Maker offers a quote:
 
 
-### 3. Request a buy quote from the Maker
+#### 4. Accept and fulfill the Order from the Maker
 
 
-### 4. If the Maker offers a quote:
+### 5. Request a sell quote from the Maker
 
 
-### 5. Accept and fulfill the Order from the Maker
-
-
-### 6. Request a sell quote from the Maker
-
-
-### 7. Accept and fulfill the Order from the Maker
-
-
-
+### 6. Accept and fulfill the Order from the Maker
 
 
 
