@@ -76,7 +76,7 @@ navigation_links_docs:
     name: Deployed Addresses
     group:
       - clearinghouse
-
+      
   - url: /docs/dev-guide-write-physically-settled/
     name: Write physically settled options
     group:
