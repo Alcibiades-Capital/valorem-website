@@ -13,15 +13,15 @@ navigation_links:
       - footer
     group:
       - main
-  - url: /docs/
+  - url: /docs/clear-litepaper/
     name: Docs
     visible:
       - header
       - footer
     group:
       - main
-  - url: https://valorem.xyz/docs/options-litepaper/
-    name: Read litepaper
+  - url: https://app.valorem.xyz/
+    name: Launch app
     visible:
       - header
     group:
@@ -55,38 +55,35 @@ footer_groups:
   - social
 
 navigation_links_docs:
-  - url: /docs/options-litepaper/
-    name: Options Litepaper
+  - url: /docs/clear-litepaper/
+    name: Clear Litepaper
     group:
       - research
         
-  - url: /docs/clearinghouse-overview/
-    name: Clearinghouse Overview
+  - url: /docs/clear-overview/
+    name: Overview
     group:
-      - clearinghouse          
-  - url: /docs/clearinghouse-contracts/
+      - clear
+  - url: /docs/clear-contracts/
     name: Smart Contract ABI
     group:
-      - clearinghouse  
-  - url: /docs/clearinghouse-subgraph/
+      - clear
+  - url: /docs/clear-subgraph/
     name: Querying the Subgraph
     group:
-      - clearinghouse
-  - url: /docs/clearinghouse-addresses/
+      - clear
+  - url: /docs/clear-addresses/
     name: Deployed Addresses
     group:
-      - clearinghouse
-      
-  - url: /docs/dev-guide-write-physically-settled/
-    name: Write physically settled options
+      - clear
+
+  - url: /docs/trade-overview/
+    name: Overview
     group:
-      - developer guides
-  - url: /docs/dev-guide-write-cash-settled/
-    name: Write cash settled options
-    group:
-      - developer guides
+      - trade
 
 docs_groups:
   - research
-  - clearinghouse
+  - clear
+  - trade
   - developer guides
