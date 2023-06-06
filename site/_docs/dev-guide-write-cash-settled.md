@@ -1,7 +1,7 @@
 ---
 date: 2023-04-12 00:00:00
 title: How to write cash settled options
-description: Developer guide for writing cash settled options on digital assets with the Valorem Options Clearinghouse.
+description: Developer guide for writing cash settled options on digital assets with Valorem Clear.
 ---
 
 Picking up from where we left off in the previous guide to writing [physically settled options](/docs/dev-guide-write-asset-settled), let's now learn how to achieve cash settlement of your Clearinghouse positions.

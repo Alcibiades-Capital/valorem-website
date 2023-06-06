@@ -61,7 +61,7 @@ navigation_links_docs:
       - research
         
   - url: /docs/clear-overview/
-    name: Overview
+    name: Clear Overview
     group:
       - clear
   - url: /docs/clear-contracts/
@@ -78,9 +78,18 @@ navigation_links_docs:
       - clear
 
   - url: /docs/trade-overview/
-    name: Overview
+    name: Trade Overview
     group:
       - trade
+
+  - url: /docs/dev-guide-write-physically-settled/
+    name: Write physically settled options
+    group:
+      - developer guides
+  - url: /docs/dev-guide-write-cash-settled/
+    name: Write cash settled options
+    group:
+      - developer guides
 
 docs_groups:
   - research

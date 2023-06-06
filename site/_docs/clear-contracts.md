@@ -4,7 +4,7 @@ title: Clear Smart Contract ABI
 description: Developer documentation for the Valorem Clear smart contracts.
 ---
 
-The [Valorem Clear](/docs/clear-overview) is a persistent, non-upgradable smart contract written in Solidity,
+[Valorem Clear](/docs/clear-overview) is a persistent, non-upgradable smart contract written in Solidity,
 responsible for the core clearing and settling of Valorem Options. It is designed to prioritize censorship resistance,
 security, self-custody, and to function without any intermediaries who may restrict access. The source code can be found
 on [GitHub](https://github.com/valorem-labs-inc/valorem-core).

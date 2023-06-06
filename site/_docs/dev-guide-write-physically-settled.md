@@ -1,29 +1,29 @@
 ---
 date: 2023-04-12 00:00:00
 title: How to write physically settled options
-description: Developer guide for writing physically settled options on digital assets with the Valorem Options Clearinghouse.
+description: Developer guide for writing physically settled options on digital assets with Valorem Clear.
 ---
 
-In this developer guide, we will walk through how to write physically settled options on digital assets using the Valorem Options Clearinghouse.
+In this developer guide, we will walk through how to write physically settled options on digital assets using Valorem Clear.
 
-We are Alice and we will use Bob as a second address. We'll write call options on the WETH/LUSD pair, transfer some to Bob, Bob will exercise their options (if it's in-the-money), and finally we'll redeem our claim over the underlying/exercise assets from the Clearinghouse.
+As Alice, we'll write call options on WETH, transfer some to Bob, Bob will exercise their options (because they're in-the-money), and finally we'll redeem our claim over the underlying/exercise assets from the Clearinghouse.
 
 All code examples are provided in Solidity // `forge` and CLI // `cast`.
 
 ## Creating an option type
 
-First we need to create a new option type in the Clearinghouse for our call option. This is done by invoking the [`newOptionType`](/docs/clearinghouse-contracts/#newOptionType) function on the ABI.
+First we need to create a new option type in the clearinghouse for our call option. This is done by invoking the [`newOptionType`](/docs/clearinghouse-contracts/#newOptionType) function on the ABI.
 
 Here are the details of the call option we want to write:
 
 - Underlying asset: WETH
 - Underlying amount: 1
-- Exercise asset: LUSD
+- Exercise asset: USDC
 - Exercise amount: 2100
 - Exercise timestamp: Now
 - Expiry timestamp: 1 week from now
 
-Note that this call option grants the holder the right (but not the obligation) to 'buy' the volatile asset. The underlying asset is volatile, the exercise asset is stable, and the strike is implicitly the exercise amount divided by the underlying amount (2100 LUSD / 1 WETH).
+Note that this call option grants the holder the right (but not the obligation) to 'buy' the volatile asset. The underlying asset is volatile, the exercise asset is stable, and the strike is implicitly the exercise amount divided by the underlying amount (2100 USDC / 1 WETH).
 
 For put options, it's the inverse — the underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (still 2100 USD / 1 WETH, but for puts the underlying and exercise assets are inverted). The holder has the option to 'sell' the volatile asset at the strike, which upon exercise is transferred in  and the underlying asset is transferred out.
 
@@ -39,7 +39,7 @@ IValoremOptionsClearinghouse clearinghouse = new IValoremOptionsClearinghouse(CL
 // Setup option parameters.
 address WETH_ADDRESS = 0x...;
 uint96 underlyingAmount = 1 ether;
-address LUSD_ADDRESS = 0x...;
+address USDC_ADDRESS = 0x...;
 uint96 exercisePrice = 2100e18;
 uint40 earliestExercise = block.timestamp;
 uint40 expiry = earliestExercise + 1 weeks;
@@ -48,7 +48,7 @@ uint40 expiry = earliestExercise + 1 weeks;
 uint256 optionId = clearinghouse.newOptionType({
     underlyingAsset: WETH_ADDRESS,
     underlyingAmount: underlyingAmount,
-    exerciseAsset: LUSD_ADDRESS,
+    exerciseAsset: USDC_ADDRESS,
     exerciseAmount: exercisePrice,
     exerciseTimestamp: earliestExercise,
     expiryTimestamp: expiry
@@ -58,7 +58,7 @@ uint256 optionId = clearinghouse.newOptionType({
 
 {% tab log bash %}
 ```bash
-$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "newOptionType(address,uint96,address,uint96,uint40,uin40) (uint256)" "$WETH" 1e18 "$LUSD" 2100e18 1681488000 1682092800
+$ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "newOptionType(address,uint96,address,uint96,uint40,uin40) (uint256)" "$WETH" 1e18 "$USDC" 2100e18 1681488000 1682092800
 ```
 {% endtab %}
 
@@ -117,9 +117,9 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "safeTrans
 
 We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for the option type (on or after `exerciseTimestamp`, before `expiryTimestamp`), he can exercise his position.
 
-Let's imagine for this example that the position is finishing in-the-money, and Bob wants to exercise his options. This is done by calling the [`exercise`](/docs/clearinghouse-contracts/#exercise) function. The result is that Bob's 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e18 LUSD) is transferred to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1 ether WETH) is transferred from the Clearinghouse to Bob.
+Let's imagine for this example that the position is finishing in-the-money, and Bob wants to exercise his options. This is done by calling the [`exercise`](/docs/clearinghouse-contracts/#exercise) function. The result is that Bob's 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e18 USDC) is transferred to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1 ether WETH) is transferred from the Clearinghouse to Bob.
 
-Note again that sufficient ERC20 approval must be granted to the Clearinghouse contract before calling this function (although in this case, for the exercise asset, LUSD).
+Note again that sufficient ERC20 approval must be granted to the Clearinghouse contract before calling this function (although in this case, for the exercise asset, USDC).
 
 {% tabs log %}
 
@@ -149,7 +149,7 @@ Finally, we will redeem our Claim NFT (using the Claim token ID returned from [`
 - For fully exercised positions, solely the `exerciseAsset`
 - For partially exercised positions, a mix of both assets in the correct proportions
 
-In our example, we will redeem the WETH and LUSD remaining in the position. And we can always use the [`claim`](/docs/clearinghouse-contracts/#claim) function to check the exercise status of our Claim NFT before redeeming.
+In our example, we will redeem the WETH and USDC remaining in the position. And we can always use the [`claim`](/docs/clearinghouse-contracts/#claim) function to check the exercise status of our Claim NFT before redeeming.
 
 {% tabs log %}
 
@@ -165,11 +165,11 @@ vm.warp(expiry);
 // Redeem our claim.
 clearinghouse.redeem(claimId);
 
-// Log the amount of WETH and LUSD we received upon redemption.
+// Log the amount of WETH and USDC we received upon redemption.
 uint256 wethBalance = WETH.balanceOf(address(this));
-uint256 lusdBalance = LUSD.balanceOf(address(this));
-emit log_named_uint("WETH received", lusdBalance);
-emit log_named_uint("LUSD received", uint256(exerciseAmount));
+uint256 USDCBalance = USDC.balanceOf(address(this));
+emit log_named_uint("WETH received", USDCBalance);
+emit log_named_uint("USDC received", uint256(exerciseAmount));
 ```
 {% endtab %}
 

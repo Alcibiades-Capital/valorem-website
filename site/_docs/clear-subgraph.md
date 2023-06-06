@@ -1,6 +1,6 @@
 ---
 date: 2023-04-12 00:00:00
-title: Using the Clear subgraph
+title: Querying the Clear Subgraph
 description: Developer documentation for Valorem Clear subgraph.
 ---
 
