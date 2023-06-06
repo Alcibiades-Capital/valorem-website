@@ -3,22 +3,21 @@ date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-12-22 00:00:00 +01
 title: Valorem Options Litepaper
 usemathjax: true
-description: This paper outlines Valorem Options, an oracle-free, permissionless, underwriting system and clearinghouse for ERC20 token options. 
+description: This paper outlines Valorem Options, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ---
 
 ## Introduction
 
-In this paper, we present [Valorem](https://valorem.xyz/) Options, an option 
-contract underwriting system and clearinghouse implemented for the 
+In this paper, we present [Valorem](https://valorem.xyz/) Options, an option contract clearing and settling system implemented for the 
 [Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf).
 The design of the Valorem Options protocol aims to provide superior 
-flexibility when compared with existing options protocols, by removing price 
+flexibility and execution costs when compared with existing options protocols, by removing price 
 oracles, reliance on existing DeFi primitives, and premium value assumptions. 
 Valorem Options are settled physically using a novel fair settlement 
 algorithm. The protocol can interact directly with any pair of non-rebasing, 
 non-fee-on-transfer, 
 [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) 
-tokens to enable the transfer, and settlement of long and short put and call 
+tokens to enable the transfer and settlement of long and short put and call 
 option positions in a permissionless and non-custodial manner.
 
 ## Motivation
@@ -32,7 +31,7 @@ past year — both centralized exchanges, such as Deribit, and on-chain protocol
 
 There are already a number of on-chain options market making protocols. While
 most of these trade products which emulate traditional options structures, the
-reliance on price oracles and assumptions around option premiums via models
+reliance on price oracles and assumptions around option premia via models
 such as Black-Scholes make them inflexible and subject to toxic orderflow.
 Recently, protocols synthesizing options via single tick Uniswap V3 LPs have
 emerged, but they are restricted by the lack of Uniswap V3 deployment across
@@ -52,12 +51,19 @@ The Valorem protocol is permissionless. It is open to public use with no
 ability to restrict who can or cannot use it. Any potential user can perform
 any operation that the protocol supports.
 
-### Fully collateralized
+### Risk-aware
 
-Options written via the protocol are fully collateralized, reducing
-counterparty risk and ensuring settlement. This leaves the opportunity for
-higher level margining systems, with risk, to be implemented atop the protocol, 
+Options written via the protocol are physically settled and fully collateralized, reducing
+counterparty risk and ensuring settlement. Physical settlement simplifies the core mechanism,
+while supporting cash settlement through flash loans and swaps. Full collaterilization leaves
+the opportunity for higher level margining systems, with risk, to be implemented atop the protocol, 
 whilst remaining un-opinionated at the base layer.
+
+### Minimalist
+
+Valorem's protocol design is minimalist, with a single smart contract for clearing
+and settling business logic. This enables superb execution costs to write and
+exercise options, along with an ergonomic developer experience.
 
 ### Composable
 
@@ -68,13 +74,13 @@ that it can easily be integrated into other smart contract systems as a
 ## Mechanism
 
 The Valorem Options protocol, at it's core, is a non-custodial engine for the
-underwriting and physical settlement of options, consisting of a set of
+clearing and physical settlement of options, consisting of a set of
 smart contracts. The engine utilizes the
 [ERC1155 multi-token standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/)
 to gas-efficiently tokenize long and short positions, or **options** and 
 **claims**. On-chain actors — either individuals using wallets, or protocols 
 using smart contracts — can create a new option type, defined as the
-unique tuple with regard option contract properties. They can then write
+unique tuple with regard to the option contract's properties. They can then write
 options of that type. Writing issues one or more fungible option tokens, and 
 a non-fungible claim token, representing a claim to the collateral used for 
 writing, or the exercise asset if that claim is assigned exercise via a 
@@ -84,7 +90,7 @@ window, after which the claim tokens can be redeemed.
 
 ### Creating a new option type
 
-Actors can permissionlessly [create a new option type](/docs/options-smart-contracts#write-options) by specifying:
+Actors can permissionlessly [create a new option type](/docs/clearinghouse-contracts#write-options) by specifying:
 
 - The **underlying asset** for the option; this is the token the option 
   holder receives if the option is exercised.
@@ -99,7 +105,7 @@ Actors can permissionlessly [create a new option type](/docs/options-smart-contr
 
 #### Option data model
 
-A Valorem option is represented with the [following struct](/docs/options-smart-contracts#option), packed into
+A Valorem option is represented with the following [data structure](/docs/clearinghouse-contracts#option), packed into
 4 storage slots:
 
 ```solidity
@@ -138,9 +144,22 @@ uint160 optionKey = uint160(
 This `uint160 optionKey` is used to determine if that type of option already 
 exists and, if it doesn't, create it.
 
+#### Claim data model
+
+A Valorem claim is represented with the following virtual [data structure](/docs/clearinghouse-contracts#claim), which is not represented directly in storage:
+
+```solidity
+
+    struct Claim {
+        uint256 amountWritten;
+        uint256 amountExercised;
+        uint256 optionId;
+    }
+```
+
 #### Token address space
 
-The ERC-1155 standard has a 256-bit address space for [sub-tokens](/docs/options-smart-contracts#tokentype). Valorem uses 
+The ERC-1155 standard has a 256-bit address space for [sub-tokens](/docs/clearinghouse-contracts/#tokentype). Valorem uses 
 the upper 160 bits for fungible option token types, keyed on 
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens 
 within each option type, keyed on an auto-incrementing `uint96 claimKey` 
@@ -151,12 +170,12 @@ follows:
 MSb
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
 0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 │
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
 0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b claim key
 0000 0000   0000 0000   0000 0000   0000 0000 ┘
                                           LSb
 ```
@@ -171,7 +190,7 @@ and `type(uint96).max - 1` individual claims for each option type.
 
 ### Writing options
 
-Once an option type has been created, any actor can [write options](/docs/options-smart-contracts#write) of that 
+Once an option type has been created, any actor can [write options](/docs/clearinghouse-contracts#write) of that 
 type. Upon writing, the requisite amount of the underlying token is transferred 
 in to the engine and the option writer receives a non-fungible claim token 
 representing the short position, which is a claim to the underlying asset and 
@@ -187,7 +206,7 @@ providing the claim NFT identifier when writing.
 
 ### Exercising options
 
-Holders of an option token can [exercise the option](/docs/options-smart-contracts#exercise) pursuant to the following 
+Holders of an option token can [exercise the option](/docs/clearinghouse-contracts#exercise) pursuant to the following 
 conditions:
 
 - The current block timestamp is on or after the exercise timestamp of the 
@@ -214,21 +233,21 @@ exercised, and the next write creates a new bucket. This defines the bucket
 lifecycle algorithm.
 
 Exercise assignment is performed using a deterministic algorithm seeded by
-the `uint160 optionKey`, with entropy from actors who write and exercise
-options without either party being able to influence the outcome. The runtime 
+the `uint160 optionKey`, without actors who write and exercise
+being able to influence the outcome. The runtime 
 complexity of this algorithm is $ \mathcal{O}(n) $ where $ n $ is the number 
 of buckets consumed by the algorithm to fulfill the exercise.
 
 However, because the probability of an exercise assignment to 
 the most recently created bucket is $ 1 \over n $, where $ n $ is the number 
-of buckets, and because $ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $, 
+of buckets, and because $ \sum_{n \rightarrow \infty} {1 \over n} = { \infty } $ is the [harmonic series](https://mathworld.wolfram.com/HarmonicSeries.html), 
 and since 
-$ \sum_{n=1}^k {1 \over n} = H_k $, and $ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and $ \gamma \approx 0.5772156649 $, 
+$ \sum_{n=1}^k {1 \over n} = H_k $, and $ H_k = \sum_{n=1}^k {1 \over n} \approx \ln n + \gamma $, and [Euler's constant](https://mathworld.wolfram.com/Euler-MascheroniConstant.html) $ \gamma \approx 0.57721 $, 
 the average case growth rate of the number of buckets for an option type 
 is $ \mathcal{O}(\ln n) $. This makes it prohibitively expensive for a
 malicious writer to perform a denial of service attack on options exercisers,
 and generally keeps the runtime complexity to exercise an option type bounded
-by $ \mathcal{O}(\ln n) $ where $ n $ is the number of writes followed by a 
+by $ \mathcal{O}(\ln n) $, where $ n $ is the number of writes followed by a 
 partial exercise which occur.
 
 #### What comprises a claim?
@@ -281,7 +300,7 @@ $$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + {B_{u
 
 ### Redeeming claims
 
-Holders of a claim NFT can [redeem their claim](/docs/options-smart-contracts#redeem) from the engine when current 
+Holders of a claim NFT can [redeem their claim](/docs/clearinghouse-contracts#redeem) from the engine when current 
 block timestamp is on or after the expiry timestamp of the option type. If their 
 claim was assigned full or partial exercise during the lifetime of the option 
 type, the claim holder receives the correct ratio of the underlying and 
@@ -311,12 +330,11 @@ payoff $ max(0,X-S_T) $ for the holder, and the payoff  $ -max(0,X-S_T) $
 for the writer. This can be accomplished by writing a call option with the 
 exercise and underlying asset order swapped. An ETH/DAI call is a DAI/ETH put.
 
-#### European, American, and Bermudan options
+#### European and American options
 
 European options can be created by setting the exercise timestamp to the 
 expiry timestamp minus one day. American options can be created by setting 
-an exercise timestamp to the current block timestamp upon creation. Bermudan
-options can be created by setting an exercise timestamp to a future timestamp.
+an exercise timestamp to the current block timestamp upon creation.
 
 ### Trading and market making
 

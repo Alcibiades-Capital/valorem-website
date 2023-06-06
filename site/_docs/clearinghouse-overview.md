@@ -12,7 +12,7 @@ The Valorem Options Clearinghouse V1 consists of a clearing and settling engine 
 
 The Clearinghouse follows the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) standard. Options can be written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an option contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses like any ERC-1155 token.
 
-An option writer's claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is represented by a non-fungible option lot Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.
+An option writer's claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus exercise assets, based on currently exercised.
 
 The structure of an option is as follows:
 
@@ -26,7 +26,9 @@ The structure of an option is as follows:
 The Clearinghouse is unopinionated on the type of option (call vs. put), where, when, or for how much an option is bought/sold, and whether or not the option is profitable when exercised. Because all options written with Valorem are fully collateralized, physical settlement at exercise or redeem time is instant and gas-efficient.
 
 ## Trust Model
+
 ### Actors
+
 There are 3 main actors in the core protocol:
 - Protocol Admin
 - Option Writer
@@ -34,14 +36,16 @@ There are 3 main actors in the core protocol:
 
 The **Protocol Admin** is the address to which protocol fees are swept. This address can update the Protocol Admin address, update the contract address of the TokenURIGenerator, enable/disable protocol fees, and sweep accrued fees. No other permissioned actions are possible.
 
-**Option Writers** can create new option types and write options for any valid ERC-20 asset pair (excluding rebasing, fee-on-transfer, and ERC-777 tokens). Sufficient approval must be granted for the Clearinghouse to take custody of the requisite amount of the underlying asset. Once an option expires, the writer can redeem their Claim NFT for their share of the underlying and/or exercise assets.
+**Option Writers** can create new option types and write options for any valid ERC-20 asset pair (excluding rebasing, fee-on-transfer, and ERC-777 tokens). Sufficient approval must be granted for the Clearinghouse to transfer in the requisite amount of the underlying asset. Once an option expires, the writer can redeem their Claim NFT for their share of the underlying and/or exercise assets.
 
 **Option Holders** can transfer and exercise options that have been written. This is accomplished via a standard ERC-1155 transfer of the desired amount of option contracts from writer to holder. When exercising an option, they must have enough of the exercise asset, and similarly to when writing an option, they must have granted sufficient approval for the Clearinghouse on the ERC20 exercise asset.
 
 ### Assets
-When an option is written, the Clearinghouse takes control of the underlying asset, transferring in the requisite amount. When an option is exercised, the Clearinghouse transfers in the requisite amount of the exerise asset and transfers out the underlying asset. When a claim is redeemed, the Clearinghouse transfers out that claimant's share of the exercise asset and any remaining, unexercised underlying asset.
+
+When an option is written, the Clearinghouse transfers in the requisite amount of the underlying asset. When an option is exercised, the Clearinghouse transfers in the requisite amount of the exerise asset and transfers out the underlying asset. When a claim is redeemed, the Clearinghouse transfers out that claimant's share of the exercise asset and any remaining, unexercised underlying asset.
 
 ### Actions
+
 What can each actor do, when and with how much, of each asset?
 
 - `ERC1155`
@@ -78,6 +82,17 @@ What can each actor do, when and with how much, of each asset?
     - sweep accrued fees for any ERC20 asset to the Protocol Admin ("feeTo") address  
 
 ## Security Info
+
+The Valorem V1 clearinghouse contains one unresolved medium severity audit finding.
+
+The probability of an options bucket being chosen for exercise is not correlated 
+with the number of options contained in that bucket. Thus, individual option 
+contracts in smaller buckets have a higher probability of being selected for 
+assignment.
+
+This probabilistic imperfection will be remediated in a future version. Discrete
+probability mass functions with dynamic weighting are an unsolved issue in 
+solidity. Work on the remediation is underway with [LibDDRV](https://github.com/valorem-labs-inc/LibDDRV).
 
 - Audits: [PDF reports](https://github.com/valorem-labs-inc/valorem-core/tree/master/audits)
 - Security contact: info(at)valorem(dot)xyz
