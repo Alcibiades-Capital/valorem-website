@@ -25,11 +25,10 @@ plugins:
     opt: target=ts,import_extension=none
     out: gen/quay
 ```
-Use this command to generate the proto definitions from the proto files in `proto/quay`.
+Use this command to generate from the proto files in `proto/quay`.
 ```
 npx buf generate proto/quay
 ```
-
 
 ### Connecting and Authenticating with Valorem Trade
 
@@ -39,8 +38,8 @@ We use [sign-in with ethereum](https://docs.login.xyz/) for authenticating our u
 import { createPromiseClient } from '@bufbuild/connect';
 import { createGrpcTransport } from '@bufbuild/connect-node';
 import { SiweMessage } from 'siwe';
-import * as ethers from 'ethers';
-import { Session } from '../gen/quay/session_connect';
+import * as ethers from 'ethers';  // v5.5.0
+import { Auth } from '@gen/quay/auth_connect';  // generated from auth.proto
 
 // replace with account to use for signing
 const PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
@@ -69,8 +68,8 @@ const transport = createGrpcTransport({
 });
 
 async function authenticateWithTrade() {
-  const sessionClient = createPromiseClient(Session, transport);
-  const { nonce } = await sessionClient.nonce({});
+  const authClient = createPromiseClient(Auth, transport);
+  const { nonce } = await authClient.nonce({});
 
   // create SIWE message
   const message = new SiweMessage({
@@ -87,7 +86,7 @@ async function authenticateWithTrade() {
   const signature = await signer.signMessage(message);
 
   // verify with Valorem Trade
-  await sessionClient.verify(
+  await authClient.verify(
     {
       body: JSON.stringify({
         message: message,
@@ -98,48 +97,10 @@ async function authenticateWithTrade() {
   );
 
   // authenticate with Valorem Trade
-  await sessionClient.authenticate({}, {headers: [['cookie', cookie]]});
+  await authClient.authenticate({}, {headers: [['cookie', cookie]]});
 
   console.log('Client has authenticated with Valorem Trade!');
 }
-```
-
-### RFQ Maker
-
-After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
-Here we will connect as an RFQ client, listen for incoming quote requests from takers, and respond with quotes. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_maker.ts).
-
-Note: the below code is for demonstration purposes only so you should create your own robust steam handling for production.
-
-```typescript
-import { RFQ } from '../gen/quay/rfq_connect';
-import { QuoteResponse } from '../gen/quay/rfq_pb';
-import { toH160} from '../lib/fromBNToH';
-
-async function createResponse(optionId: ethers.BigNumber) {
-  const rfqClient = createPromiseClient(RFQ, transport);
-
-  const response = new QuoteResponse({ 
-    ulid: undefined,
-    makerAddress: toH160(signer.address),
-    order: undefined,
-  });
-
-  // create your own quote request and response stream handling logic here
-  const responseStream = async function* () {
-    yield response;
-  };
-
-  const requestStream = rfqClient.maker(
-    responseStream(),
-    {headers: [['cookie', cookie]]}
-  );
-
-  for await (const request of requestStream) {
-    console.log(request);
-  }
-};
-
 ```
 
 ### RFQ Taker
@@ -150,10 +111,10 @@ Here we will request a quote to buy an option, and listen for responses. The ful
 Note: the below code is for demonstration purposes only so you should create your own robust stream handling for production.
 
 ```typescript
-import { RFQ } from '../gen/quay/rfq_connect';
-import { Action, QuoteRequest } from '../gen/quay/rfq_pb';
-import { ItemType } from '../gen/quay/seaport_pb';
-import { toH160, toH256 } from '../lib/fromBNToH';
+import { RFQ } from '@gen/quay/rfq_connect';  // generated from rfq.proto
+import { Action, QuoteRequest } from '@gen/quay/rfq_pb';  // generated from rfq.proto
+import { ItemType } from '@gen/quay/seaport_pb';  // generated from seaport.proto
+import { toH160, toH256 } from './lib/fromBNToH';
 
 async function createRequest(optionId: ethers.BigNumber) {
   const rfqClient = createPromiseClient(RFQ, transport);
@@ -181,6 +142,43 @@ async function createRequest(optionId: ethers.BigNumber) {
 
   for await (const response of responseStream) {
     console.log(response);
+  }
+};
+```
+
+### RFQ Maker
+
+After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
+Here we will connect as an RFQ client, listen for incoming quote requests from takers, and respond with quotes. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_maker.ts).
+
+Note: the below code is for demonstration purposes only so you should create your own robust steam handling for production.
+
+```typescript
+import { RFQ } from '@gen/quay/rfq_connect';  // generated from rfq.proto
+import { QuoteResponse } from '@gen/quay/rfq_pb';  // generated from rfq.proto
+import { toH160 } from './lib/fromBNToH';
+
+async function createResponse(optionId: ethers.BigNumber) {
+  const rfqClient = createPromiseClient(RFQ, transport);
+
+  const response = new QuoteResponse({ 
+    ulid: undefined,
+    makerAddress: toH160(signer.address),
+    order: undefined,
+  });
+
+  // create your own quote request and response stream handling logic here
+  const responseStream = async function* () {
+    yield response;
+  };
+
+  const requestStream = rfqClient.maker(
+    responseStream(),
+    {headers: [['cookie', cookie]]}
+  );
+
+  for await (const request of requestStream) {
+    console.log(request);
   }
 };
 ```
