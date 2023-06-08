@@ -20,7 +20,7 @@ Ahead of the hackathon, we delved into a more comprehensive solution. It became
 clear that we needed a mechanism for generating random variates fitting a
 dynamically weighted discrete probability mass function (PMF). We aimed to
 leverage this unique type of random number to equalize the probability of
-[option exercise assignment across various buckets]((/docs/clear-litepaper/#fair-exercise-assignment)).
+[option exercise assignment across various buckets]((https://valorem.xyz/docs/clear-litepaper/#fair-exercise-assignment)).
 
 ## A random forest in Solidity
 
