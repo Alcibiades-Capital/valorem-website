@@ -173,6 +173,6 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "redeem(ui
 
 There we have it, a physically settled American option using the Valorem Clear clearinghouse. We learned how to create a new option type and write options, transfer a long position to another address, exercise this long position, and finally redeem our claim over the collateral backing the short position.
 
-A full working code example is available [here](TODO), complete with balance assertions to help demonstrate the movements of the underlying and option tokens.
+A full working code example is available [here](https://github.com/valorem-labs-inc/valorem-dev-guides/blob/main/test/ClearPhysicallySettled.t.sol), complete with balance assertions that demonstrate the movements of the underlying and option tokens.
 
 Please get in touch on our [Discord server](https://discord.gg/5jZdPuY9kR) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!

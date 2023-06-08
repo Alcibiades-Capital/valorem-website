@@ -61,7 +61,7 @@ navigation_links_docs:
       - research
         
   - url: /docs/clear-overview/
-    name: Clear Overview
+    name: Overview
     group:
       - clear
   - url: /docs/clear-contracts/
@@ -78,7 +78,7 @@ navigation_links_docs:
       - clear
 
   - url: /docs/trade-overview/
-    name: Trade Overview
+    name: Overview
     group:
       - trade
 
