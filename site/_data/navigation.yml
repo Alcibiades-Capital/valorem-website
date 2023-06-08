@@ -82,6 +82,11 @@ navigation_links_docs:
     group:
       - trade
 
+  - url: /docs/dev-guide-write-physically-settled/
+    name: Write physically settled options
+    group:
+      - developer guides
+
 docs_groups:
   - research
   - clear
