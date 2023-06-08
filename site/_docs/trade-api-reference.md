@@ -6,7 +6,7 @@ description: Developer documentation for the Valorem Exchange API.
 
 ## Introduction
 
-Valorem Trade has an expanding ecosystem of high-performance options trading infrastructure. The API currently supports RFQ (Request for Quote) services and returns signed offers for execution on [Seaport](https://docs.opensea.io/reference/seaport-overview). We utilise the [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) framework and use protocol buffers for data serialization for fast and efficient communication.
+Valorem Trade The API currently supports RFQ (Request for Quote) services and returns signed offers for execution on [Seaport](https://docs.opensea.io/reference/seaport-overview). We utilise the [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) framework which uses protocol buffers for data serialization for fast and efficient communication.
 
 ### API Endpoint
 
@@ -32,9 +32,6 @@ We will use [Connect-Node](https://connect.build/docs/node/getting-started) to m
 
 Install the neccessary dependencies outlined in this [package.json](https://github.com/valorem-labs-inc/exchange-proto/blob/rfq-api-usage-examples/package.json).
 
-```bash
-yarn install
-```
 Then generate the code from the protobuf service definitions. We will use [Buf](https://www.npmjs.com/package/@bufbuild/buf), a modern replacement for Google's protobuf compiler, using the following config file.
 
 `buf.gen.yaml`
@@ -43,14 +40,14 @@ version: v1
 plugins:
   - plugin: es
     opt: target=ts,import_extension=none
-    out: gen
+    out: gen/quay
   - plugin: connect-es
     opt: target=ts,import_extension=none
-    out: gen
+    out: gen/quay
 ```
-Then generate the code from the proto definitions stored in the `proto` directory.
+Then generate the code from the proto definitions stored in the `proto/quay` directory.
 ```
-npx buf generate proto
+npx buf generate proto/quay
 ```
 
 
@@ -63,7 +60,7 @@ import { createPromiseClient } from '@bufbuild/connect';
 import { createGrpcTransport } from '@bufbuild/connect-node';
 import { SiweMessage } from 'siwe';
 import * as ethers from 'ethers';
-import { Session } from '../gen/session_connect';
+import { Session } from '../gen/quay/session_connect';
 
 // replace with account to use for signing
 const PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
@@ -135,8 +132,8 @@ Here we will connect as an RFQ client, listen for incoming quote requests from t
 Note: the below code is for demonstration purposes only so you should create your own robust steam handling for production.
 
 ```typescript
-import { RFQ } from '../gen/rfq_connect';
-import { QuoteResponse } from '../gen/rfq_pb';
+import { RFQ } from '../gen/quay/rfq_connect';
+import { QuoteResponse } from '../gen/quay/rfq_pb';
 import { toH160} from '../lib/fromBNToH';
 
 async function createResponse(optionId: ethers.BigNumber) {
@@ -173,9 +170,9 @@ Here we will request a quote to buy an option, and listen for responses. The ful
 Note: the below code is for demonstration purposes only so you should create your own robust stream handling for production.
 
 ```typescript
-import { RFQ } from '../gen/rfq_connect';
-import { Action, QuoteRequest } from '../gen/rfq_pb';
-import { ItemType } from '../gen/seaport_pb';
+import { RFQ } from '../gen/quay/rfq_connect';
+import { Action, QuoteRequest } from '../gen/quay/rfq_pb';
+import { ItemType } from '../gen/quay/seaport_pb';
 import { toH160, toH256 } from '../lib/fromBNToH';
 
 async function createRequest(optionId: ethers.BigNumber) {
