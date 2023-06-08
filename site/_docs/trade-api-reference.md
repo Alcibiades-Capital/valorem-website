@@ -130,9 +130,9 @@ async function authenticateWithTrade() {
 ### RFQ Maker
 
 After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
-Here we will connect as an RFQ client and listen for incoming quote requests from takers, and respond with quotes. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_maker.ts).
+Here we will connect as an RFQ client, listen for incoming quote requests from takers, and respond with quotes. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_maker.ts).
 
-Note: the below code is for demonstration purposes only so you should creat your own robust steam handling for production.
+Note: the below code is for demonstration purposes only so you should create your own robust steam handling for production.
 
 ```typescript
 import { RFQ } from '../gen/rfq_connect';
@@ -168,9 +168,9 @@ async function createResponse(optionId: ethers.BigNumber) {
 ### RFQ Taker
 
 After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
-Here we will request a quite to buy an option, and listen for quote responses. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_taker.ts).
+Here we will request a quote to buy an option, and listen for responses. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_taker.ts).
 
-Note: the below code is for demonstration purposes only so you should creat your own robust steam handling for production.
+Note: the below code is for demonstration purposes only so you should create your own robust stream handling for production.
 
 ```typescript
 import { RFQ } from '../gen/rfq_connect';
