@@ -8,7 +8,7 @@ description: This paper outlines Valorem Clear, an oracle-free, permissionless, 
 
 ## Introduction
 
-In this paper, we present [Valorem](https://valorem.xyz/) Clear, an option contract clearing and settling system
+In this paper, we present [Valorem](https://valorem.xyz/) Clear, an option contract clearing and settlement system
 implemented for the
 [Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf).
 The design of the Valorem Options protocol aims to provide superior
