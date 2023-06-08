@@ -1,5 +1,5 @@
 ---
-date: 2023-04-12 00:00:00
+date: 2023-06-06 00:00:00
 title: How to write physically settled options
 description: Developer guide for writing physically settled options on digital assets with Valorem Clear.
 ---
