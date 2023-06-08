@@ -85,6 +85,10 @@ navigation_links_docs:
     name: API Reference
     group:
       - trade
+  - url: /docs/trade-api-usage/
+    name: API Usage
+    group:
+      - trade
 
 
 docs_groups:
