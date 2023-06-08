@@ -45,22 +45,22 @@
     <link rel="alternate" type="application/atom+xml" title="Valorem Protocol" href="/feed.xml" title="Valorem Protocol">
 
     
-    <title>Valorem Clear | Valorem Protocol</title>
-<meta property="og:title" content="Valorem Clear
+    <title>How to write physically settled options</title>
+<meta property="og:title" content="How to write physically settled options
 " />
 <meta name="author" content="Alcibiades" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+<meta name="description" content="Developer guide for writing physically settled options on digital assets with Valorem Clear.
 " />
-<meta property="og:description" content="Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+<meta property="og:description" content="Developer guide for writing physically settled options on digital assets with Valorem Clear.
 " />
-<link rel="canonical" href="https://valorem.xyz/docs/clear-overview/" />
-<meta property="og:url" content="https://valorem.xyz/docs/clear-overview/" />
+<link rel="canonical" href="https://valorem.xyz/docs/dev-guide-write-physically-settled/" />
+<meta property="og:url" content="https://valorem.xyz/docs/dev-guide-write-physically-settled/" />
 <meta property="og:site_name" content="Valorem Protocol" />
-<meta property="og:image" content="" /><meta property="og:type" content="website" /><meta property="article:published_time" content="2022-11-29T19:00:00-05:00" />
+<meta property="og:image" content="" /><meta property="og:type" content="website" /><meta property="article:published_time" content="2023-06-05T20:00:00-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="" />
-<meta property="twitter:title" content="Valorem Clear
+<meta property="twitter:title" content="How to write physically settled options
 " />
 <meta name="google-site-verification" content="" />
 
@@ -68,8 +68,8 @@
     {
         "@context":"https://schema.org",
         "@type":"WebPage",
-        "name":"Valorem Clear",
-        "description":"Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+        "name":"How to write physically settled options",
+        "description":"Developer guide for writing physically settled options on digital assets with Valorem Clear.
 ",
         "publisher":{
             "@type":"Organization",
@@ -251,7 +251,7 @@
                     
                     <li>
                         <a href="/docs/clear-overview/"
-                            class="block py-3 px-6 rounded-md text-gray-900 bg-gray-cool">Overview</a>
+                            class="block py-3 px-6 rounded-md hover:bg-gray-200">Overview</a>
                     </li>
                     
                     <li>
@@ -288,7 +288,7 @@
                     
                     <li>
                         <a href="/docs/dev-guide-write-physically-settled/"
-                            class="block py-3 px-6 rounded-md hover:bg-gray-200">Write physically settled options</a>
+                            class="block py-3 px-6 rounded-md text-gray-900 bg-gray-cool">Write physically settled options</a>
                     </li>
                     
                 </ol>
@@ -297,161 +297,236 @@
         </nav>
         <article class="lg:flex-grow">
             <div class="prose">
-                <h1>Valorem Clear</h1>
+                <h1>How to write physically settled options</h1>
                 <hr>
-                <p><a href="https://valorem.xyz/">Valorem</a> Clear is a DeFi money lego, enabling writing covered calls and cash-secured puts, physically
-settled or cash settled, American, European, and Exotic options.</p>
+                <p>In this developer guide, we will walk through how to write physically settled options on digital assets using Valorem Clear.</p>
 
-<h2 id="protocol-introduction">Protocol introduction</h2>
+<p>We’ll write call options on WETH as Alice, transfer some to Bob, Bob will exercise their options (because they’re in the money), and finally we’ll redeem our claim over the underlying/exercise assets from the Clearinghouse.</p>
 
-<p>Valorem Clear V1 consists of a clearing and settling engine which allows users to write options,
-exercise options, and redeem claims on assets, while handling fair assignment of exercises to claims written. It is
-designed to be gas efficient, minimal, and provide a secure settlement layer upon which more complex systems can be
-built.</p>
+<p>All code examples are provided in Solidity // <code class="language-plaintext highlighter-rouge">forge</code> and CLI // <code class="language-plaintext highlighter-rouge">cast</code> (more languages to come).</p>
 
-<p>Clear follows the <a href="https://eips.ethereum.org/EIPS/eip-1155">ERC-1155 multi-token</a> standard. Options can be
-written for any pair of valid ERC-20 assets (excluding rebasing, fee-on-transfer, and ERC-777 tokens). When written, an
-option contract is represented by semi-fungible Option tokens, which can be bought/sold/transferred between addresses
-like any ERC-1155 token.</p>
+<h2 id="creating-an-option-type">Creating an option type</h2>
 
-<p>An option writer’s claim to the underlying asset(s) (if not exercised) and exercise asset(s) (if exercised) is
-represented by a non-fungible Claim token. This Claim NFT can be redeemed for their share of the underlying plus
-exercise assets, based on currently exercised.</p>
+<p>First we need to create a new option type in the clearinghouse for our call option. This is done by invoking the <a href="/docs/clear-contracts/#newOptionType"><code class="language-plaintext highlighter-rouge">newOptionType</code></a> function on the ABI.</p>
 
-<p>The structure of an option is as follows:</p>
+<p>Here are the details of the call option we want to write:</p>
 
 <ul>
-  <li><strong>Underlying asset:</strong> the ERC-20 address of the asset to be received upon exercise.</li>
-  <li><strong>Underlying amount:</strong> the amount of the underlying asset contained within an option of this type.</li>
-  <li><strong>Exercise asset:</strong> the ERC-20 address of the asset needed for exercise.</li>
-  <li><strong>Exercise amount:</strong> the amount of the exercise asset required to exercise this option.</li>
-  <li><strong>Exercise timestamp:</strong> the timestamp after which this option can be exercised and physically settled.</li>
-  <li><strong>Expiry timestamp:</strong> the timestamp before which this option can be exercised.</li>
+  <li>Underlying asset: WETH</li>
+  <li>Underlying amount: 1 (ie, 1e18)</li>
+  <li>Exercise asset: USDC</li>
+  <li>Exercise amount: 2100 (ie, 2100e6)</li>
+  <li>Exercise timestamp: Now</li>
+  <li>Expiry timestamp: 1 week from now</li>
 </ul>
 
-<p>Clear is unopinionated on the type of option (call vs. put), where, when, or for how much an option is
-bought/sold, and whether or not the option is profitable when exercised. Because all options written with Valorem are
-fully collateralized, physical settlement at exercise or redeem time is instant and gas-efficient.</p>
+<p>Note that this call option grants the holder the right, but not the obligation, to buy the volatile asset, in this example Wrapped Ether. The underlying asset is volatile, the exercise asset is stable, and the strike price is implicitly the exercise amount divided by the underlying amount (2100 USDC / 1 WETH = $2100).</p>
 
-<h2 id="trust-model">Trust model</h2>
+<p>For put options, it’s the inverse — the holder has the option to sell the exercise asset (WETH) at the strike price. The underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (which is still 2100 USD / 1 WETH, because for puts the underlying and exercise assets are inverted in comparision with calls).</p>
 
-<h3 id="actors">Actors</h3>
+<p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<p>There are 3 main actors in the core protocol:</p>
+<ul class="tab" data-tab="82be335e-9749-451c-8aae-7e805cb0db31" data-name="log">
+  
+      <li class="active">
+          <a href="#">solidity </a>
+      </li>
+  
+      <li>
+          <a href="#">bash </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="82be335e-9749-451c-8aae-7e805cb0db31" data-name="log">
+  
+      <li class="active">
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice creates a new option type.
+</span><span class="n">vm</span><span class="p">.</span><span class="n">startPrank</span><span class="p">(</span><span class="n">ALICE</span><span class="p">);</span>
 
+<span class="kt">uint96</span> <span class="n">underlyingAmount</span> <span class="o">=</span> <span class="mi">1e18</span><span class="p">;</span>
+<span class="kt">uint96</span> <span class="n">exerciseAmount</span> <span class="o">=</span> <span class="mi">2100e6</span><span class="p">;</span>
+<span class="kt">uint40</span> <span class="n">earliestExercise</span> <span class="o">=</span> <span class="kt">uint40</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">timestamp</span><span class="p">);</span>
+<span class="kt">uint40</span> <span class="n">expiry</span> <span class="o">=</span> <span class="kt">uint40</span><span class="p">(</span><span class="n">earliestExercise</span> <span class="o">+</span> <span class="mi">1</span> <span class="kc">weeks</span><span class="p">);</span>
+
+<span class="kt">uint256</span> <span class="n">optionId</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">newOptionType</span><span class="p">({</span>
+    <span class="n">underlyingAsset</span><span class="o">:</span> <span class="kt">address</span><span class="p">(</span><span class="n">WETH</span><span class="p">),</span>
+    <span class="n">underlyingAmount</span><span class="o">:</span> <span class="n">underlyingAmount</span><span class="p">,</span>
+    <span class="n">exerciseAsset</span><span class="o">:</span> <span class="kt">address</span><span class="p">(</span><span class="n">USDC</span><span class="p">),</span>
+    <span class="n">exerciseAmount</span><span class="o">:</span> <span class="n">exerciseAmount</span><span class="p">,</span>
+    <span class="n">exerciseTimestamp</span><span class="o">:</span> <span class="n">earliestExercise</span><span class="p">,</span>
+    <span class="n">expiryTimestamp</span><span class="o">:</span> <span class="n">expiry</span>
+<span class="p">});</span>
+</code></pre></div></div>
+</li>
+  
+      <li>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cast send <span class="nv">$CH_ADDRESS</span> <span class="nt">--rpc-url</span><span class="o">=</span><span class="nv">$RPC_URL</span> <span class="nt">--private-key</span><span class="o">=</span><span class="nv">$PRIVATE_KEY</span> <span class="s2">"newOptionType(address,uint96,address,uint96,uint40,uint40) (uint256)"</span> <span class="s2">"</span><span class="nv">$WETH</span><span class="s2">"</span> 1000000000000000000 <span class="s2">"</span><span class="nv">$USDC</span><span class="s2">"</span> 2100000000 1686115811 1686720611
+</code></pre></div></div>
+</li>
+  
+</ul>
+
+<h2 id="writing-an-option">Writing an option</h2>
+
+<p>Next we will write 10 options for this option type. This is done by calling the <a href="/docs/clear-contracts/#write"><code class="language-plaintext highlighter-rouge">write</code></a> function. The Clearinghouse will transfer in the required amount of the underlying asset (10 * 1e18 WETH) and in return, we receive 10 fungible Option tokens, representing our long position, and 1 Claim NFT, representing our short position. The function returns the token ID for this Claim NFT.</p>
+
+<p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
+
+<ul class="tab" data-tab="6c350dcb-94cb-4630-9997-107cd32008b4" data-name="log">
+  
+      <li class="active">
+          <a href="#">solidity </a>
+      </li>
+  
+      <li>
+          <a href="#">bash </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="6c350dcb-94cb-4630-9997-107cd32008b4" data-name="log">
+  
+      <li class="active">
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice writes 10 options.
+</span><span class="n">WETH</span><span class="p">.</span><span class="n">approve</span><span class="p">(</span><span class="kt">address</span><span class="p">(</span><span class="n">clearinghouse</span><span class="p">),</span> <span class="k">type</span><span class="p">(</span><span class="kt">uint256</span><span class="p">).</span><span class="n">max</span><span class="p">);</span>
+<span class="kt">uint256</span> <span class="n">claimId</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">optionId</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</code></pre></div></div>
+</li>
+  
+      <li>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cast send <span class="nv">$CH_ADDRESS</span> <span class="nt">--rpc-url</span><span class="o">=</span><span class="nv">$RPC_URL</span> <span class="nt">--private-key</span><span class="o">=</span><span class="nv">$PRIVATE_KEY</span> <span class="s2">"write(uint256,uint112)"</span> <span class="nv">$OPTION_ID</span> 10
+</code></pre></div></div>
+</li>
+  
+</ul>
+
+<h2 id="transferring-a-long-position">Transferring a long position</h2>
+
+<p>Now that we have written some options, we can transfer our long (or short!) position to another address using the tried and true <a href="https://eips.ethereum.org/EIPS/eip-1155#specification"><code class="language-plaintext highlighter-rouge">safeTransferFrom</code></a> function, native to the <code class="language-plaintext highlighter-rouge">IERC1155</code> interface.</p>
+
+<p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
+
+<ul class="tab" data-tab="58d1ead8-1e1b-4d3c-9798-ca19a9920728" data-name="log">
+  
+      <li class="active">
+          <a href="#">solidity </a>
+      </li>
+  
+      <li>
+          <a href="#">bash </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="58d1ead8-1e1b-4d3c-9798-ca19a9920728" data-name="log">
+  
+      <li class="active">
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice transfers 4 options to Bob.
+</span><span class="n">clearinghouse</span><span class="p">.</span><span class="n">safeTransferFrom</span><span class="p">(</span><span class="n">ALICE</span><span class="p">,</span> <span class="n">BOB</span><span class="p">,</span> <span class="n">optionId</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">""</span><span class="p">);</span>
+</code></pre></div></div>
+</li>
+  
+      <li>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cast send <span class="nv">$CH_ADDRESS</span> <span class="nt">--rpc-url</span><span class="o">=</span><span class="nv">$RPC_URL</span> <span class="nt">--private-key</span><span class="o">=</span><span class="nv">$PRIVATE_KEY</span> <span class="s2">"safeTransferFrom(address,address,uint256,uint256,bytes)"</span> <span class="s2">"</span><span class="nv">$ALICE</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$BOB</span><span class="s2">"</span> <span class="nv">$OPTION_ID</span> 4 <span class="s2">""</span>
+</code></pre></div></div>
+</li>
+  
+</ul>
+
+<h2 id="exercising-an-option">Exercising an option</h2>
+
+<p>We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for this option type (on or after <code class="language-plaintext highlighter-rouge">exerciseTimestamp</code>, before <code class="language-plaintext highlighter-rouge">expiryTimestamp</code>), he can exercise his some or all of his position.</p>
+
+<p>Let’s imagine for this example that the position is in-the-money, and Bob wants to exercise his options. This is done by calling the <a href="/docs/clear-contracts/#exercise"><code class="language-plaintext highlighter-rouge">exercise</code></a> function. The result is that Bob’s 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e6 USDC) is transferred in to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1e18 WETH) is transferred out from the Clearinghouse to Bob.</p>
+
+<p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
+
+<ul class="tab" data-tab="84b3e927-9f89-4ea2-b574-309c43363cca" data-name="log">
+  
+      <li class="active">
+          <a href="#">solidity </a>
+      </li>
+  
+      <li>
+          <a href="#">bash </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="84b3e927-9f89-4ea2-b574-309c43363cca" data-name="log">
+  
+      <li class="active">
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the exercise timestamp.
+</span><span class="n">vm</span><span class="p">.</span><span class="n">warp</span><span class="p">(</span><span class="n">earliestExercise</span><span class="p">);</span>
+
+<span class="c1">// Bob exercises his options.
+</span><span class="n">vm</span><span class="p">.</span><span class="n">startPrank</span><span class="p">(</span><span class="n">BOB</span><span class="p">);</span>
+<span class="n">USDC</span><span class="p">.</span><span class="n">approve</span><span class="p">(</span><span class="kt">address</span><span class="p">(</span><span class="n">clearinghouse</span><span class="p">),</span> <span class="k">type</span><span class="p">(</span><span class="kt">uint256</span><span class="p">).</span><span class="n">max</span><span class="p">);</span>
+<span class="n">clearinghouse</span><span class="p">.</span><span class="n">exercise</span><span class="p">(</span><span class="n">optionId</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</code></pre></div></div>
+</li>
+  
+      <li>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cast send <span class="nv">$CH_ADDRESS</span> <span class="nt">--rpc-url</span><span class="o">=</span><span class="nv">$RPC_URL</span> <span class="nt">--private-key</span><span class="o">=</span><span class="nv">$BOB_PRIVATE_KEY</span> <span class="s2">"exercise(uint256,uint112)"</span> <span class="nv">$OPTION_ID</span> 4
+</code></pre></div></div>
+</li>
+  
+</ul>
+
+<h2 id="redeeming-a-claim">Redeeming a claim</h2>
+
+<p>Finally, we will redeem our Claim NFT (using the Claim token ID returned from <a href="/docs/clear-contracts/#write"><code class="language-plaintext highlighter-rouge">write</code></a>), which is achieved by calling the <a href="/docs/clear-contracts/#redeem"><code class="language-plaintext highlighter-rouge">redeem</code></a> function. This function transfers out either one or both of the underlying and exercise assets, depending on the exercise assignment status of the Claim:</p>
 <ul>
-  <li>Protocol Admin</li>
-  <li>Option Writer</li>
-  <li>Option Holder</li>
+  <li>For unexercised positions, solely the <code class="language-plaintext highlighter-rouge">underlyingAsset</code></li>
+  <li>For fully exercised positions, solely the <code class="language-plaintext highlighter-rouge">exerciseAsset</code></li>
+  <li>For partially exercised positions, a mix of both assets in the correct proportions</li>
 </ul>
 
-<p>The <strong>Protocol Admin</strong> is the address to which protocol fees are swept. This address can update the Protocol Admin
-address, update the contract address of the TokenURIGenerator, enable/disable protocol fees, and sweep accrued fees. No
-other permissioned actions are possible.</p>
+<p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<p><strong>Option Writers</strong> can create new option types and write options for any valid ERC-20 asset pair (excluding rebasing,
-fee-on-transfer, and ERC-777 tokens). Sufficient approval must be granted for Clear to transfer in the
-requisite amount of the underlying asset. Once an option expires, the writer can redeem their Claim NFT for their share
-of the underlying and/or exercise assets.</p>
-
-<p><strong>Option Holders</strong> can transfer and exercise options that have been written. This is accomplished via a standard
-ERC-1155 transfer of the desired amount of option contracts from writer to holder. When exercising an option, they must
-have enough of the exercise asset, and similarly to when writing an option, they must have granted sufficient approval
-for Clear on the ERC20 exercise asset.</p>
-
-<h3 id="assets">Assets</h3>
-
-<p>When an option is written, Clear transfers in the requisite amount of the underlying asset. When an option
-is exercised, Clear transfers in the requisite amount of the exerise asset and transfers out the underlying
-asset. When a claim is redeemed, Clear transfers out that claimant’s share of the exercise asset and any
-remaining, unexercised underlying asset.</p>
-
-<h3 id="actions">Actions</h3>
-
-<p>What can each actor do, when and with how much, of each asset?</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">ERC1155</code>
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">anyone</code> can
-        <ul>
-          <li>check token balances of any address</li>
-          <li>check ownership of any token</li>
-          <li>check transfer approvals</li>
-          <li>check supported interfaces (ERC165 and ERC1155)</li>
-          <li>render the URI of any token</li>
-        </ul>
+<ul class="tab" data-tab="220fe25c-15d6-4a89-933d-3fcae7f01ead" data-name="log">
+  
+      <li class="active">
+          <a href="#">solidity </a>
       </li>
-    </ul>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">ValoremOptionsClearinghouse</code>
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">anyone</code> can
-        <ul>
-          <li>get info for any Option fungible token ID</li>
-          <li>get info for any Claim non-fungible token ID</li>
-          <li>check position of the underlying and exercise assets of any token</li>
-          <li>check whether any token ID is a fungible Option or a non-fungible Claim</li>
-          <li>view the contract address of the TokenURIGenerator</li>
-          <li>check fee balance of any ERC20 asset</li>
-          <li>view protocol fee (expressed in basis points)</li>
-          <li>check if protocol fees are enabled</li>
-          <li>view Protocol Admin (“feeTo”) address</li>
-          <li>create an Option Type which does not exist yet</li>
-          <li>write a new Claim for a given Option Type</li>
-        </ul>
+  
+      <li>
+          <a href="#">bash </a>
       </li>
-      <li><code class="language-plaintext highlighter-rouge">ERC1155 Claim NFT holders</code> (i.e., Option Writers) can
-        <ul>
-          <li>write new options to a given Claim which they hold, before the expiry timestamp</li>
-          <li>redeem a Claim NFT which they hold for their share of the underlying and/or exercise assets, on or after the
-expiry timestamp</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">ERC1155 Option fungible token holders</code> (i.e., Option Holders) can
-        <ul>
-          <li>transfer (up to their amount held) Option fungible tokens to another address</li>
-          <li>exercise (up to their amount held) Option fungible tokens, on or after the earliest exercise timestamp, and
-before the expiry timestamp</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">Protocol Admin</code> can
-        <ul>
-          <li>enable/disable protocol fees</li>
-          <li>nominate a new Protocol Admin (“feeTo”) address</li>
-          <li>accept a new Protocol Admin (“feeTo”) address</li>
-          <li>update the contract address of the TokenURIGenerator</li>
-          <li>sweep accrued fees for any ERC20 asset to the Protocol Admin (“feeTo”) address</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  
+</ul>
+<ul class="tab-content" id="220fe25c-15d6-4a89-933d-3fcae7f01ead" data-name="log">
+  
+      <li class="active">
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the expiry timestamp.
+</span><span class="n">vm</span><span class="p">.</span><span class="n">warp</span><span class="p">(</span><span class="n">expiry</span><span class="p">);</span>
+
+<span class="c1">// Check out claim position
+</span><span class="p">(,</span> <span class="kt">int256</span> <span class="n">underlyingAmount</span><span class="p">,,</span> <span class="kt">int256</span> <span class="n">exerciseAmount</span><span class="p">)</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">position</span><span class="p">(</span><span class="n">claimId</span><span class="p">);</span>
+
+<span class="c1">// Alice redeems her claim.
+</span><span class="n">clearinghouse</span><span class="p">.</span><span class="n">redeem</span><span class="p">(</span><span class="n">claimId</span><span class="p">);</span>
+</code></pre></div></div>
+</li>
+  
+      <li>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cast send <span class="nv">$CH_ADDRESS</span> <span class="nt">--rpc-url</span><span class="o">=</span><span class="nv">$RPC_URL</span> <span class="nt">--private-key</span><span class="o">=</span><span class="nv">$PRIVATE_KEY</span> <span class="s2">"redeem(uint256)"</span> <span class="nv">$CLAIM_ID</span>
+</code></pre></div></div>
+</li>
+  
 </ul>
 
-<h2 id="security-info">Security info</h2>
+<h2 id="conclusion">Conclusion</h2>
 
-<p>Valorem Clear v1.0.0 contains one unresolved medium severity audit finding.</p>
+<p>There we have it, a physically settled American option using the Valorem Clear clearinghouse. We learned how to create a new option type and write options, transfer a long position to another address, exercise this long position, and finally redeem our claim over the collateral backing the short position.</p>
 
-<p>The probability of an options bucket being chosen for exercise is not correlated
-with the number of options contained in that bucket. Thus, individual option
-contracts in smaller buckets have a higher probability of being selected for
-assignment.</p>
+<p>A full working code example is available <a href="https://github.com/valorem-labs-inc/valorem-dev-guides/blob/main/test/ClearPhysicallySettled.t.sol">here</a>, complete with balance assertions that demonstrate the movements of the underlying and option tokens.</p>
 
-<p>This probabilistic imperfection will be remediated in a future version. Discrete
-probability mass functions with dynamic weighting are an unsolved issue in
-solidity. Work on the remediation is underway with <a href="https://github.com/valorem-labs-inc/LibDDRV">LibDDRV</a>.</p>
-
-<ul>
-  <li>Audits: <a href="https://github.com/valorem-labs-inc/valorem-core/tree/master/audits">PDF reports</a></li>
-  <li>Security contact: info(at)valorem(dot)xyz</li>
-</ul>
+<p>Please get in touch on our <a href="https://discord.gg/5jZdPuY9kR">Discord server</a> if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!</p>
 
             </div>
         </article>
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#protocol-introduction" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol introduction</a></li><li class=""><a href="#trust-model" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Trust model</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#actors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Actors</a></li><li class=""><a href="#assets" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Assets</a></li><li class=""><a href="#actions" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Actions</a></li></ol></li><li class=""><a href="#security-info" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Security info</a></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#creating-an-option-type" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Creating an option type</a></li><li class=""><a href="#writing-an-option" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Writing an option</a></li><li class=""><a href="#transferring-a-long-position" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Transferring a long position</a></li><li class=""><a href="#exercising-an-option" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercising an option</a></li><li class=""><a href="#redeeming-a-claim" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeeming a claim</a></li><li class=""><a href="#conclusion" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Conclusion</a></li></ol>
             </div>
         </nav>
     </div>
