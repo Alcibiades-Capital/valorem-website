@@ -4,7 +4,7 @@ title: How to write cash settled options
 description: Developer guide for writing cash settled options on digital assets with Valorem Clear.
 ---
 
-Picking up from where we left off in the previous guide to writing [physically settled options](/docs/dev-guide-write-asset-settled), let's now learn how to achieve cash settlement of your Clearinghouse positions.
+Picking up from where we left off in the previous guide to writing [physically settled options](/docs/dev-guide-write-asset-settled), let's now learn how to achieve cash settlement of your Valorem Clear positions.
 
 ## Writing an option 
 
@@ -12,12 +12,12 @@ Picking up from where we left off in the previous guide to writing [physically s
 
 {% tab log solidity %}
 ```solidity
-// Create a new option type for a MAGIC-LUSD call option.
+// Create a new option type for a MAGIC-USDC call option.
 uint256 optionId = clearinghouse.newOptionType({
     underlyingAsset: MAGIC,
     underlyingAmount: 1e18,
-    exerciseAsset: LUSD,
-    exerciseAmount: 1.50e18,
+    exerciseAsset: USDC,
+    exerciseAmount: 1.20e6,
     exerciseTimestamp: exerciseTimestamp,
     expiryTimestamp: exerciseTimestamp + 1 weeks
 });
@@ -52,20 +52,20 @@ vm.warp(earliestExercise);
 vm.prank(BOB_ADDRESS);
 clearinghouse.exercise(optionId, 5);
 
-// Bob swaps his MAGIC for LUSD via Uniswap.
+// Bob swaps his MAGIC for USDC via Uniswap v3.
 uint256 bobMagicBalance = MAGIC.balanceOf(address(this));
-ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-    tokenIn: address(MAGIC),
-    tokenOut: address(LUSD),
-    fee: 3000,
-    recipient: address(this),
-    deadline: block.timestamp + 1,
+ISwapRouter.ExactInputParams memory params =
+ISwapRouter.ExactInputParams({
+    path: abi.encodePacked(MAGIC, 300, WETH, 50, USDC),
+    recipient: msg.sender,
+    deadline: block.timestamp,
     amountIn: bobMagicBalance,
-    amountOutMinimum: 0
+    amountOutMinimum: 0 // of course you'll want to set price impact / slippage tolerance
 });
+amountOut = swapRouter.exactInput(params);
 
-// Log the amount of LUSD we received for cash settled exercise.
-uint256 bobLusdBalance = LUSD.balanceOf(address(this));
+// Log the amount of USDC we received for cash settled exercise.
+uint256 bobUSDCBalance = USDC.balanceOf(address(this));
 ```
 {% endtab %}
 
@@ -87,18 +87,18 @@ $ cast TODO
 vm.warp(expiry);
 
 // Check the position of our claim -- 5 options should be exercised, totaling
-// 5 * 1e18 MAGIC and 1.5e18 LUSD should be available to redeem from the claim.
+// 5 * 1e18 MAGIC and 1.5e18 USDC should be available to redeem from the claim.
 (, int256 underlyingAmount,, int256 exerciseAmount) = clearinghouse.position(claimId);
 
 // Redeem our claim.
 vm.prank(ALICE_ADDRESS);
 clearinghouse.redeem(claimId);
 
-// Swap any remaining MAGIC for LUSD via Uniswap.
+// Swap any remaining MAGIC for USDC via Uniswap.
 uint256 magicBalance = MAGIC.balanceOf(address(this));
 ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
     tokenIn: address(MAGIC),
-    tokenOut: address(LUSD),
+    tokenOut: address(USDC),
     fee: 3000,
     recipient: address(this),
     deadline: block.timestamp + 1,
@@ -107,11 +107,11 @@ ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleP
     sqrtPriceLimitX96: 0
 });
 
-// Log the amount of LUSD we received for cash settled writing.
-uint256 lusdBalance = LUSD.balanceOf(address(this));
-emit log_named_uint("LUSD received from swap", lusdBalance);
-emit log_named_uint("LUSD received from claim", uint256(exerciseAmount));
-emit log_named_uint("Total LUSD received", lusdBalance + uint256(exerciseAmount));
+// Log the amount of USDC we received for cash settled writing.
+uint256 USDCBalance = USDC.balanceOf(address(this));
+emit log_named_uint("USDC received from swap", USDCBalance);
+emit log_named_uint("USDC received from claim", uint256(exerciseAmount));
+emit log_named_uint("Total USDC received", USDCBalance + uint256(exerciseAmount));
 ```
 {% endtab %}
 
@@ -125,6 +125,6 @@ $ cast TODO
 
 ## Conclusion
 
-There we have it, a cash settled American option using the Valorem Clearinghouse. We picked up from the [physical settlement developer guide](/docs/dev-guide-write-cash-settled/) and learned how to exercise a long position and redeem a short position into cash.
+There we have it, a cash settled American option using the Valorem Clear clearinghouse. We picked up from the [physical settlement developer guide](/docs/dev-guide-write-cash-settled/) and learned how to exercise a long position using a flash swap.
 
 Please get in touch on our [Discord server](https://discord.gg/5jZdPuY9kR) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
