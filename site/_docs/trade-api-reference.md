@@ -1,29 +1,48 @@
 ---
 date: 2023-06-07 00:00:00
 title: Trade API Reference
-description: Developer documentation for the Valorem Exchange API.
+description: Reference documentation for the Valorem Trade API. 
 ---
 
-Valorem Trade is an API that provides both an Authentication Service and an RFQ (Request for Quote) Service. The Authentication Service enables users to authenticate themselves and obtain the necessary credentials to access the other services provided by the API. The RFQ Service allows authenticated users to request quotes from makers and execute trades on the Seaport exchange.
+The Valorem Trade API allows options market makers and takers to trade options via
+an RFQ (Request for Quote) service authenticated via [SIWE (Sign-In with Ethereum)](https://docs.login.xyz/general-information/siwe-overview).
+It is comprised of two services: the Auth Service and the RFQ Service.
+The Authentication Service enables users to authenticate themselves and obtain 
+the necessary credentials to access the other services provided by the API. The 
+RFQ Service allows authenticated takers to request quotes from makers, and 
+authenticated makers to return signed offers. Takers can then execute those 
+signed offers via the Seaport smart contracts.
 
-The complete protobuf definitions can be found in [this repository](https://github.com/valorem-labs-inc/exchange-proto/blob/main/quay).
+The complete protobuf definitions can be found
+in [this repository](https://github.com/valorem-labs-inc/exchange-proto/blob/main/quay).
 
+## Makers and Takers
 
-## Authentication Service
+There are two principal user roles in the Valorem Trade API:
 
-The Authentication Service in Valorem Trade API enables users to authenticate themselves and obtain the necessary credentials to access the other services provided by the API.
+- **Maker**: Makers are users who signed offers in response to a request for quote.
+  They are responsible for fulfilling orders when a taker agrees to their quotes.
 
-### Service Endpoint
+- **Taker**: Takers are users who request quotes from makers and optionally 
+  execute signed offers via the Seaport smart contracts.
 
-```
-Endpoint: https://exchange.valorem.xyz/auth
+## Auth Service
+
+The Authentication Service in Valorem Trade API enables users to authenticate 
+themselves via SIWE and obtain the necessary credentials to access the other 
+services provided by the API.
+
+```protobuf
+service Auth {
+  ...
+}
 ```
 
 ### Methods
 
 #### `Nonce`
 
-Returns an EIP-4361 nonce for session and invalidates an existing session.
+Returns an [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) nonce for the session and invalidates any existing session.
 
 ```protobuf
 rpc Nonce (Empty) returns (NonceText);
@@ -47,7 +66,8 @@ message NonceText {
 
 #### `Verify`
 
-Verifies a signed message and returns the verified address.
+Verifies an [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signed message 
+following the SIWE format and returns the verified address.
 
 ```protobuf
 rpc Verify (VerifyText) returns (H160);
@@ -95,11 +115,13 @@ message H160 {}
 
 ## RFQ Service
 
-The RFQ (Request for Quote) Service in Valorem Trade API allows authenticated users to request quotes from makers and execute trades on the Seaport exchange.
+The RFQ (Request for Quote) Service in Valorem Trade API allows authenticated users to request quotes from makers and
+execute trades on the Seaport exchange.
 
 ### Authentication
 
-Only authenticated users can access the RFQ service. Users need to obtain authentication credentials from the Authentication Service before making RFQ requests.
+Only authenticated users can access the RFQ service. Users need to obtain authentication credentials from the
+Authentication Service before making RFQ requests.
 
 ### Methods
 
@@ -195,7 +217,8 @@ message QuoteRequest {
 
 Request
 
- quotes from makers via a single `QuoteRequest` message and receive a stream of `QuoteResponse` messages for use by gRPC-web clients.
+quotes from makers via a single `QuoteRequest` message and receive a stream of `QuoteResponse` messages for use by
+gRPC-web clients.
 
 ```protobuf
 rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
@@ -236,16 +259,3 @@ message QuoteResponse {
 - `ulid` (H128): The unique identifier for the quote request.
 - `maker_address` (H160): The address of the maker making the offer.
 - `order` (SignedOrder): The order and signature from the maker.
-
-
-## Makers and Takers
-
-The RFQ service in Valorem Trade API involves two types of users: makers and takers.
-
-- **Makers**: Makers are users who provide quotes and signed offers. They are responsible for fulfilling orders when a taker agrees to their quotes. Makers interact with the API using the `Maker` method.
-
-- **Takers**: Takers are users who request quotes from makers and execute trades on the Seaport exchange. Takers interact with the API using the `WebTaker` and `Taker` methods.
-
-Please note that only authenticated users can access the RFQ service, and takers need to be authenticated before requesting quotes.
-
-For the complete protobuf definitions, please refer to the [Valorem Trade Protobuf Repository](https://github.com/valorem-labs-inc/exchange-proto/blob/main).
