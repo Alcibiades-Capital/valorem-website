@@ -30,7 +30,7 @@ Use this command to generate from the proto files in `proto/quay`.
 npx buf generate proto/quay
 ```
 
-### Connecting and Authenticating with Valorem Trade
+## Connecting and Authenticating with Valorem Trade
 
 We use [sign-in with ethereum](https://docs.login.xyz/) for authenticating our users.
 
@@ -103,7 +103,7 @@ async function authenticateWithTrade() {
 }
 ```
 
-### RFQ Taker
+## RFQ Taker
 
 After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
 Here we will request a quote to buy an option, and listen for responses. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_taker.ts).
@@ -146,7 +146,7 @@ async function createRequest(optionId: ethers.BigNumber) {
 };
 ```
 
-### RFQ Maker
+## RFQ Maker
 
 After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
 Here we will connect as an RFQ client, listen for incoming quote requests from takers, and respond with quotes. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_maker.ts).
