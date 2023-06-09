@@ -1,6 +1,6 @@
 ---
 date: 2023-06-02 00:00:00
-title: Trade overview
+title: Valorem Trade
 description: Overview of Valorem Trade, a decentralized exchange for DeFi options.
 ---
 

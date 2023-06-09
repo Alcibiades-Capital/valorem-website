@@ -1,6 +1,6 @@
 ---
 date: 2022-11-30 00:00:00
-title: Clear overview
+title: Valorem Clear
 description: Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
 ---
 
@@ -9,7 +9,7 @@ settled or cash settled, American, European, and Exotic options.
 
 ## Protocol introduction
 
-The Valorem Clear V1 consists of a clearing and settling engine which allows users to write options,
+Valorem Clear V1 consists of a clearing and settling engine which allows users to write options,
 exercise options, and redeem claims on assets, while handling fair assignment of exercises to claims written. It is
 designed to be gas efficient, minimal, and provide a secure settlement layer upon which more complex systems can be
 built.

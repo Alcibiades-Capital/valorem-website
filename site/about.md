@@ -25,6 +25,7 @@ page_blocks:
         image_alt: "Nick’s profile picture"
         heading: Nick
         subheading: "@nickadams0n"
+        url: https://twitter.com/nickadams0n
       - label: Protocol Developer
         image_path: /assets/images/partners/flip.jpg
         image_alt: "Flip’s profile picture"
