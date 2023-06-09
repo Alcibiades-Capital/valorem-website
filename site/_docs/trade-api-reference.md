@@ -248,4 +248,4 @@ The RFQ service in Valorem Trade API involves two types of users: makers and tak
 
 Please note that only authenticated users can access the RFQ service, and takers need to be authenticated before requesting quotes.
 
-For the complete protobuf definitions, please refer to the [Valorem Trade Protobuf Repository](https://github.com/valorem-labs-inc/exchange-proto/blob/main/quay).
+For the complete protobuf definitions, please refer to the [Valorem Trade Protobuf Repository](https://github.com/valorem-labs-inc/exchange-proto/blob/main).
