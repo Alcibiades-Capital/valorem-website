@@ -5,8 +5,9 @@ description: Reference documentation for the Valorem Trade API.
 ---
 
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
-digital asset trading via low latency gRPC protobuf `proto3` interfaces, with order
-settlement via the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
+digital asset trading via low latency gRPC (HTTP2 TLS) and gRPC-web 
+(HTTP 1.1 TLS) protobuf `proto3` interfaces, with order settlement via 
+the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
 The complete protobuf definitions can be found
 in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
 
@@ -268,18 +269,22 @@ message SignedOrder {
 The Authentication Service in Valorem Trade API enables users to authenticate
 themselves via SIWE, and receive the necessary credentials to access the other
 services provided by the API. The Auth service uses session cookies to store
-authentication information. The session cookies are implemented
-using [axum-sessions](https://docs.rs/axum-sessions/latest/axum_sessions/),
-and all information is verified server-side. This provides compatibility with
-both broswer and non-browser clients out of the box.
+authentication information. Auth sessions are backed by 
+cryptographically signed cookies. These cookies are generated when they’re 
+not found or are otherwise invalid. When a valid, known cookie is received 
+in a request, the session is hydrated from this cookie. These cookies validated 
+server-side. This provides compatibility with both broswer and 
+non-browser clients "out of the box".
+
+Non browser clients must implement cookie storage and management themselves.
+
+This service supports gRPC and gRPC-web clients.
 
 ```protobuf
 service Auth {
     ...
 }
 ```
-
-### Cookie format
 
 ### Methods
 
@@ -301,6 +306,10 @@ message Empty {}
 
 **Response**
 
+Status `200 OK`:
+
+The request was successful.
+
 ```protobuf
 message NonceText {
   string nonce = 1;
@@ -308,12 +317,12 @@ message NonceText {
 ```
 
 - `nonce` (string): a randomized token typically chosen by the Trade API, and
-  used to prevent replay attacks, at least 8 alphanumeric characters UTF-8 encoded.
+  used to prevent replay attacks, at least 8 alphanumeric characters UTF-8 encoded as plaintext.
 
 #### `Verify`
 
-Verifies an [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signed message
-following the SIWE format and returns the verified address.
+Verifies a valid SIWE message and returns the Ethereum address of the signer.
+Upon successful verification, the Auth session is updated.
 
 ```protobuf
 rpc Verify (VerifyText) returns (H160);
@@ -327,16 +336,18 @@ message VerifyText {
 }
 ```
 
-- `body` (string): a JSON-encoded ECDSA signature following the SIWE format.
-  ECDSA signatures in Ethereum consist of three parameters: v, r and s.
-  The signature is always 65-bytes in length.
-    - r = first 32 bytes of signature
-    - s = second 32 bytes of signature
-    - v = final 1 byte of signature
+- `body` (string): a JSON-encoded, signed, EIP-191 signature scheme message.
+
+Example signed and JSON encoded message:
+```json
+{"message":"app-preview.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nWe use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z","signature":"<ECDSA signature>"}
+```
 
 **Response**
 
-The response is the verified 160-bit address as an `H160`.
+Status `200 OK`:
+
+The request was successful, the response is the verified 160-bit address as an `H160`.
 
 ```protobuf
 message H160 {
@@ -346,7 +357,7 @@ message H160 {
 #### `Authenticate`
 
 Checks if a given connection is authenticated and returns the authenticated
-address for a session cookie.
+address for an Auth session.
 
 ```protobuf
 rpc Authenticate (Empty) returns (H160);
@@ -360,19 +371,22 @@ message Empty {}
 
 **Response**
 
-The response is the verified 160-bit address as an `H160`.
+Status `200 OK`:
+
+The request was successful, the response is the authenticated 160-bit address as an `H160`.
 
 ```protobuf
 message H160 {
 }
+
 ```
 
 ## RFQ service
 
-The RFQ (Request for Quote) Service in Valorem Trade API allows authenticated
+The RFQ (Request for Quote) service of the Valorem Trade API allows authenticated
 takers to request quotes from makers, for those makers to respond with signed
 offers, and for those traders to receive those signed offers for executing
-trades on the Seaport smart contracts.
+trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay.
 
 ```protobuf
 service RFQ {
@@ -395,7 +409,7 @@ a stream of `QuoteResponse` messages.
 rpc Taker (stream QuoteRequest) returns (stream QuoteResponse);
 ```
 
-**Request**
+**Transmit stream**
 
 ```protobuf
 message QuoteRequest {
@@ -410,14 +424,14 @@ message QuoteRequest {
 ```
 
 - `ulid` (H128, optional): The unique identifier for the quote request.
-- `taker_address` (H160, optional): The address of the taker.
+- `taker_address` (H160, optional): The address of the taker, used to tailor an RFQ for the taker.
 - `item_type` (ItemType): The type of item for which a quote is being requested.
 - `token_address` (H160, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
 - `amount` (H256): The amount of the item.
-- `action` (Action): The action (BUY or SELL) for the quote request.
+- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
 
-**Response**
+**Receive stream**
 
 ```protobuf
 message QuoteResponse {
@@ -433,13 +447,14 @@ message QuoteResponse {
 
 #### `Maker`
 
-Send quotes to takers via a stream of `QuoteResponse` messages and receive a stream of `QuoteRequest` messages.
+Send quotes to takers via a stream of `QuoteResponse` messages and receive a 
+stream of `QuoteRequest` messages.
 
 ```protobuf
 rpc Maker (stream QuoteResponse) returns (stream QuoteRequest);
 ```
 
-**Request**
+**Transmit stream**
 
 ```protobuf
 message QuoteResponse {
@@ -453,7 +468,7 @@ message QuoteResponse {
 - `maker_address` (H160): The address of the maker making the offer.
 - `order` (SignedOrder): The order and signature from the maker.
 
-**Response**
+**Receive stream**
 
 ```protobuf
 message QuoteRequest {
@@ -473,14 +488,12 @@ message QuoteRequest {
 - `token_address` (H160, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
 - `amount` (H256): The amount of the item.
-- `action` (Action): The action (BUY or SELL) for the quote request.
+- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
 
 #### `WebTaker`
 
-Request
-
-quotes from makers via a single `QuoteRequest` message and receive a stream of `QuoteResponse` messages for use by
-gRPC-web clients.
+Quotes from makers via a unary `QuoteRequest` message and receive a stream 
+of `QuoteResponse` messages for use by gRPC-web clients such as browsers. 
 
 ```protobuf
 rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
@@ -506,7 +519,7 @@ message QuoteRequest {
 - `token_address` (H160, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
 - `amount` (H256): The amount of the item.
-- `action` (Action): The action (BUY or SELL) for the quote request.
+- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
 
 **Response**
 
