@@ -4,6 +4,8 @@ title: Trade API Reference
 description: Reference documentation for the Valorem Trade API. 
 ---
 
+Version: RFC-preliminary
+
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
 digital asset trading via low latency gRPC and gRPC-web TLS protobuf `proto3` 
 interfaces, with order settlement via 
