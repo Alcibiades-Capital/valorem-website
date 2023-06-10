@@ -5,8 +5,8 @@ description: Reference documentation for the Valorem Trade API.
 ---
 
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
-digital asset trading via low latency gRPC (HTTP2 TLS) and gRPC-web 
-(HTTP 1.1 TLS) protobuf `proto3` interfaces, with order settlement via 
+digital asset trading via low latency gRPC and gRPC-web TLS protobuf `proto3` 
+interfaces, with order settlement via 
 the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
 The complete protobuf definitions can be found
 in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
@@ -521,7 +521,7 @@ message QuoteRequest {
 - `amount` (H256): The amount of the item.
 - `action` (Action): The action (`BUY` or `SELL`) for the quote request.
 
-**Response**
+**Receive stream**
 
 ```protobuf
 message QuoteResponse {
