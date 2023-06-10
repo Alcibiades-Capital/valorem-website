@@ -81,6 +81,11 @@ navigation_links_docs:
     name: Overview
     group:
       - trade
+  - url: /docs/trade-api-reference/
+    name: API Reference
+    group:
+      - trade
+
 
   - url: /docs/dev-guide-write-physically-settled/
     name: Write physically settled options
