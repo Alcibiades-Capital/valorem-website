@@ -11,6 +11,8 @@ the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
 The complete protobuf definitions can be found
 in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
 
+The public endpoint for the exchange is `https://exchange.valorem.xyz`.
+
 ## User roles
 
 There are two principal user roles in the Valorem Trade API:
