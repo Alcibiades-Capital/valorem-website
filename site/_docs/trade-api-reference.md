@@ -7,7 +7,7 @@ description: Reference documentation for the Valorem Trade API.
 Version: RFC-preliminary
 
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
-digital asset trading via low latency gRPC and gRPC-web TLS protobuf `proto3` 
+digital asset trading via low latency gRPC and gRPC-web TLS-encrypted protobuf `proto3` 
 interfaces, with order settlement via 
 the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
 The complete protobuf definitions can be found
@@ -39,7 +39,9 @@ via Seaport.
 
 The trade API defines some primitive data types mirroring the Ethereum ABI:
 
-`H40`: A 40 bit data type
+### H40
+
+A 40 bit data type
 
 ```protobuf
 message H40 {
@@ -50,7 +52,9 @@ message H40 {
 }
 ```
 
-`H96`: A 96 bit data type
+### H96
+
+A 96 bit data type
 
 ```protobuf
 message H96 {
@@ -59,7 +63,9 @@ message H96 {
 }
 ```
 
-`H128`: A 128 bit data type
+### H128
+
+A 128 bit data type
 
 ```protobuf
 message H128 {
@@ -68,7 +74,9 @@ message H128 {
 }
 ```
 
-`H160`: A 160 bit data type
+### H160
+
+A 160 bit data type
 
 ```protobuf
 message H160 {
@@ -77,7 +85,9 @@ message H160 {
 }
 ```
 
-`H256`: A 256 bit data type
+### H256
+
+A 256 bit data type
 
 ```protobuf
 message H256 {
@@ -88,19 +98,23 @@ message H256 {
 
 As well as a few utility types:
 
-`Empty`: an empty message type
+### Empty
+
+An empty message type
 
 ```protobuf
 message Empty {}
 ```
 
-`EthSignature`: An Ethereum signature
+### EthSignature
 
-ECDSA signatures in Ethereum consist of three parameters: v, r and s. The signature is always 65-bytes in length.
+An Ethereum signature
 
-- r = first 32 bytes of signature
-- s = second 32 bytes of signature
-- v = final 1 byte of signature
+ECDSA signatures in Ethereum consist of three parameters: `v`, `r` and `s`. The signature is always 65-bytes in length.
+
+- `r` (`bytes`): first 32 bytes of signature
+- `s` (`bytes`): second 32 bytes of signature
+- `v` (`bytes`): 1 byte of signature
 
 ```protobuf
 message EthSignature {
@@ -119,7 +133,9 @@ smart contracts.
 **For a full reference on the seaport smart contracts and interfaces, see
 the [Seaport documentation](https://docs.opensea.io/reference/seaport-overview).**
 
-`ItemType`: The ItemType designates the type of item, with valid types being Ether
+### ItemType
+
+The ItemType designates the type of item, with valid types being Ether
 (or other native token for the given chain), ERC20, ERC721, ERC1155,
 ERC721 with "criteria" (explained below), and ERC1155 with criteria.
 
@@ -134,7 +150,9 @@ enum ItemType {
 }
 ```
 
-`ConsiderationItem`: An item required in exchange for an offer.
+### ConsiderationItem
+
+An item required in exchange for an offer.
 
 ```protobuf
 message ConsiderationItem {
@@ -147,7 +165,9 @@ message ConsiderationItem {
 }
 ```
 
-`OfferItem`: An item offered in exchange for consideration.
+### OfferItem
+
+An item offered in exchange for consideration.
 
 ```protobuf
 message OfferItem {
@@ -162,7 +182,7 @@ message OfferItem {
 - `item_type`: The item_type designates the type of item.
 - `token`: Designates the account of the item's token contract (with the null  
   address used for Ether or other native tokens).
-- `identifier_or_criteria`: The identifier_or_criteria represents either the ERC721 or ERC1155
+- `identifier_or_criteria`: The `identifier_or_criteria` represents either the ERC721 or ERC1155
   token identifier or, in the case of a criteria-based item type, a
   merkle root composed of the valid set of token identifiers for
   the item. This value will be ignored for Ether and ERC20 item types,
@@ -177,7 +197,9 @@ message OfferItem {
   the realized amount is calculated linearly based on the time elapsed
   since the order became active.
 
-`OrderType`: designates one of four types for the order depending on two distinct preferences:
+### OrderType
+
+Designates one of four types for the order depending on two distinct preferences:
 
 ```protobuf
 enum OrderType {
@@ -197,7 +219,9 @@ enum OrderType {
   that a magic value indicating that the order is approved is returned upon 
   calling validateOrder on the zone.
 
-`Order`: A Seaport order. Each order contains ten key components.
+### Order
+
+A Seaport order. Each order contains ten key components.
 
 ```protobuf
 message Order {
@@ -231,10 +255,10 @@ message Order {
 - `offers`: The offers array contains an array of items that may be transferred
   from the offerer's account.
 - `considerations`: The consideration contains an array of items that must be received
-  in order to fulfill the order. It contains all of the same components
+  in order to fulfill the order. It contains the same components
   as an offered item, and additionally includes a recipient that will
   receive each item. This array may be extended by the fulfiller on
-  order fulfillment so as to support "tipping" (e.g. relayer or
+  order fulfillment as to support "tipping" (e.g. relayer or
   referral payments)
 - `order_type`: The order type indicates whether the order supports partial fills
   and whether the order can be executed by any account or only by the
@@ -259,7 +283,9 @@ message Order {
   Seaport will then instruct that conduit to transfer the respective
   tokens.
 
-`SignedOrder`: A signed order ready for execution via Seaport.
+### SignedOrder
+
+A signed order ready for execution via Seaport.
 
 ```protobuf
 message SignedOrder {
@@ -277,7 +303,7 @@ authentication information. Auth sessions are backed by
 cryptographically signed cookies. These cookies are generated when they’re 
 not found or are otherwise invalid. When a valid, known cookie is received 
 in a request, the session is hydrated from this cookie. These cookies validated 
-server-side. This provides compatibility with both broswer and 
+server-side. This provides compatibility with both browser and 
 non-browser clients "out of the box".
 
 Non browser clients must implement cookie storage and management themselves.
@@ -302,15 +328,15 @@ which is passed back on the request.
 rpc Nonce (Empty) returns (NonceText);
 ```
 
-**Request**
+##### Unary Request
 
 ```protobuf
 message Empty {}
 ```
 
-**Response**
+##### Unary Response
 
-Status `200 OK`:
+###### 200 OK
 
 The request was successful.
 
@@ -320,7 +346,7 @@ message NonceText {
 }
 ```
 
-- `nonce` (string): a randomized token typically chosen by the Trade API, and
+- `nonce` (`string`): a randomized token typically chosen by the Trade API, and
   used to prevent replay attacks, at least 8 alphanumeric characters UTF-8 encoded as plaintext.
 
 #### `Verify`
@@ -332,7 +358,7 @@ Upon successful verification, the Auth session is updated.
 rpc Verify (VerifyText) returns (H160);
 ```
 
-**Request**
+##### Unary Request
 
 ```protobuf
 message VerifyText {
@@ -340,16 +366,16 @@ message VerifyText {
 }
 ```
 
-- `body` (string): a JSON-encoded, signed, EIP-191 signature scheme message.
+- `body` (`string`): a JSON-encoded, signed, EIP-191 signature scheme message.
 
 Example signed and JSON encoded message:
 ```json
 {"message":"app-preview.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nWe use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z","signature":"<ECDSA signature>"}
 ```
 
-**Response**
+##### Unary Response
 
-Status `200 OK`:
+###### 200 OK
 
 The request was successful, the response is the verified 160-bit address as an `H160`.
 
@@ -367,15 +393,15 @@ address for an Auth session.
 rpc Authenticate (Empty) returns (H160);
 ```
 
-**Request**
+##### Unary Request
 
 ```protobuf
 message Empty {}
 ```
 
-**Response**
+##### Unary Response
 
-Status `200 OK`:
+###### 200 OK
 
 The request was successful, the response is the authenticated 160-bit address as an `H160`.
 
@@ -413,7 +439,7 @@ a stream of `QuoteResponse` messages.
 rpc Taker (stream QuoteRequest) returns (stream QuoteResponse);
 ```
 
-**Transmit stream**
+##### Request stream
 
 ```protobuf
 message QuoteRequest {
@@ -427,15 +453,15 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (H128, optional): The unique identifier for the quote request.
-- `taker_address` (H160, optional): The address of the taker, used to tailor an RFQ for the taker.
-- `item_type` (ItemType): The type of item for which a quote is being requested.
-- `token_address` (H160, optional): The token address for which a quote is being requested.
-- `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
-- `amount` (H256): The amount of the item.
-- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `taker_address` (`H160`, optional): The address of the taker, used to tailor an RFQ for the taker.
+- `item_type` (`ItemType`): The type of item for which a quote is being requested.
+- `token_address` (`H160`, optional): The token address for which a quote is being requested.
+- `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
+- `amount` (`H256`): The amount of the item.
+- `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
 
-**Receive stream**
+##### Response stream
 
 ```protobuf
 message QuoteResponse {
@@ -445,9 +471,9 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (H128): The unique identifier for the quote request.
-- `maker_address` (H160): The address of the maker making the offer.
-- `order` (SignedOrder): The order and signature from the maker.
+- `ulid` (`H128`): The unique identifier for the quote request.
+- `maker_address` (`H160`): The address of the maker making the offer.
+- `order` (`SignedOrder`): The order and signature from the maker.
 
 #### `Maker`
 
@@ -458,7 +484,7 @@ stream of `QuoteRequest` messages.
 rpc Maker (stream QuoteResponse) returns (stream QuoteRequest);
 ```
 
-**Transmit stream**
+##### Request stream
 
 ```protobuf
 message QuoteResponse {
@@ -468,11 +494,11 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (H128): The unique identifier for the quote request.
-- `maker_address` (H160): The address of the maker making the offer.
-- `order` (SignedOrder): The order and signature from the maker.
+- `ulid` (`H128`): The unique identifier for the quote request.
+- `maker_address` (`H160`): The address of the maker making the offer.
+- `order` (`SignedOrder`): The order and signature from the maker.
 
-**Receive stream**
+##### Response stream
 
 ```protobuf
 message QuoteRequest {
@@ -486,13 +512,13 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (H128, optional): The unique identifier for the quote request.
-- `taker_address` (H160, optional): The address of the taker.
-- `item_type` (ItemType): The type of item for which a quote is being requested.
-- `token_address` (H160, optional): The token address for which a quote is being requested.
-- `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
-- `amount` (H256): The amount of the item.
-- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `taker_address` (`H160`, optional): The address of the taker.
+- `item_type` (`ItemType`): The type of item for which a quote is being requested.
+- `token_address` (`H160`, optional): The token address for which a quote is being requested.
+- `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
+- `amount` (`H256`): The amount of the item.
+- `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
 
 #### `WebTaker`
 
@@ -503,7 +529,7 @@ of `QuoteResponse` messages for use by gRPC-web clients such as browsers.
 rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
 ```
 
-**Request**
+##### Unary Request
 
 ```protobuf
 message QuoteRequest {
@@ -517,15 +543,15 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (H128, optional): The unique identifier for the quote request.
-- `taker_address` (H160, optional): The address of the taker.
-- `item_type` (ItemType): The type of item for which a quote is being requested.
-- `token_address` (H160, optional): The token address for which a quote is being requested.
-- `identifier_or_criteria` (H256, optional): The identifier or criteria for the item.
-- `amount` (H256): The amount of the item.
-- `action` (Action): The action (`BUY` or `SELL`) for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `taker_address` (`H160`, optional): The address of the taker.
+- `item_type` (`ItemType`): The type of item for which a quote is being requested.
+- `token_address` (`H160`, optional): The token address for which a quote is being requested.
+- `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
+- `amount` (`H256`): The amount of the item.
+- `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
 
-**Receive stream**
+##### Response stream
 
 ```protobuf
 message QuoteResponse {
@@ -535,6 +561,6 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (H128): The unique identifier for the quote request.
-- `maker_address` (H160): The address of the maker making the offer.
-- `order` (SignedOrder): The order and signature from the maker.
+- `ulid` (`H128`): The unique identifier for the quote request.
+- `maker_address` (`H160`): The address of the maker making the offer.
+- `order` (`SignedOrder`): The order and signature from the maker.

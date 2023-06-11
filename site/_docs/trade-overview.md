@@ -4,17 +4,15 @@ title: Valorem Trade
 description: Overview of Valorem Trade, a decentralized exchange for DeFi options.
 ---
 
-[Valorem](https://valorem.xyz/) Trade is a decentralized exchange for
-Valorem Clear options, settled on chain via
+[Valorem](https://valorem.xyz/) Trade is a signature relay for peer-to-peer 
+trading of Valorem Clear options and other digital assets, settled on chain via
 [Seaport](https://github.com/ProjectOpenSea/seaport). With Valorem Trade, users
 can access professional market maker liquidity via an off chain
 request-for-quote (RFQ) system. This professional market maker liquidity
 allows users to trade options with low price impact and low fees. Valorem Trade
-presents both a web interface and a gRPC API for interacting with the exchange.
-It functions primarily as a signature relay between makers and takers in a given 
-market.
+presents both a web user interface and a gRPC API.
 
-The public endpoint for the exchange is `https://exchange.valorem.xyz`.
+API documentation is available [here](https://valorem.xyz/docs/trade-api-reference/).
 
 ## How it works
 
