@@ -7,10 +7,12 @@ description: Reference documentation for the Valorem Trade API.
 Version: RFC-preliminary
 
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
-digital asset trading via low latency gRPC and gRPC-web TLS-encrypted protobuf `proto3` 
-interfaces, with order settlement via 
+digital asset trading via low latency [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) and
+[gRPC-web](https://github.com/grpc/grpc-web)
+TLS-encrypted [version 3 protocol buffer](https://protobuf.dev/programming-guides/proto3/)
+interfaces, with order settlement via
 the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
-The complete protobuf definitions can be found
+The complete protocol buffer definitions can be found
 in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
 
 The public endpoint for the exchange is `https://exchange.valorem.xyz`.
@@ -29,19 +31,24 @@ There are two principal user roles in the Valorem Trade API:
 
 The Valorem Trade API is composed of an RFQ (request-for-quote) service, and an Auth service
 using [SIWE (Sign-In with Ethereum)](https://docs.login.xyz/general-information/siwe-overview).
-The Auth service enables users to authenticate themselves and obtain the necessary
-credentials to access the other services provided by the API. The RFQ service
-allows authenticated takers to request quotes from makers, and authenticated
+The RFQ service allows authenticated takers to request quotes from makers, and authenticated
 makers to return signed offers. Takers can then execute those signed offers
-via Seaport.
+via Seaport. The Auth service enables users to authenticate themselves and obtain the necessary
+credentials to access the other services provided by the API.
+
+## Errors and status codes
+
+The Valorem Trade API uses the [gRPC richer error model](https://grpc.io/docs/guides/error/#richer-error-model).
+It additionally uses [standard gRPC status codes](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) to
+indicate the success or failure of an API call.
 
 ## Primitive data types
 
-The trade API defines some primitive data types mirroring the Ethereum ABI:
+The trade API defines some primitive data types mirroring a subset of the [Solidity ABI](https://docs.soliditylang.org/en/latest/abi-spec.html):
 
 ### H40
 
-A 40 bit data type
+A 40-bit data type
 
 ```protobuf
 message H40 {
@@ -54,7 +61,7 @@ message H40 {
 
 ### H96
 
-A 96 bit data type
+A 96-bit data type
 
 ```protobuf
 message H96 {
@@ -65,7 +72,7 @@ message H96 {
 
 ### H128
 
-A 128 bit data type
+A 128-bit data type
 
 ```protobuf
 message H128 {
@@ -76,7 +83,7 @@ message H128 {
 
 ### H160
 
-A 160 bit data type
+A 160-bit data type
 
 ```protobuf
 message H160 {
@@ -87,7 +94,7 @@ message H160 {
 
 ### H256
 
-A 256 bit data type
+A 256-bit data type
 
 ```protobuf
 message H256 {
@@ -108,9 +115,8 @@ message Empty {}
 
 ### EthSignature
 
-An Ethereum signature
-
-ECDSA signatures in Ethereum consist of three parameters: `v`, `r` and `s`. The signature is always 65-bytes in length.
+An Ethereum signature. ECDSA signatures in Ethereum consist of three parameters:
+`v`, `r` and `s`. The signature is always 65-bytes in length.
 
 - `r` (`bytes`): first 32 bytes of signature
 - `s` (`bytes`): second 32 bytes of signature
@@ -126,9 +132,8 @@ message EthSignature {
 
 ## Seaport data types
 
-Valorem Trade uses the Seaport smart contracts for order settlement. This section
-describes the data types used for a protobuf wire format relating to the Seaport
-smart contracts.
+This section describes protobuf data types and messages used by the Trade API as
+they relate to Seaport.
 
 **For a full reference on the seaport smart contracts and interfaces, see
 the [Seaport documentation](https://docs.opensea.io/reference/seaport-overview).**
@@ -136,7 +141,10 @@ the [Seaport documentation](https://docs.opensea.io/reference/seaport-overview).
 ### ItemType
 
 The ItemType designates the type of item, with valid types being Ether
-(or other native token for the given chain), ERC20, ERC721, ERC1155,
+(or other native token for the given chain),
+[ERC20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/),
+[ERC721](https://ethereum.org/en/developers/docs/standards/tokens/erc-721/),
+[ERC1155](https://ethereum.org/en/developers/docs/standards/tokens/erc-1155/),
 ERC721 with "criteria" (explained below), and ERC1155 with criteria.
 
 ```protobuf
@@ -179,21 +187,21 @@ message OfferItem {
 }
 ```
 
-- `item_type`: The item_type designates the type of item.
+- `item_type`: Designates the type of item.
 - `token`: Designates the account of the item's token contract (with the null  
   address used for Ether or other native tokens).
-- `identifier_or_criteria`: The `identifier_or_criteria` represents either the ERC721 or ERC1155
+- `identifier_or_criteria`: Represents either the ERC721 or ERC1155
   token identifier or, in the case of a criteria-based item type, a
   merkle root composed of the valid set of token identifiers for
   the item. This value will be ignored for Ether and ERC20 item types,
   and can optionally be zero for criteria-based item types to allow
   for any identifier.
-- `start_amount`: The start_amount represents the amount of the item in question that
+- `start_amount`: Represents the amount of the item in question that
   will be required should the order be fulfilled at the moment the
   order becomes active.
-- `end_amount`: The end_amount represents the amount of the item in question that
+- `end_amount`: Represents the amount of the item in question that
   will be required should the order be fulfilled at the moment the
-  order expires. If this value differs from the item's start_amount,
+  order expires. If this value differs from the item's `start_amount`,
   the realized amount is calculated linearly based on the time elapsed
   since the order became active.
 
@@ -214,9 +222,9 @@ enum OrderType {
   whereas `PARTIAL` enables filling some fraction of the order, with the
   important caveat that each item must be cleanly divisible by the supplied
   fraction (i.e. no remainder after division). `OPEN` indicates that the call to
-  execute the order can be submitted by any account, whereas `RESTRICTED` requires 
-  that the order either be executed by the offerer or the zone of the order, or 
-  that a magic value indicating that the order is approved is returned upon 
+  execute the order can be submitted by any account, whereas `RESTRICTED` requires
+  that the order either be executed by the `offerer` or the `zone` of the order, or
+  that a magic value indicating that the order is approved is returned upon
   calling validateOrder on the zone.
 
 ### Order
@@ -238,48 +246,49 @@ message Order {
 }
 ```
 
-- `offerer`: The offerer of the order supplies all offered items and must either
-  fulfill the order personally (i.e. msg.sender == offerer) or approve
+- `offerer`: Supplies all offered items and must either
+  fulfill the order personally (i.e. `msg.sender == offerer`) or approve
   the order via signature (either standard 65-byte EDCSA, 64-byte
-  EIP-2098, or an EIP-1271 isValidSignature check) or by listing the order
-  on-chain (i.e. calling validate).
-- `zone`: The zone of the order is an optional secondary account attached to the
+  [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098), 
+  or an [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) `isValidSignature` check) or by listing the order
+  on-chain (i.e. calling `validate`).
+- `zone`: An optional secondary account attached to the
   order with two additional privileges:
     - The zone may cancel orders where it is named as the zone by calling
-      cancel. (Note that offerers can also cancel their own orders, either
+      cancel. (Note that `offerer`s can also cancel their own orders, either
       individually or for all orders signed with their current counter at
-      once by calling incrementCounter).
-    - "Restricted" orders (as specified by the order type) must either be
-      executed by the zone or the offerer, or must be approved as indicated
-      by a call to an validateOrder on the zone.
-- `offers`: The offers array contains an array of items that may be transferred
-  from the offerer's account.
-- `considerations`: The consideration contains an array of items that must be received
+      once by calling `incrementCounter`).
+    - "Restricted" orders (as specified by the `order_type`) must either be
+      executed by the zone or the `offerer`, or must be approved as indicated
+      by a call to an `validateOrder` on the `zone`.
+- `offers`: Contains an array of items that may be transferred
+  from the `offerer`'s account.
+- `considerations`: Contains an array of items that must be received
   in order to fulfill the order. It contains the same components
   as an offered item, and additionally includes a recipient that will
   receive each item. This array may be extended by the fulfiller on
   order fulfillment as to support "tipping" (e.g. relayer or
   referral payments)
-- `order_type`: The order type indicates whether the order supports partial fills
+- `order_type`: Indicates whether the order supports partial fills
   and whether the order can be executed by any account or only by the
-  offerer or zone.
-- `start_time`: The start_time indicates the block timestamp at which the order
+  `offerer` or `zone`.
+- `start_time`: Indicates the block timestamp at which the order
   becomes active.
-- `end_time`: The end_time indicates the block timestamp at which the order expires.
-  This value and the startTime are used in conjunction with the
-  start_amount and end_amount of each item to derive their current amount.
-- `zone_hash`: The zoneHash represents an arbitrary `bytes32` value that will be
-  supplied to the zone when fulfilling restricted orders that the zone
+- `end_time`: Indicates the block timestamp at which the order expires.
+  This value and the `start_time` are used in conjunction with the
+  `start_amount` and `end_amount` of each item to derive their current amount.
+- `zone_hash`: Represents an arbitrary `bytes32` value that will be
+  supplied to the `zone` when fulfilling restricted orders that the `zone`
   can utilize when making a determination on whether to authorize the order.
-- `salt`: The salt represents an arbitrary source of entropy for the order.
-- `conduit_key`: The conduit_key is a `bytes32` value that indicates what conduit,
+- `salt`: Represents an arbitrary source of entropy for the order.
+- `conduit_key`: Indicates what conduit,
   if any, should be utilized as a source for token approvals when
-  performing transfers. By default, i.e. when conduitKey is set to the
-  zero hash, the offerer will grant ERC20, ERC721, and ERC1155 token
+  performing transfers. By default, i.e. when `conduit_key` is set to the
+  zero hash, the `offerer` will grant ERC20, ERC721, and ERC1155 token
   approvals to Seaport directly so that it can perform any transfers
-  specified by the order during fulfillment. In contrast, an offerer
+  specified by the order during fulfillment. In contrast, an `offerer`
   that elects to utilize a conduit will grant token approvals to the
-  conduit contract corresponding to the supplied conduit key, and
+  conduit contract corresponding to the supplied `conduit_key`, and
   Seaport will then instruct that conduit to transfer the respective
   tokens.
 
@@ -299,11 +308,11 @@ message SignedOrder {
 The Authentication Service in Valorem Trade API enables users to authenticate
 themselves via SIWE, and receive the necessary credentials to access the other
 services provided by the API. The Auth service uses session cookies to store
-authentication information. Auth sessions are backed by 
-cryptographically signed cookies. These cookies are generated when they’re 
-not found or are otherwise invalid. When a valid, known cookie is received 
-in a request, the session is hydrated from this cookie. These cookies validated 
-server-side. This provides compatibility with both browser and 
+authentication information. Auth sessions are backed by
+cryptographically signed cookies. These cookies are generated when they’re
+not found or are otherwise invalid. When a valid, known cookie is received
+in a request, the session is hydrated from this cookie. These cookies validated
+server-side. This provides compatibility with both browser and
 non-browser clients "out of the box".
 
 Non browser clients must implement cookie storage and management themselves.
@@ -328,13 +337,13 @@ which is passed back on the request.
 rpc Nonce (Empty) returns (NonceText);
 ```
 
-##### Unary Request
+##### Unary request
 
 ```protobuf
 message Empty {}
 ```
 
-##### Unary Response
+##### Unary response
 
 ###### 200 OK
 
@@ -358,7 +367,7 @@ Upon successful verification, the Auth session is updated.
 rpc Verify (VerifyText) returns (H160);
 ```
 
-##### Unary Request
+##### Unary request
 
 ```protobuf
 message VerifyText {
@@ -366,14 +375,18 @@ message VerifyText {
 }
 ```
 
-- `body` (`string`): a JSON-encoded, signed, EIP-191 signature scheme message.
+- `body` (`string`): a JSON-encoded, signed, [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature scheme message.
 
 Example signed and JSON encoded message:
+
 ```json
-{"message":"app-preview.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nWe use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z","signature":"<ECDSA signature>"}
+{
+  "message": "app.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nWe use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z",
+  "signature": "<ECDSA signature signing the message>"
+}
 ```
 
-##### Unary Response
+##### Unary response
 
 ###### 200 OK
 
@@ -393,13 +406,13 @@ address for an Auth session.
 rpc Authenticate (Empty) returns (H160);
 ```
 
-##### Unary Request
+##### Unary request
 
 ```protobuf
 message Empty {}
 ```
 
-##### Unary Response
+##### Unary response
 
 ###### 200 OK
 
@@ -477,7 +490,7 @@ message QuoteResponse {
 
 #### `Maker`
 
-Send quotes to takers via a stream of `QuoteResponse` messages and receive a 
+Send quotes to takers via a stream of `QuoteResponse` messages and receive a
 stream of `QuoteRequest` messages.
 
 ```protobuf
@@ -522,14 +535,14 @@ message QuoteRequest {
 
 #### `WebTaker`
 
-Quotes from makers via a unary `QuoteRequest` message and receive a stream 
-of `QuoteResponse` messages for use by gRPC-web clients such as browsers. 
+Quotes from makers via a unary `QuoteRequest` message and receive a stream
+of `QuoteResponse` messages for use by gRPC-web clients such as browsers.
 
 ```protobuf
 rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
 ```
 
-##### Unary Request
+##### Unary request
 
 ```protobuf
 message QuoteRequest {
