@@ -345,7 +345,7 @@ message Empty {}
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful.
 
@@ -388,7 +388,7 @@ Example signed and JSON encoded message:
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful, the response is the verified 160-bit address as an `H160`.
 
@@ -414,7 +414,7 @@ message Empty {}
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful, the response is the authenticated 160-bit address as an `H160`.
 
