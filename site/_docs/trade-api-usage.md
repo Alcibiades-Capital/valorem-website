@@ -8,9 +8,9 @@ description: Developer documentation for the Valorem Exchange API.
 
 We will use [Connect-Node](https://connect.build/docs/node/getting-started) to connect with the gRPC API in the following examples.
 
-It is most efficient to clone [this repository](https://github.com/valorem-labs-inc/exchange-proto/tree/main) containing all the protobuf definitions and examples to get started.
+It is most efficient to clone [this repository](https://github.com/valorem-labs-inc/trade-interfaces/tree/main) containing all the protobuf definitions and examples to get started.
 
-Install the neccessary dependencies outlined in the [package.json](https://github.com/valorem-labs-inc/exchange-proto/blob/rfq-api-usage-examples/package.json).
+Install the neccessary dependencies outlined in the [package.json](https://github.com/valorem-labs-inc/trade-interfaces/tree/main/docs/examples/typescript/package.json).
 
 Then generate the code from the protobuf service definitions. We will use [Buf](https://www.npmjs.com/package/@bufbuild/buf), a modern replacement for Google's protobuf compiler, using the following config file.
 
@@ -20,10 +20,10 @@ version: v1
 plugins:
   - plugin: es
     opt: target=ts,import_extension=none
-    out: gen/quay
+    out: gen/valorem/trade/v1
   - plugin: connect-es
     opt: target=ts,import_extension=none
-    out: gen/quay
+    out: gen/valorem/trade/v1
 ```
 Use this command to generate from the proto files in `proto/quay`.
 ```
@@ -38,17 +38,17 @@ We use [sign-in with ethereum](https://docs.login.xyz/) for authenticating our u
 import { createPromiseClient } from '@bufbuild/connect';
 import { createGrpcTransport } from '@bufbuild/connect-node';
 import { SiweMessage } from 'siwe';
-import * as ethers from 'ethers';  // v5.5.0
-import { Auth } from '@gen/quay/auth_connect';  // generated from auth.proto
+import { Wallet, providers } from 'ethers';  // v5.5.0
+const { JsonRpcProvider } = providers;
+import { Auth } from '../gen/valorem/trade/v1/auth_connect';  // generated from auth.proto
 
 // replace with account to use for signing
 const PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 const NODE_ENDPOINT = 'https://goerli-rollup.arbitrum.io/rpc';
 
-const provider = new ethers.providers.JsonRpcProvider(NODE_ENDPOINT);
-const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+const provider = new JsonRpcProvider(NODE_ENDPOINT);
+const signer = new Wallet(PRIVATE_KEY, provider);
 
-const CHAIN_ID = 421613;  // Arbitrum Goerli
 const gRPC_ENDPOINT = 'https://exchange.valorem.xyz';
 const DOMAIN = 'exchange.valorem.xyz';
 
@@ -70,14 +70,14 @@ const transport = createGrpcTransport({
 async function authenticateWithTrade() {
   const authClient = createPromiseClient(Auth, transport);
   const { nonce } = await authClient.nonce({});
-
+  const { chainId } = await provider.getNetwork();
   // create SIWE message
   const message = new SiweMessage({
     domain: DOMAIN,
     address: signer.address,
     uri: gRPC_ENDPOINT,
     version: '1',
-    chainId: CHAIN_ID,
+    chainId: chainId,
     nonce,
     issuedAt: new Date().toISOString(),
   }).toMessage();
@@ -104,45 +104,48 @@ async function authenticateWithTrade() {
 ```
 
 ## RFQ Taker
-
 After connecting and authenticating with Valorem Trade, we can now make requests to the RFQ service.
-Here we will request a quote to buy an option, and listen for responses. The full working example can be found [here](https://github.com/valorem-labs-inc/exchange-proto/blob/main/examples/RFQ_taker.ts).
+Here we will request a quote to buy an option, and listen for responses. The full working example can be found [here](https://github.com/valorem-labs-inc/trade-interfaces/tree/main/docs/examples/typescript/src/RFQ_taker.ts).
 
 Note: the below code is for demonstration purposes only so you should create your own robust stream handling for production.
-
 ```typescript
-import { RFQ } from '@gen/quay/rfq_connect';  // generated from rfq.proto
-import { Action, QuoteRequest } from '@gen/quay/rfq_pb';  // generated from rfq.proto
-import { ItemType } from '@gen/quay/seaport_pb';  // generated from seaport.proto
-import { toH160, toH256 } from './lib/fromBNToH';
+import { BigNumber } from 'ethers';  // v5.5.0
+import { RFQ } from '../gen/valorem/trade/v1/rfq_connect';  // generated from rfq.proto
+import { Action, QuoteRequest } from '../gen/valorem/trade/v1/rfq_pb';  // generated from rfq.proto
+import { ItemType } from '../gen/valorem/trade/v1/seaport_pb';  // generated from seaport.proto
+import { toH160, toH256 } from './lib/fromBNToH';  // library script for H number conversions
 
-async function createRequest(optionId: ethers.BigNumber) {
+async function sendRfqRequests(optionId: BigNumber) {
   const rfqClient = createPromiseClient(RFQ, transport);
 
-  // create an option buy quote request 
-  const request = new QuoteRequest({
-    ulid: undefined,
+  // Create your own quote request and response stream handling logic here!
+
+  // create a quote request to buy 5 options
+  const quoteRequest = new QuoteRequest({
     takerAddress: toH160(signer.address),
-    itemType: ItemType.NATIVE,
-    tokenAddress: toH160(VALOREM_CLEAR_ADDRESS),
-    identifierOrCriteria: toH256(optionId),
-    amount: toH256(BigInt(5)),
-    action: Action.BUY
+    itemType: ItemType.ERC1155,  // see Seaport ItemType enum
+    tokenAddress: toH160(VALOREM_CLEAR_ADDRESS),  // clearing house is the options token contract
+    identifierOrCriteria: toH256(optionId),  // the erc1155 token id = optionId
+    amount: toH256(5),  // 5 options
+    action: Action.BUY  
   });
 
+  // continuously send requests and handle responses
+  console.log('Sending RFQs for option ID', optionId.toString());
+
   // create your own quote request and response stream handling logic here
-  const requestStream = async function* () {
-    yield request;
+  const quoteRequestStream = async function* () {
+    yield quoteRequest;
   };
 
-  const responseStream = rfqClient.taker(
-    requestStream(), 
-    {headers: [['cookie', cookie]]}
-  );
+  while (true) {
+    for await (const quoteResponse of rfqClient.taker(quoteRequestStream(), {headers: [['cookie', cookie]]})) {
+      if (Object.keys(quoteResponse).length === 0) { continue };  // empty response
+      console.log('Received a Quote Response...');
 
-  for await (const response of responseStream) {
-    console.log(response);
-  }
+      await handleQuoteResponse(quoteResponse);
+    };
+  };
 };
 ```
 
