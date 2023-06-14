@@ -21,7 +21,7 @@ The public endpoint for the exchange is `https://exchange.valorem.xyz`.
 
 There are two principal user roles in the Valorem Trade API:
 
-- **Maker**: Makers are users who signed offers in response to a request for quote.
+- **Maker**: Makers are users who sign offers in response to a request for quote.
   They are responsible for fulfilling orders when a taker agrees to their quotes.
 
 - **Taker**: Takers are users who request quotes from makers and optionally
@@ -41,6 +41,8 @@ credentials to access the other services provided by the API.
 The Valorem Trade API uses the [gRPC richer error model](https://grpc.io/docs/guides/error/#richer-error-model).
 It additionally uses [standard gRPC status codes](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) to
 indicate the success or failure of an API call.
+
+More detail to come.
 
 ## Primitive data types
 
@@ -115,7 +117,7 @@ message Empty {}
 
 ### EthSignature
 
-An Ethereum signature. ECDSA signatures in Ethereum consist of three parameters:
+An Ethereum signature. [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures in Ethereum consist of three parameters:
 `v`, `r` and `s`. The signature is always 65-bytes in length.
 
 - `r` (`bytes`): first 32 bytes of signature
@@ -135,7 +137,7 @@ message EthSignature {
 This section describes protobuf data types and messages used by the Trade API as
 they relate to Seaport.
 
-**For a full reference on the seaport smart contracts and interfaces, see
+**For a full reference on the Seaport smart contracts and interfaces, see
 the [Seaport documentation](https://docs.opensea.io/reference/seaport-overview).**
 
 ### ItemType
