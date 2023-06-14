@@ -112,7 +112,7 @@ To send a request you will need an option ID which can be [calculated from the o
 
 The full working example can be found [here](https://github.com/valorem-labs-inc/trade-interfaces/tree/main/docs/examples/typescript/src/RFQ_taker.ts).
 
-Note: the below code is for demonstration purposes only so you should create your own robust stream handling for production.
+Note: the below code is for demonstration purposes only; you should create your own robust stream handling for production.
 ```typescript
 import { BigNumber, constants } from 'ethers';  // v5.5.0
 const { formatUnits } = utils;
@@ -183,7 +183,7 @@ async function sendRfqRequests(optionId: BigNumber) {
 };
 ```
 
-Upon receiving quotes, we format the responses into the signed orders for seaport.
+Upon receiving quotes, we format the responses into signed orders for seaport.
 ```typescript
 const { hexValue, joinSignature, hexlify } = utils;
 import { QuoteResponse } from '../gen/valorem/trade/v1/rfq_pb';  // generated from rfq.proto
@@ -255,11 +255,11 @@ async function formatQuoteResponse(quoteResponse: QuoteResponse) {
 ## RFQ Maker
 After connecting and authenticating with Valorem Trade, we can now respond to requests from takers on the RFQ service.
 
-Here we will connect as an RFQ client, listen for quote requests, and respond with signed offers for Seaport 
+Here we will connect as an RFQ client to the stream, listen for quote requests, and respond with signed offers for Seaport.
 
 The full working example can be found [here](https://github.com/valorem-labs-inc/trade-interfaces/tree/main/docs/examples/typescript/src/RFQ_maker.ts).
 
-Note: the below code is for demonstration purposes only so you should create your own robust steam handling for production.
+Note: The below code is for demonstration purposes only; you should create your own robust steam handling for production.
 ```typescript
 import { Contract } from 'ethers';  // v5.5.0
 import { RFQ } from '../gen/valorem/trade/v1/rfq_connect';  // generated from rfq.proto
@@ -316,7 +316,7 @@ async function respondToRfqs() {
 };
 ```
 
-Upon receiving requests, we will construct the signed offers and wrap in a quote response.
+Upon receiving requests, we will construct the signed offers for Seaport, and wrap in a quote response.
 ```typescript
 import { BigNumber, utils, constants } from 'ethers';  // v5.5.0
 const { parseUnits, randomBytes, splitSignature, arrayify } = utils;
