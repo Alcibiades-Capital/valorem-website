@@ -592,14 +592,16 @@ message QuoteRequest {
 
 ```protobuf
 message QuoteResponse {
-  H128 ulid = 1;
-  H160 maker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 maker_address = 2;
   SignedOrder order = 3;
+  optional H256 chain_id = 4;
+  optional H160 seaport_address = 5;
 }
 ```
 
-- `ulid` (`H128`): The unique identifier for the quote request.
-- `maker_address` (`H160`): The address of the maker making the offer.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
 - `chain_id` (`H256`, optional): The chain ID for the offer.
 - `seaport_address` (`H160`, optional): The Seaport address for the offer.
