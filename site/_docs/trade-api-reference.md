@@ -46,7 +46,8 @@ More detail to come.
 
 ## Primitive data types
 
-The trade API defines some primitive data types mirroring a subset of the [Solidity ABI](https://docs.soliditylang.org/en/latest/abi-spec.html):
+The trade API defines some primitive data types mirroring a subset of
+the [Solidity ABI](https://docs.soliditylang.org/en/latest/abi-spec.html):
 
 ### H40
 
@@ -117,7 +118,8 @@ message Empty {}
 
 ### EthSignature
 
-An Ethereum signature. [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures in Ethereum consist of three parameters:
+An Ethereum signature. [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures in
+Ethereum consist of three parameters:
 `v`, `r` and `s`. The signature is always 65-bytes in length.
 
 - `r` (`bytes`): first 32 bytes of signature
@@ -435,7 +437,7 @@ trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay
 
 ```protobuf
 service RFQ {
-        ...
+  ...
 }
 ```
 
