@@ -325,7 +325,7 @@ in <a href="https://github.com/valorem-labs-inc/trade-interfaces">this repositor
 
 <ul>
   <li>
-    <p><strong>Maker</strong>: Makers are users who signed offers in response to a request for quote.
+    <p><strong>Maker</strong>: Makers are users who sign offers in response to a request for quote.
 They are responsible for fulfilling orders when a taker agrees to their quotes.</p>
   </li>
   <li>
@@ -349,9 +349,12 @@ credentials to access the other services provided by the API.</p>
 It additionally uses <a href="https://grpc.github.io/grpc/core/md_doc_statuscodes.html">standard gRPC status codes</a> to
 indicate the success or failure of an API call.</p>
 
+<p>More detail to come.</p>
+
 <h2 id="primitive-data-types">Primitive data types</h2>
 
-<p>The trade API defines some primitive data types mirroring a subset of the <a href="https://docs.soliditylang.org/en/latest/abi-spec.html">Solidity ABI</a>:</p>
+<p>The trade API defines some primitive data types mirroring a subset of
+the <a href="https://docs.soliditylang.org/en/latest/abi-spec.html">Solidity ABI</a>:</p>
 
 <h3 id="h40">H40</h3>
 
@@ -416,7 +419,8 @@ indicate the success or failure of an API call.</p>
 
 <h3 id="ethsignature">EthSignature</h3>
 
-<p>An Ethereum signature. ECDSA signatures in Ethereum consist of three parameters:
+<p>An Ethereum signature. <a href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm">ECDSA</a> signatures in
+Ethereum consist of three parameters:
 <code class="language-plaintext highlighter-rouge">v</code>, <code class="language-plaintext highlighter-rouge">r</code> and <code class="language-plaintext highlighter-rouge">s</code>. The signature is always 65-bytes in length.</p>
 
 <ul>
@@ -437,7 +441,7 @@ indicate the success or failure of an API call.</p>
 <p>This section describes protobuf data types and messages used by the Trade API as
 they relate to Seaport.</p>
 
-<p><strong>For a full reference on the seaport smart contracts and interfaces, see
+<p><strong>For a full reference on the Seaport smart contracts and interfaces, see
 the <a href="https://docs.opensea.io/reference/seaport-overview">Seaport documentation</a>.</strong></p>
 
 <h3 id="itemtype">ItemType</h3>
@@ -536,8 +540,8 @@ calling validateOrder on the zone.</li>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Order</span> <span class="p">{</span>
   <span class="n">H160</span> <span class="na">offerer</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
   <span class="n">H160</span> <span class="na">zone</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="n">OfferItem</span> <span class="na">offers</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-  <span class="k">repeated</span> <span class="n">ConsiderationItem</span> <span class="na">considerations</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="n">OfferItem</span> <span class="na">offer</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="n">ConsiderationItem</span> <span class="na">consideration</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
   <span class="n">OrderType</span> <span class="na">order_type</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
   <span class="n">H256</span> <span class="na">start_time</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
   <span class="n">H256</span> <span class="na">end_time</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
@@ -551,7 +555,7 @@ calling validateOrder on the zone.</li>
   <li><code class="language-plaintext highlighter-rouge">offerer</code>: Supplies all offered items and must either
 fulfill the order personally (i.e. <code class="language-plaintext highlighter-rouge">msg.sender == offerer</code>) or approve
 the order via signature (either standard 65-byte EDCSA, 64-byte
-<a href="https://eips.ethereum.org/EIPS/eip-2098">EIP-2098</a>, 
+<a href="https://eips.ethereum.org/EIPS/eip-2098">EIP-2098</a>,
 or an <a href="https://eips.ethereum.org/EIPS/eip-1271">EIP-1271</a> <code class="language-plaintext highlighter-rouge">isValidSignature</code> check) or by listing the order
 on-chain (i.e. calling <code class="language-plaintext highlighter-rouge">validate</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">zone</code>: An optional secondary account attached to the
@@ -566,9 +570,9 @@ executed by the zone or the <code class="language-plaintext highlighter-rouge">o
 by a call to an <code class="language-plaintext highlighter-rouge">validateOrder</code> on the <code class="language-plaintext highlighter-rouge">zone</code>.</li>
     </ul>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">offers</code>: Contains an array of items that may be transferred
+  <li><code class="language-plaintext highlighter-rouge">offer</code>: Contains an array of items that may be transferred
 from the <code class="language-plaintext highlighter-rouge">offerer</code>’s account.</li>
-  <li><code class="language-plaintext highlighter-rouge">considerations</code>: Contains an array of items that must be received
+  <li><code class="language-plaintext highlighter-rouge">consideration</code>: Contains an array of items that must be received
 in order to fulfill the order. It contains the same components
 as an offered item, and additionally includes a recipient that will
 receive each item. This array may be extended by the fulfiller on
@@ -647,7 +651,7 @@ which is passed back on the request.</p>
 
 <h5 id="unary-response">Unary response</h5>
 
-<h6 id="200-ok">200 OK</h6>
+<h6 id="0-ok">0 OK</h6>
 
 <p>The request was successful.</p>
 
@@ -690,7 +694,7 @@ Upon successful verification, the Auth session is updated.</p>
 
 <h5 id="unary-response-1">Unary response</h5>
 
-<h6 id="200-ok-1">200 OK</h6>
+<h6 id="0-ok-1">0 OK</h6>
 
 <p>The request was successful, the response is the verified 160-bit address as an <code class="language-plaintext highlighter-rouge">H160</code>.</p>
 
@@ -713,7 +717,7 @@ address for an Auth session.</p>
 
 <h5 id="unary-response-2">Unary response</h5>
 
-<h6 id="200-ok-2">200 OK</h6>
+<h6 id="0-ok-2">0 OK</h6>
 
 <p>The request was successful, the response is the authenticated 160-bit address as an <code class="language-plaintext highlighter-rouge">H160</code>.</p>
 
@@ -730,7 +734,7 @@ offers, and for those traders to receive those signed offers for executing
 trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay.</p>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">service</span> <span class="n">RFQ</span> <span class="p">{</span>
-    <span class="o">...</span>
+  <span class="o">...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -751,13 +755,15 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
 <h5 id="request-stream">Request stream</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">ItemType</span> <span class="na">item_type</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">token_address</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-  <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">token_address</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
   <span class="n">H256</span> <span class="na">amount</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
   <span class="n">Action</span> <span class="na">action</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -769,21 +775,27 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
 </ul>
 
 <h5 id="response-stream">Response stream</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">SignedOrder</span> <span class="na">order</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>): The unique identifier for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The address of the maker making the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
 </ul>
 
 <h4 id="maker"><code class="language-plaintext highlighter-rouge">Maker</code></h4>
@@ -797,28 +809,34 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
 <h5 id="request-stream-1">Request stream</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">SignedOrder</span> <span class="na">order</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>): The unique identifier for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The address of the maker making the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
 </ul>
 
 <h5 id="response-stream-1">Response stream</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">ItemType</span> <span class="na">item_type</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">token_address</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-  <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">token_address</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
   <span class="n">H256</span> <span class="na">amount</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
   <span class="n">Action</span> <span class="na">action</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -830,6 +848,8 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
 </ul>
 
 <h4 id="webtaker"><code class="language-plaintext highlighter-rouge">WebTaker</code></h4>
@@ -843,13 +863,15 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 <h5 id="unary-request-3">Unary request</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">taker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">ItemType</span> <span class="na">item_type</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
   <span class="n">H160</span> <span class="na">token_address</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-  <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">identifier_or_criteria</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
   <span class="n">H256</span> <span class="na">amount</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
   <span class="n">Action</span> <span class="na">action</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -861,6 +883,8 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
 </ul>
 
 <h5 id="response-stream-2">Response stream</h5>
@@ -876,6 +900,8 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
   <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>): The unique identifier for the quote request.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
 </ul>
 
             </div>

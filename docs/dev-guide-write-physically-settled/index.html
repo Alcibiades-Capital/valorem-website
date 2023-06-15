@@ -333,7 +333,7 @@
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="ff87e029-eb81-47f0-8bdb-e958dc47b482" data-name="log">
+<ul class="tab" data-tab="d0e93b7a-d163-4229-b50f-a3d50fd04f94" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -344,7 +344,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="ff87e029-eb81-47f0-8bdb-e958dc47b482" data-name="log">
+<ul class="tab-content" id="d0e93b7a-d163-4229-b50f-a3d50fd04f94" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice creates a new option type.
@@ -379,7 +379,7 @@
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="6b4328e2-b5ff-4ee9-b9d2-3c248694ef9c" data-name="log">
+<ul class="tab" data-tab="6f3cc0f4-1956-445d-87a4-1ab20bef47f6" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -390,7 +390,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="6b4328e2-b5ff-4ee9-b9d2-3c248694ef9c" data-name="log">
+<ul class="tab-content" id="6f3cc0f4-1956-445d-87a4-1ab20bef47f6" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice writes 10 options.
@@ -412,7 +412,7 @@
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="5576bce0-1c93-42de-9f51-863c60938a36" data-name="log">
+<ul class="tab" data-tab="69024b58-ed8f-4dd6-94e2-5f6e0ea40fd7" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -423,7 +423,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="5576bce0-1c93-42de-9f51-863c60938a36" data-name="log">
+<ul class="tab-content" id="69024b58-ed8f-4dd6-94e2-5f6e0ea40fd7" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice transfers 4 options to Bob.
@@ -446,7 +446,7 @@
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="e9f9ca45-e918-44c1-85ff-689fc32a8bd9" data-name="log">
+<ul class="tab" data-tab="4f3d213c-b487-41c9-8ea9-51176ed06cc2" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -457,7 +457,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="e9f9ca45-e918-44c1-85ff-689fc32a8bd9" data-name="log">
+<ul class="tab-content" id="4f3d213c-b487-41c9-8ea9-51176ed06cc2" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the exercise timestamp.
@@ -488,7 +488,7 @@
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="b4bb69ef-6bed-4d99-a5c4-5b06d09e9725" data-name="log">
+<ul class="tab" data-tab="3daafe71-d845-4fe7-86df-c23ed294d424" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -499,7 +499,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="b4bb69ef-6bed-4d99-a5c4-5b06d09e9725" data-name="log">
+<ul class="tab-content" id="3daafe71-d845-4fe7-86df-c23ed294d424" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the expiry timestamp.
