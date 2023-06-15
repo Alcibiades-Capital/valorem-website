@@ -80,6 +80,10 @@
 
 
     <script defer type="text/javascript" src="/assets/js/alpine.js"></script>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_aVOPjmMUMGcWqjImzv2YjkZy2ziRKXvj7iRzosE73K1',{api_host:'https://app.posthog.com'})
+    </script>
 </head>
 
 
@@ -333,7 +337,7 @@
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="a4f05a50-2b7d-41a7-9846-f887614e245e" data-name="log">
+<ul class="tab" data-tab="accafe99-c521-443c-948d-4f9e1a205f88" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -344,7 +348,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="a4f05a50-2b7d-41a7-9846-f887614e245e" data-name="log">
+<ul class="tab-content" id="accafe99-c521-443c-948d-4f9e1a205f88" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice creates a new option type.
@@ -379,7 +383,7 @@
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="3a0fa127-60b2-4171-9459-4538fc2fae71" data-name="log">
+<ul class="tab" data-tab="50aa0354-42ee-4ea7-8fe0-070509012d45" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -390,7 +394,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="3a0fa127-60b2-4171-9459-4538fc2fae71" data-name="log">
+<ul class="tab-content" id="50aa0354-42ee-4ea7-8fe0-070509012d45" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice writes 10 options.
@@ -412,7 +416,7 @@
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="88aee8ed-f66b-4e6b-9c09-f24de5154ece" data-name="log">
+<ul class="tab" data-tab="9871dd37-3ce4-4e59-86bb-4d3dd55e0e56" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -423,7 +427,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="88aee8ed-f66b-4e6b-9c09-f24de5154ece" data-name="log">
+<ul class="tab-content" id="9871dd37-3ce4-4e59-86bb-4d3dd55e0e56" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice transfers 4 options to Bob.
@@ -446,7 +450,7 @@
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="10a7424e-c2c0-47d0-b3c8-5e8fd68273ce" data-name="log">
+<ul class="tab" data-tab="4b77e716-a725-47bb-90a7-5f355884159a" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -457,7 +461,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="10a7424e-c2c0-47d0-b3c8-5e8fd68273ce" data-name="log">
+<ul class="tab-content" id="4b77e716-a725-47bb-90a7-5f355884159a" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the exercise timestamp.
@@ -488,7 +492,7 @@
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="1304d264-4f89-48c4-b86d-79e3a6b57235" data-name="log">
+<ul class="tab" data-tab="cd55b8be-6695-4f41-a737-afc48913632d" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -499,7 +503,7 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="1304d264-4f89-48c4-b86d-79e3a6b57235" data-name="log">
+<ul class="tab-content" id="cd55b8be-6695-4f41-a737-afc48913632d" data-name="log">
   
       <li class="active">
 <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the expiry timestamp.
