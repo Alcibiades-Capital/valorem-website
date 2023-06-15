@@ -54,6 +54,7 @@ kramdown:
 
 plugins:
   - jekyll-include-cache
+  - jekyll-redirect-from
   - jekyll-responsive-image
   - jekyll-last-modified-at
   - jekyll-paginate-v2

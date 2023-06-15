@@ -3,6 +3,9 @@ date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-05-29 00:00:00 +01
 title: Clear Litepaper
 usemathjax: true
+redirect_from:
+  - /docs/options-litepaper/
+  - /docs/clear-litepaper/
 description: This paper outlines Valorem Clear, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ---
 

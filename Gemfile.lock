@@ -43,6 +43,8 @@ GEM
       posix-spawn (~> 0.3.9)
     jekyll-paginate-v2 (3.0.0)
       jekyll (>= 3.0, < 5.0)
+    jekyll-redirect-from (0.16.0)
+      jekyll (>= 3.3, < 5.0)
     jekyll-responsive-image (1.6.0)
       jekyll (>= 2.0, < 5.0)
       rmagick (>= 2.0, < 5.0)
@@ -95,6 +97,7 @@ DEPENDENCIES
   jekyll-include-cache
   jekyll-last-modified-at
   jekyll-paginate-v2
+  jekyll-redirect-from
   jekyll-responsive-image
   jekyll-sitemap
   jekyll-tabs
