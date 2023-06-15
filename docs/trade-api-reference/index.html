@@ -890,15 +890,17 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 <h5 id="response-stream-2">Response stream</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
-  <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">maker_address</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
   <span class="n">SignedOrder</span> <span class="na">order</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">optional</span> <span class="n">H160</span> <span class="na">seaport_address</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>): The unique identifier for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The address of the maker making the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
   <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
