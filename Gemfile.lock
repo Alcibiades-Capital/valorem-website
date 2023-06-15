@@ -48,6 +48,8 @@ GEM
       rmagick (>= 2.0, < 5.0)
     jekyll-sass-converter (2.2.0)
       sassc (> 2.0.1, < 3.0)
+    jekyll-sitemap (1.4.0)
+      jekyll (>= 3.7, < 5.0)
     jekyll-tabs (1.1.1)
       jekyll (>= 3.0, < 5.0)
     jekyll-watch (2.2.1)
@@ -94,6 +96,7 @@ DEPENDENCIES
   jekyll-last-modified-at
   jekyll-paginate-v2
   jekyll-responsive-image
+  jekyll-sitemap
   jekyll-tabs
   liquid
   liquid-c

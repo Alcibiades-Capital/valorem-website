@@ -59,6 +59,7 @@ plugins:
   - jekyll-paginate-v2
   - jekyll-analytics
   - jekyll-tabs
+  - jekyll-sitemap
 
 # Plugin settings
 responsive_image:

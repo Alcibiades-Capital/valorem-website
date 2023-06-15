@@ -8,6 +8,7 @@ gem "webrick"
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
+  gem "jekyll-sitemap"
   gem "jekyll-include-cache"
   gem "jekyll-responsive-image"
   gem "jekyll-last-modified-at"
