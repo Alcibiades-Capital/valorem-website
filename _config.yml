@@ -54,11 +54,12 @@ kramdown:
 
 plugins:
   - jekyll-include-cache
+  - jekyll-redirect-from
   - jekyll-responsive-image
   - jekyll-last-modified-at
   - jekyll-paginate-v2
-  - jekyll-analytics
   - jekyll-tabs
+  - jekyll-sitemap
 
 # Plugin settings
 responsive_image:
@@ -84,8 +85,3 @@ pagination:
   trail:
     before: 3
     after: 3
-
-jekyll_analytics:
-  Plausible:
-    domain: 'valorem.xyz'
-    source: 'https://plausible.io/js/script.js'
