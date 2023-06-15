@@ -108,9 +108,6 @@ html {
   table, th, td {
     @apply px-2 border border-gray-900;
   }
-  h3 {
-    @apply pt-20 -mt-20;
-  }
 }
 @layer components {
   /* Section paddings */

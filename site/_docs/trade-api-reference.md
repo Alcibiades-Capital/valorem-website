@@ -21,7 +21,7 @@ The public endpoint for the exchange is `https://exchange.valorem.xyz`.
 
 There are two principal user roles in the Valorem Trade API:
 
-- **Maker**: Makers are users who signed offers in response to a request for quote.
+- **Maker**: Makers are users who sign offers in response to a request for quote.
   They are responsible for fulfilling orders when a taker agrees to their quotes.
 
 - **Taker**: Takers are users who request quotes from makers and optionally
@@ -42,9 +42,12 @@ The Valorem Trade API uses the [gRPC richer error model](https://grpc.io/docs/gu
 It additionally uses [standard gRPC status codes](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) to
 indicate the success or failure of an API call.
 
+More detail to come.
+
 ## Primitive data types
 
-The trade API defines some primitive data types mirroring a subset of the [Solidity ABI](https://docs.soliditylang.org/en/latest/abi-spec.html):
+The trade API defines some primitive data types mirroring a subset of
+the [Solidity ABI](https://docs.soliditylang.org/en/latest/abi-spec.html):
 
 ### H40
 
@@ -115,7 +118,8 @@ message Empty {}
 
 ### EthSignature
 
-An Ethereum signature. ECDSA signatures in Ethereum consist of three parameters:
+An Ethereum signature. [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures in
+Ethereum consist of three parameters:
 `v`, `r` and `s`. The signature is always 65-bytes in length.
 
 - `r` (`bytes`): first 32 bytes of signature
@@ -135,7 +139,7 @@ message EthSignature {
 This section describes protobuf data types and messages used by the Trade API as
 they relate to Seaport.
 
-**For a full reference on the seaport smart contracts and interfaces, see
+**For a full reference on the Seaport smart contracts and interfaces, see
 the [Seaport documentation](https://docs.opensea.io/reference/seaport-overview).**
 
 ### ItemType
@@ -235,8 +239,8 @@ A Seaport order. Each order contains ten key components.
 message Order {
   H160 offerer = 1;
   H160 zone = 2;
-  repeated OfferItem offers = 3;
-  repeated ConsiderationItem considerations = 4;
+  repeated OfferItem offer = 3;
+  repeated ConsiderationItem consideration = 4;
   OrderType order_type = 5;
   H256 start_time = 6;
   H256 end_time = 7;
@@ -249,21 +253,21 @@ message Order {
 - `offerer`: Supplies all offered items and must either
   fulfill the order personally (i.e. `msg.sender == offerer`) or approve
   the order via signature (either standard 65-byte EDCSA, 64-byte
-  [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098), 
+  [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098),
   or an [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) `isValidSignature` check) or by listing the order
   on-chain (i.e. calling `validate`).
 - `zone`: An optional secondary account attached to the
   order with two additional privileges:
-    - The zone may cancel orders where it is named as the zone by calling
-      cancel. (Note that `offerer`s can also cancel their own orders, either
-      individually or for all orders signed with their current counter at
-      once by calling `incrementCounter`).
-    - "Restricted" orders (as specified by the `order_type`) must either be
-      executed by the zone or the `offerer`, or must be approved as indicated
-      by a call to an `validateOrder` on the `zone`.
-- `offers`: Contains an array of items that may be transferred
+  - The zone may cancel orders where it is named as the zone by calling
+    cancel. (Note that `offerer`s can also cancel their own orders, either
+    individually or for all orders signed with their current counter at
+    once by calling `incrementCounter`).
+  - "Restricted" orders (as specified by the `order_type`) must either be
+    executed by the zone or the `offerer`, or must be approved as indicated
+    by a call to an `validateOrder` on the `zone`.
+- `offer`: Contains an array of items that may be transferred
   from the `offerer`'s account.
-- `considerations`: Contains an array of items that must be received
+- `consideration`: Contains an array of items that must be received
   in order to fulfill the order. It contains the same components
   as an offered item, and additionally includes a recipient that will
   receive each item. This array may be extended by the fulfiller on
@@ -345,7 +349,7 @@ message Empty {}
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful.
 
@@ -388,7 +392,7 @@ Example signed and JSON encoded message:
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful, the response is the verified 160-bit address as an `H160`.
 
@@ -414,7 +418,7 @@ message Empty {}
 
 ##### Unary response
 
-###### 200 OK
+###### 0 OK
 
 The request was successful, the response is the authenticated 160-bit address as an `H160`.
 
@@ -433,7 +437,7 @@ trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay
 
 ```protobuf
 service RFQ {
-    ...
+  ...
 }
 ```
 
@@ -456,13 +460,15 @@ rpc Taker (stream QuoteRequest) returns (stream QuoteResponse);
 
 ```protobuf
 message QuoteRequest {
-  H128 ulid = 1;
-  H160 taker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 taker_address = 2;
   ItemType item_type = 3;
-  H160 token_address = 4;
-  H256 identifier_or_criteria = 5;
+  optional H160 token_address = 4;
+  optional H256 identifier_or_criteria = 5;
   H256 amount = 6;
   Action action = 7;
+  optional H256 chain_id = 8;
+  optional H160 seaport_address = 9;
 }
 ```
 
@@ -473,20 +479,26 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
 
 ##### Response stream
 
 ```protobuf
 message QuoteResponse {
-  H128 ulid = 1;
-  H160 maker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 maker_address = 2;
   SignedOrder order = 3;
+  optional H256 chain_id = 4;
+  optional H160 seaport_address = 5;
 }
 ```
 
-- `ulid` (`H128`): The unique identifier for the quote request.
-- `maker_address` (`H160`): The address of the maker making the offer.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
+- `chain_id` (`H256`, optional): The chain ID for the offer.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer.
 
 #### `Maker`
 
@@ -501,27 +513,33 @@ rpc Maker (stream QuoteResponse) returns (stream QuoteRequest);
 
 ```protobuf
 message QuoteResponse {
-  H128 ulid = 1;
-  H160 maker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 maker_address = 2;
   SignedOrder order = 3;
+  optional H256 chain_id = 4;
+  optional H160 seaport_address = 5;
 }
 ```
 
-- `ulid` (`H128`): The unique identifier for the quote request.
-- `maker_address` (`H160`): The address of the maker making the offer.
+- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
+- `chain_id` (`H256`, optional): The chain ID for the offer.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer.
 
 ##### Response stream
 
 ```protobuf
 message QuoteRequest {
-  H128 ulid = 1;
-  H160 taker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 taker_address = 2;
   ItemType item_type = 3;
-  H160 token_address = 4;
-  H256 identifier_or_criteria = 5;
+  optional H160 token_address = 4;
+  optional H256 identifier_or_criteria = 5;
   H256 amount = 6;
   Action action = 7;
+  optional H256 chain_id = 8;
+  optional H160 seaport_address = 9;
 }
 ```
 
@@ -532,6 +550,8 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
 
 #### `WebTaker`
 
@@ -546,13 +566,15 @@ rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
 
 ```protobuf
 message QuoteRequest {
-  H128 ulid = 1;
-  H160 taker_address = 2;
+  optional H128 ulid = 1;
+  optional H160 taker_address = 2;
   ItemType item_type = 3;
   H160 token_address = 4;
-  H256 identifier_or_criteria = 5;
+  optional H256 identifier_or_criteria = 5;
   H256 amount = 6;
   Action action = 7;
+  optional H256 chain_id = 8;
+  optional H160 seaport_address = 9;
 }
 ```
 
@@ -563,6 +585,8 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
 
 ##### Response stream
 
@@ -577,3 +601,5 @@ message QuoteResponse {
 - `ulid` (`H128`): The unique identifier for the quote request.
 - `maker_address` (`H160`): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
+- `chain_id` (`H256`, optional): The chain ID for the offer.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer.
