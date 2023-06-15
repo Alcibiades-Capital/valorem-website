@@ -91,6 +91,10 @@ navigation_links_docs:
     name: Write physically settled options
     group:
       - developer guides
+  - url: /docs/dev-guide-write-cash-settled/
+    name: Write cash settled options
+    group:
+      - developer guides
 
 docs_groups:
   - research
