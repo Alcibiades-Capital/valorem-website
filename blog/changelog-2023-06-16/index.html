@@ -45,22 +45,22 @@
     <link rel="alternate" type="application/atom+xml" title="Valorem Protocol" href="/feed.xml" title="Valorem Protocol">
 
     
-    <title>Building a dynamic PMF random variate generator for on-chain games</title>
-<meta property="og:title" content="Building a dynamic PMF random variate generator for on-chain games
+    <title>Product Changelog | Valorem Protocol</title>
+<meta property="og:title" content="Product Changelog
 " />
 <meta name="author" content="Alcibiades" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+<meta name="description" content="New options trading strategy, API enhancements, and more!
 " />
-<meta property="og:description" content="Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+<meta property="og:description" content="New options trading strategy, API enhancements, and more!
 " />
-<link rel="canonical" href="https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/" />
-<meta property="og:url" content="https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/" />
+<link rel="canonical" href="https://valorem.xyz/blog/changelog-2023-06-16/" />
+<meta property="og:url" content="https://valorem.xyz/blog/changelog-2023-06-16/" />
 <meta property="og:site_name" content="Valorem Protocol" />
-<meta property="og:image" content="https://valorem.xyz/assets/images/posts/blackjack.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-06-02T19:00:00-04:00" />
+<meta property="og:image" content="https://valorem.xyz/assets/images/posts/long-call-option-trading-strategy.png" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-06-16T07:00:00-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="https://valorem.xyz/assets/images/posts/blackjack.jpg" />
-<meta property="twitter:title" content="Building a dynamic PMF random variate generator for on-chain games
+<meta property="twitter:image" content="https://valorem.xyz/assets/images/posts/long-call-option-trading-strategy.png" />
+<meta property="twitter:title" content="Product Changelog
 " />
 <meta name="google-site-verification" content="" />
 
@@ -68,20 +68,20 @@
     {
         "@context":"https://schema.org",
         "@type":"BlogPosting",
-        "headline":"Building a dynamic PMF random variate generator for on-chain games
+        "headline":"Product Changelog
 ",
-        "image":"https://valorem.xyz/assets/images/posts/blackjack.jpg",
+        "image":"https://valorem.xyz/assets/images/posts/long-call-option-trading-strategy.png",
         "author":{
             "@type":"Person",
             "name":"Alcibiades",
             "url":"https://valorem.xyz/about"
         },
-        "datePublished":"2023-06-02T19:00:00-04:00",
-        "dateCreated":"2023-06-02T19:00:00-04:00",
+        "datePublished":"2023-06-16T07:00:00-04:00",
+        "dateCreated":"2023-06-16T07:00:00-04:00",
         "dateModified":"2023-06-16T17:53:21-04:00",
-        "description":"Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.
+        "description":"New options trading strategy, API enhancements, and more!
 ",
-        "url":"https://valorem.xyz/blog/building-a-dynamically-weighted-random-variate-generator-eth-denver/",
+        "url":"https://valorem.xyz/blog/changelog-2023-06-16/",
         "publisher":{
             "@type":"Organization",
             "logo":{
@@ -216,10 +216,10 @@
 
 <section class="s-hero bg-gradient-default from-purple-500 to-white">
   <div class="max-w-screen-lg mx-auto space-y-16 text-center">
-    <div class="inline-block label text-white py-2 px-3 rounded-md bg-purple-500 bg-opacity-25">Jun 02, 2023</div>
-    <h1 class="text-gray-900">Building a dynamic PMF random variate generator for on-chain games</h1>
+    <div class="inline-block label text-white py-2 px-3 rounded-md bg-purple-500 bg-opacity-25">Jun 16, 2023</div>
+    <h1 class="text-gray-900">Product Changelog</h1>
     
-    <div class="text-xl lg:text-2xl"><p>Dive into our ETH Denver 2023 Hackathon project where we built a Dynamic PMF Random Variate Generator using Solidity for blockchain-based games. Discover how this innovation enhances fairness for on-chain games.</p>
+    <div class="text-xl lg:text-2xl"><p>New options trading strategy, API enhancements, and more!</p>
 </div>
     
     <div>
@@ -230,97 +230,39 @@
 
 <section class="s-md">
   <article class="max-w-screen-xl mx-auto prose text-base sm:text-lg">
-    <p>In late February, Valorem was deep in an
-<a href="https://github.com/valorem-labs-inc/valorem-core/blob/master/audits/Valorem_April_2023_-_Zellic_Audit_Report.pdf">audit of Valorem Clear with Zellic</a>,
-while simultaneously preparing for the
-<a href="https://www.ethdenver.com/">ETH Denver 2023 Hackathon</a>. During our
-audit, one issue regarding the fairness of our option exercise assignment
-algorithm emerged as a challenging problem. We managed to get launch-ready by
-making the algorithm deterministic, ensuring fair play for both players, writer
-and exerciser, involved in the option. Yet, we were convinced we could
-enhance it further.</p>
+    <h2 id="new-strategy-long-call">New Strategy — Long Call</h2>
 
-<p>Ahead of the hackathon, we delved into a more comprehensive solution. It became
-clear that we needed a mechanism for generating random variates fitting a
-dynamically weighted discrete probability mass function (PMF). We aimed to
-leverage this unique type of random number to equalize the probability of
-<a href="https://valorem.xyz/docs/clear-litepaper/#fair-exercise-assignment">option exercise assignment across various buckets</a>.</p>
+<p>Our first option trading strategy! Traders can now open Long Call positions on digital assets, selecting from a set of 5 strikes and the next 4 Fridays.</p>
 
-<h2 id="a-random-forest-in-solidity">A random forest in Solidity</h2>
+<p><img src="/assets/images/posts/long-call-option-trading-strategy.png" alt="Long Call Option Trading Strategy" /></p>
 
-<p>A simple implementation of dynamic PMF random variate generation could be
-easily implemented but, unfortunately, runs in linear time, making it
-unsuitable for the Ethereum Virtual Machine (EVM). Our research led us to a
-1993 research paper by Matias, Vitter, and Ni, referenced in Knuth’s The Art
-of Computer Programming.
-<a href="https://kuscholarworks.ku.edu/bitstream/handle/1808/7224/MVN03.dynamic_rv_gen.pdf">This paper</a>
-proposed an innovative approach that operates in log n time, using a forest of
-trees data structure, and takes a uniform random variate (URV) as input. This
-URV can be sourced from a reliable oracle like Chainlink VRF, a randomness
-beacon like RANDAO, or a pseudorandom source like a collaborative entropy queue.</p>
+<h2 id="request-for-comment-on-trade-api-reference">Request-for-Comment on Trade API Reference</h2>
 
-<p><img src="/assets/images/posts/metaverse-coworking.jpg" alt="Working on LibDDRV in the metaverse" /></p>
+<p>We published our preliminary reference docs for the Trade API, along with a request-for-comment. We received good feedback from our initial market making partnerships and DeFi protocol integrators.</p>
 
-<p>This research was the basis for our new randomness library for the Solidity
-ecosystem, <a href="https://github.com/valorem-labs-inc/LibDDRV">LibDDRV</a>.
-The library enables the generation of random variates conforming to a
-dynamically weighted discrete PMF. It required considerable effort in the
-Metaverse, as well as with traditional pen and paper, to devise pseudocode
-that would later be transformed into Solidity. Our generator thrives
-in the dynamic case, facilitating weight updates and generating random variates
-efficiently.</p>
+<p><img src="/assets/images/posts/valorem-trade-api-rfc.png" alt="Valorem Trade API RFC" /></p>
 
-<p><img src="/assets/images/posts/pencil-and-paper.jpg" alt="Working on LibDDRV with pencil and paper" /></p>
+<h2 id="trade-api-enhancements">Trade API Enhancements</h2>
 
-<p>With the library still under development going into the hackathon, we sought
-on-chain games that could benefit from it. Our decision was to continue with
-the library implementation while competing in the hackathon gaming track.
-After some consideration, we realized we could utilize the library to
-construct a European no-hole-card blackjack game without zero-knowledge proofs.</p>
+<p>Based on feedback to our RFC, we added multichain support to the Trade API, along with future-proofing Seaport version changes and better authentication DevEx.</p>
 
-<h2 id="a-blackjack-shoe-in-solidity">A blackjack shoe in Solidity</h2>
+<hr />
 
-<p>Historically, static methods such as Walker’s Alias Method have been
-employed to generate random variates with a constant set of weights. However,
-these methods are inadequate in a dynamic context like a Blackjack game,
-where the odds of drawing a specific card change with every dealt card.
-Blackjack is a game of chance, but it’s also a game of skill. The skill comes in
-understanding the probabilities of the game, and how they dynamically change
-based on the cards which have already been drawn. This translates almost
-perfectly into a dynamically weighted discrete probability mass function (PMF).</p>
+<h2 id="improvements-and-bugfixes">Improvements and Bugfixes</h2>
 
-<p>Thus, we integrated LibDDRV into a Solidity smart contract for a game of
-<a href="https://github.com/valorem-labs-inc/evm-blackjack">EVM Blackjack</a>,
-which implements game rules and provides players with the ability to place
-bets, receive cards, hit, or stand. Along with a
-<a href="https://github.com/valorem-labs-inc/evm-blackjack-ui">user interface</a> so that
-users could play the game. All of this was a bit ambitious for a hackathon, but
-we did get pretty far along, particularly with the library.</p>
+<ul>
+  <li>UX: Empty view if no strategies match</li>
+  <li>Bug: Fix decimal input crash in ‘quantity’ field</li>
+  <li>Bug: Fix Long Put content and polish other strategies</li>
+</ul>
 
-<h2 id="doubling-down-a-dynamic-future">Doubling-down: A dynamic future</h2>
+<hr />
 
-<p>The hackathon was a whirlwind of coding and innovation, and we have much more
-to explore. The ability to generate dynamic random variates could greatly
-improve blockchain-based prediction markets or gaming scenarios where each event
-influences the odds of subsequent events. Potential applications range from
-NFTs, GameFi, DeFi, and DAOs to more technical uses like fuzz testing inputs
-for real-world scenario modeling and consensus algorithms.</p>
+<h2 id="discord-town-hall">Discord Town Hall</h2>
 
-<h2 id="wrapping-up">Wrapping up</h2>
+<p>📢 Join us in Discord this Tue 20 June at 6 pm GMT for our first Vol Hall! We’ll be sharing product updates and discussing DeFi options 📊 Plus maybe a little bonus for attendees 🤫 Don’t miss it!</p>
 
-<p>ETH Denver 2023 served as a fantastic platform to connect theoretical
-probability concepts with their practical on-chain implementations. Our journey
-continues as we strive to refine our implementation, contributing to the
-evolving landscape of randomness in the EVM ecosystem, and beyond.</p>
-
-<p>What other on-chain problems could LibDDRV solve? 🤔</p>
-
-<p><strong>Credit to <a href="https://twitter.com/neodaoist">Neodaoist</a>,
-<a href="https://twitter.com/nickadams0n">Nick Adamson</a>,
-<a href="https://twitter.com/flip_liquide">Flip</a>, and
-<a href="https://twitter.com/0xAlcibiades">0xAlcibiades</a> for their contributions during
-the hackathon.</strong></p>
-
+<p><a href="https://t.co/viE2ClPh7a">Join Discord</a></p>
 
   </article>
 </section>
