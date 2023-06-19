@@ -6,6 +6,7 @@ usemathjax: true
 redirect_from:
   - /docs/options-litepaper/
   - /docs/clear-litepaper/
+  - /docs/valorem-options-litepaper/
 description: This paper outlines Valorem Clear, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ---
 

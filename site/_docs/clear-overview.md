@@ -2,6 +2,9 @@
 date: 2022-11-30 00:00:00
 title: Valorem Clear
 description: Overview of Valorem Clear, a clearing and settlement primitive for DeFi options.
+redirect_from:
+  - /docs/smart-contracts-overview/
+  - /docs/clearinghouse-overview/
 ---
 
 [Valorem](https://valorem.xyz/) Clear is a DeFi money lego, enabling writing covered calls and cash-secured puts, physically
