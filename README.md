@@ -1,6 +1,6 @@
-# valorem-website
+# marketing-website
 
-Website for the valorem protocol: https://valorem.xyz/
+Marketing website for the valorem protocol: https://valorem.xyz/
 
 ## Building Locally
 

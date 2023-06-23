@@ -15,7 +15,7 @@ the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
 The complete protocol buffer definitions can be found
 in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
 
-The public endpoint for the exchange is `https://exchange.valorem.xyz`.
+The public endpoint for the exchange is `https://trade.valorem.xyz`.
 
 ## User roles
 
