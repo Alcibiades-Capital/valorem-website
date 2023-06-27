@@ -13,7 +13,7 @@
     {%- if page.title == nil or page.title == "" -%}
         {{ site.data.global_settings.site.title | smartify }}
     {%- else -%}
-        {{page.title|smartify}}
+        {{ page.title|smartify }}
     {%- endif -%}
 {%- endcapture -%}
 {%- capture seoDescription -%}
@@ -28,11 +28,11 @@
 {%- capture seoDatePublished -%}{{page.date|date_to_xmlschema}}{%- endcapture -%}
 {%- capture seoDateModified -%}{{page.last_modified_at|date_to_xmlschema}}{%- endcapture -%}
 {%- capture seoOpenGraphType -%}
-{%- if page.seo.type == "BlogPosting" -%}article{%- else -%}website{%- endif -%}
+{%- if page.seo.type == "BlogPosting" or page.seo.type == "TechArticle" -%}article{%- else -%}website{%- endif -%}
 {%- endcapture -%}
 <title>{{seoTitleAppended|strip}}</title>
 <meta property="og:title" content="{{seoTitle}}" />
-<meta name="author" content="{{site.data.global_settings.author_details.name | default:'Alcibiades'}}" />
+<meta name="author" content="{{site.data.global_settings.author_details.name | default:'Valorem Protocol Team'}}" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="{{seoDescription}}" />
 <meta property="og:description" content="{{seoDescription}}" />
@@ -46,7 +46,7 @@
 <meta property="twitter:image" content="{{seoImage}}" />
 <meta property="twitter:title" content="{{seoTitle}}" />
 <meta name="google-site-verification" content="{{site.webmaster_verifications.google}}" />
-{% if page.seo.type == "BlogPosting" %}
+{% if page.seo.type == "BlogPosting" or page.seo.type == "TechArticle" %}
     <script type="application/ld+json">
     {
         "@context":"https://schema.org",
@@ -93,10 +93,16 @@
     {
         "@context":"https://schema.org",
         "@type":"WebPage",
+        "image":"{{seoImage}}",
         "name":"{{page.title}}",
         "description":"{{seoDescription}}",
+        "url":"{{seoCanonical}}",
         "publisher":{
             "@type":"Organization",
+            "logo":{
+                "@type":"ImageObject",
+                "url":"{{site.logo|absolute_url}}"
+            },
             "name":"{{site.data.global_settings.site.title|smartify}}"
         }
     }
