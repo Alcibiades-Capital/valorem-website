@@ -28,6 +28,7 @@ defaults:
       type: 'docs'
     values:
       layout: doc
+      image: /assets/images/1-default.jpg
       seo:
         type: TechArticle
   - scope:
@@ -35,6 +36,7 @@ defaults:
       type: 'posts'
     values:
       layout: post
+      image: /assets/images/1-default.jpg
       seo:
         type: BlogPosting
 
