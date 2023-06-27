@@ -53,7 +53,7 @@ html {
   }
   /* Universal heading styles */
   h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5 {
-    @apply mb-6 font-normal font-secondary text-gray-900 leading-snug tracking-tighter;
+    @apply mb-6 font-normal font-secondary text-gray-900 leading-snug tracking-tighter scroll-mt-14;
   }
   /* Individual heading styles */
   h1, .h1 {
