@@ -4,7 +4,7 @@ description: We are building infrastructure for a more robust options ecosystem 
 hero:
   heading: Valorem develops decentralized options.
   text_markdown: |
-    We are building infrastructure for a more robust options ecosystem in DeFi. Find out more about our contributors, advisors, and investors below.
+    We are building infrastructure for a more robust options ecosystem in DeFi. Find out more about our contributors, advisors, and backers below.
 page_blocks:
   - _id: partners_all
     cards:
@@ -45,23 +45,39 @@ page_blocks:
         subheading: "@_TomHoward"
         url: https://twitter.com/_TomHoward
       - label: Advisor
-        image_path: /assets/images/partners/bandit.jpg
+        image_path: /assets/images/partners/mevbandit.jpg
         image_alt: "Bandits’s profile picture"
         heading: Bandit.eth
         subheading: "@mevbandit"
         url: https://twitter.com/mevbandit
-      - label: Investor
+      - label: Backer
         logo_path: /assets/images/partners/DACM.png
         logo_alt: DACM logo
         url: https://www.dacm.io/
-      - label: Investor
-        logo_path: /assets/images/partners/grug.jpg
-        logo_alt: Grug Capital logo
-        url: https://twitter.com/grugcapital
-      - label: Investor
-        logo_path: /assets/images/partners/ac.svg
-        logo_alt: Alcibiades Capital logo
-        url: https://alcibiades.capital
+      - label: Backer
+        image_path: /assets/images/partners/grug.png
+        image_alt: "Grug’s profile picture"
+        heading: Grug
+        subheading: "@CapitalGrug"
+        url: https://twitter.com/CapitalGrug
+      - label: Backer
+        image_path: /assets/images/partners/jazzy.jpg
+        image_alt: "Jazzy’s profile picture"
+        heading: Jazzy
+        subheading: "@ret2jazzy"
+        url: https://twitter.com/ret2jazzy
+      - label: Backer
+        image_path: /assets/images/partners/jeff_wang.jpg
+        image_alt: "Jeff Wang’s profile picture"
+        heading: Jeff Wang
+        subheading: "@jeff_w1098"
+        url: https://twitter.com/jeff_w1098
+      - label: Backer
+        image_path: /assets/images/partners/badquant.jpg
+        image_alt: "Badquant’s profile picture"
+        heading: Badquant
+        subheading: "@badquant1"
+        url: https://twitter.com/badquant1
   - _id: connect
     heading: Want to get involved?
     text_markdown: |
