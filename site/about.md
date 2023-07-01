@@ -50,6 +50,10 @@ page_blocks:
         heading: Bandit.eth
         subheading: "@mevbandit"
         url: https://twitter.com/mevbandit
+      - label: Auditor
+        logo_path: /assets/images/partners/zellic.png
+        logo_alt: Zellic logo
+        url: https://www.zellic.io/
       - label: Backer
         logo_path: /assets/images/partners/DACM.png
         logo_alt: DACM logo
