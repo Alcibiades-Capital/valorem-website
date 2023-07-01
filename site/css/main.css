@@ -313,6 +313,9 @@ html {
       --tw-translate-y: -3.5px;
     }
   }
+  .featuredPartner + .featuredPartner {
+    @apply pt-0;
+  }
   .highlight {
     @apply bg-gray-200 cd-xs font-mono tracking-tight leading-normal text-base;
   }
