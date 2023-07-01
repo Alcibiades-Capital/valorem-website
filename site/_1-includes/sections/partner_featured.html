@@ -1,5 +1,5 @@
-<section class="s-lg bg-gray-200">
-  <div class="max-w-sm mx-auto text-center space-y-8">
+<section class="s-lg bg-gray-200 featuredPartner">
+  <div class="max-w-sm mx-auto text-center space-y-12">
     <div class="label text-gray-600">{{ item.label }}</div>
     <div>
       {% responsive_image_block %}
@@ -9,6 +9,6 @@
         sizes: ""
       {% endresponsive_image_block %}
     </div>
-    <a href="{{ item.button.url }}" class="btn btn-purple-500 btn--outlined">{{ item.button.text }}</a>
+    {% unless item.button.url == nil or item.button.url == "" %}<a href="{{ item.button.url }}" class="btn btn-purple-500 btn--outlined">{{ item.button.text }}</a>{% endunless %}
   </div>
 </section>
