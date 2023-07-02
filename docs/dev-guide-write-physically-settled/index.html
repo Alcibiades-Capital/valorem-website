@@ -32,10 +32,8 @@
     
 
     
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/css/tabs.css">
     <link rel="preconnect" href="https://use.typekit.net">
-    <link rel="stylesheet" href="https://use.typekit.net/rnm5bax.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
 
     
     <link rel="shortcut icon" href="/assets/icons/favicon.png">
@@ -78,7 +76,7 @@
         },
         "datePublished":"2023-06-05T20:00:00-04:00",
         "dateCreated":"2023-06-05T20:00:00-04:00",
-        "dateModified":"2023-06-27T13:50:34-04:00",
+        "dateModified":"2023-07-01T20:07:53-04:00",
         "description":"Developer guide for writing physically settled options on digital assets with Valorem Clear.
 ",
         "url":"https://valorem.xyz/docs/dev-guide-write-physically-settled/",
@@ -352,7 +350,7 @@
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="d6501e13-09a0-4820-a1ec-b4ca280d268f" data-name="log">
+<ul class="tab" data-tab="5181d1b0-9187-45a6-860b-3da750416bc9" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -363,26 +361,26 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="d6501e13-09a0-4820-a1ec-b4ca280d268f" data-name="log">
+<ul class="tab-content" id="5181d1b0-9187-45a6-860b-3da750416bc9" data-name="log">
   
       <li class="active">
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice creates a new option type.
-</span><span class="n">vm</span><span class="p">.</span><span class="n">startPrank</span><span class="p">(</span><span class="n">ALICE</span><span class="p">);</span>
+<pre><code class="language-solidity">// Alice creates a new option type.
+vm.startPrank(ALICE);
 
-<span class="kt">uint96</span> <span class="n">underlyingAmount</span> <span class="o">=</span> <span class="mi">1e18</span><span class="p">;</span>
-<span class="kt">uint96</span> <span class="n">exerciseAmount</span> <span class="o">=</span> <span class="mi">2100e6</span><span class="p">;</span>
-<span class="kt">uint40</span> <span class="n">earliestExercise</span> <span class="o">=</span> <span class="kt">uint40</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">timestamp</span><span class="p">);</span>
-<span class="kt">uint40</span> <span class="n">expiry</span> <span class="o">=</span> <span class="kt">uint40</span><span class="p">(</span><span class="n">earliestExercise</span> <span class="o">+</span> <span class="mi">1</span> <span class="kc">weeks</span><span class="p">);</span>
+uint96 underlyingAmount = 1e18;
+uint96 exerciseAmount = 2100e6;
+uint40 earliestExercise = uint40(block.timestamp);
+uint40 expiry = uint40(earliestExercise + 1 weeks);
 
-<span class="kt">uint256</span> <span class="n">optionId</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">newOptionType</span><span class="p">({</span>
-    <span class="n">underlyingAsset</span><span class="o">:</span> <span class="kt">address</span><span class="p">(</span><span class="n">WETH</span><span class="p">),</span>
-    <span class="n">underlyingAmount</span><span class="o">:</span> <span class="n">underlyingAmount</span><span class="p">,</span>
-    <span class="n">exerciseAsset</span><span class="o">:</span> <span class="kt">address</span><span class="p">(</span><span class="n">USDC</span><span class="p">),</span>
-    <span class="n">exerciseAmount</span><span class="o">:</span> <span class="n">exerciseAmount</span><span class="p">,</span>
-    <span class="n">exerciseTimestamp</span><span class="o">:</span> <span class="n">earliestExercise</span><span class="p">,</span>
-    <span class="n">expiryTimestamp</span><span class="o">:</span> <span class="n">expiry</span>
-<span class="p">});</span>
-</code></pre></div></div>
+uint256 optionId = clearinghouse.newOptionType({
+    underlyingAsset: address(WETH),
+    underlyingAmount: underlyingAmount,
+    exerciseAsset: address(USDC),
+    exerciseAmount: exerciseAmount,
+    exerciseTimestamp: earliestExercise,
+    expiryTimestamp: expiry
+});
+</code></pre>
 </li>
   
       <li>
@@ -398,7 +396,7 @@
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="b6f1f907-1a8c-4645-9344-19e83e7294e6" data-name="log">
+<ul class="tab" data-tab="5b6bc797-90f8-47d3-9bac-5d6129434250" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -409,13 +407,13 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="b6f1f907-1a8c-4645-9344-19e83e7294e6" data-name="log">
+<ul class="tab-content" id="5b6bc797-90f8-47d3-9bac-5d6129434250" data-name="log">
   
       <li class="active">
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice writes 10 options.
-</span><span class="n">WETH</span><span class="p">.</span><span class="n">approve</span><span class="p">(</span><span class="kt">address</span><span class="p">(</span><span class="n">clearinghouse</span><span class="p">),</span> <span class="k">type</span><span class="p">(</span><span class="kt">uint256</span><span class="p">).</span><span class="n">max</span><span class="p">);</span>
-<span class="kt">uint256</span> <span class="n">claimId</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">optionId</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-</code></pre></div></div>
+<pre><code class="language-solidity">// Alice writes 10 options.
+WETH.approve(address(clearinghouse), type(uint256).max);
+uint256 claimId = clearinghouse.write(optionId, 10);
+</code></pre>
 </li>
   
       <li>
@@ -431,7 +429,7 @@
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="9ea54f23-e3df-4e7b-bb9b-5e0d7b212b1b" data-name="log">
+<ul class="tab" data-tab="0da21e39-20ec-4943-b34d-6d8650038a13" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -442,12 +440,12 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="9ea54f23-e3df-4e7b-bb9b-5e0d7b212b1b" data-name="log">
+<ul class="tab-content" id="0da21e39-20ec-4943-b34d-6d8650038a13" data-name="log">
   
       <li class="active">
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Alice transfers 4 options to Bob.
-</span><span class="n">clearinghouse</span><span class="p">.</span><span class="n">safeTransferFrom</span><span class="p">(</span><span class="n">ALICE</span><span class="p">,</span> <span class="n">BOB</span><span class="p">,</span> <span class="n">optionId</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">""</span><span class="p">);</span>
-</code></pre></div></div>
+<pre><code class="language-solidity">// Alice transfers 4 options to Bob.
+clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
+</code></pre>
 </li>
   
       <li>
@@ -465,7 +463,7 @@
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="f6bcf7a4-45bd-431b-9398-d7a4ac6fd36b" data-name="log">
+<ul class="tab" data-tab="7cacdfec-0cc6-4718-b76d-0784b6143905" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -476,17 +474,17 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="f6bcf7a4-45bd-431b-9398-d7a4ac6fd36b" data-name="log">
+<ul class="tab-content" id="7cacdfec-0cc6-4718-b76d-0784b6143905" data-name="log">
   
       <li class="active">
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the exercise timestamp.
-</span><span class="n">vm</span><span class="p">.</span><span class="n">warp</span><span class="p">(</span><span class="n">earliestExercise</span><span class="p">);</span>
+<pre><code class="language-solidity">// Warp to the exercise timestamp.
+vm.warp(earliestExercise);
 
-<span class="c1">// Bob exercises his options.
-</span><span class="n">vm</span><span class="p">.</span><span class="n">startPrank</span><span class="p">(</span><span class="n">BOB</span><span class="p">);</span>
-<span class="n">USDC</span><span class="p">.</span><span class="n">approve</span><span class="p">(</span><span class="kt">address</span><span class="p">(</span><span class="n">clearinghouse</span><span class="p">),</span> <span class="k">type</span><span class="p">(</span><span class="kt">uint256</span><span class="p">).</span><span class="n">max</span><span class="p">);</span>
-<span class="n">clearinghouse</span><span class="p">.</span><span class="n">exercise</span><span class="p">(</span><span class="n">optionId</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
-</code></pre></div></div>
+// Bob exercises his options.
+vm.startPrank(BOB);
+USDC.approve(address(clearinghouse), type(uint256).max);
+clearinghouse.exercise(optionId, 4);
+</code></pre>
 </li>
   
       <li>
@@ -507,7 +505,7 @@
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="146607ca-7d52-4686-8047-09f24e226415" data-name="log">
+<ul class="tab" data-tab="51dd98bc-80c2-4072-9d19-ff2dac7a1590" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -518,18 +516,18 @@
       </li>
   
 </ul>
-<ul class="tab-content" id="146607ca-7d52-4686-8047-09f24e226415" data-name="log">
+<ul class="tab-content" id="51dd98bc-80c2-4072-9d19-ff2dac7a1590" data-name="log">
   
       <li class="active">
-<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Warp to the expiry timestamp.
-</span><span class="n">vm</span><span class="p">.</span><span class="n">warp</span><span class="p">(</span><span class="n">expiry</span><span class="p">);</span>
+<pre><code class="language-solidity">// Warp to the expiry timestamp.
+vm.warp(expiry);
 
-<span class="c1">// Check out claim position
-</span><span class="p">(,</span> <span class="kt">int256</span> <span class="n">underlyingAmount</span><span class="p">,,</span> <span class="kt">int256</span> <span class="n">exerciseAmount</span><span class="p">)</span> <span class="o">=</span> <span class="n">clearinghouse</span><span class="p">.</span><span class="n">position</span><span class="p">(</span><span class="n">claimId</span><span class="p">);</span>
+// Check out claim position
+(, int256 underlyingAmount,, int256 exerciseAmount) = clearinghouse.position(claimId);
 
-<span class="c1">// Alice redeems her claim.
-</span><span class="n">clearinghouse</span><span class="p">.</span><span class="n">redeem</span><span class="p">(</span><span class="n">claimId</span><span class="p">);</span>
-</code></pre></div></div>
+// Alice redeems her claim.
+clearinghouse.redeem(claimId);
+</code></pre>
 </li>
   
       <li>
