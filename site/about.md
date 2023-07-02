@@ -89,7 +89,7 @@ page_blocks:
     links:
       - heading: Discord
         subheading: Join the conversation
-        url: https://discord.gg/jRNGhTef57
+        url: https://discord.gg/MyPUGGqDZU
       - heading: Twitter
         subheading: Keep up to date
         url: https://twitter.com/valoremxyz

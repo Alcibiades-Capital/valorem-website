@@ -175,4 +175,4 @@ There we have it, a physically settled American option using the Valorem Clear c
 
 A full working code example is available [here](https://github.com/valorem-labs-inc/valorem-dev-guides/blob/main/test/ClearPhysicallySettled.t.sol), complete with balance assertions that demonstrate the movements of the underlying and option tokens.
 
-Please get in touch on our [Discord server](https://discord.gg/5jZdPuY9kR) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
+Please get in touch on our [Discord server](https://discord.gg/MyPUGGqDZU) if you have any questions or feedback. We are always looking for ways to improve our documentation and tutorials. Good luck building!
