@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-06T20:00:00-04:00",
         "dateCreated":"2023-06-06T20:00:00-04:00",
-        "dateModified":"2023-07-01T20:22:21-04:00",
+        "dateModified":"2023-07-02T22:55:01-04:00",
         "description":"Reference documentation for the Valorem Trade API.
 ",
         "url":"https://valorem.xyz/docs/trade-api-reference/",
@@ -360,13 +360,21 @@ makers to return signed offers. Takers can then execute those signed offers
 via Seaport. The Auth service enables users to authenticate themselves and obtain the necessary
 credentials to access the other services provided by the API.</p>
 
+<h2 id="health">Health</h2>
+
+<p>The Valorem Trade API uses
+the <a href="https://github.com/grpc/grpc/blob/master/doc/health-checking.md">gRPC health checking protocol</a>
+to provide a general health check endpoint, as well as endpoints for each of the services.
+Health checks for each service are available via <code class="language-plaintext highlighter-rouge">valorem.trade.v1.&lt;service&gt;</code>.</p>
+
 <h2 id="errors-and-status-codes">Errors and status codes</h2>
 
 <p>The Valorem Trade API uses the <a href="https://grpc.io/docs/guides/error/#richer-error-model">gRPC richer error model</a>.
 It additionally uses <a href="https://grpc.github.io/grpc/core/md_doc_statuscodes.html">standard gRPC status codes</a> to
 indicate the success or failure of an API call.</p>
 
-<p>More detail to come.</p>
+<p>This allows the client to programmatically determine the cause of an error and
+take appropriate action.</p>
 
 <h2 id="primitive-data-types">Primitive data types</h2>
 
@@ -751,7 +759,7 @@ offers, and for those traders to receive those signed offers for executing
 trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay.</p>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">service</span> <span class="n">RFQ</span> <span class="p">{</span>
-  <span class="o">...</span>
+    <span class="o">...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -792,8 +800,9 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
 <h5 id="response-stream">Response stream</h5>
@@ -811,8 +820,9 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
   <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
 <h4 id="maker"><code class="language-plaintext highlighter-rouge">Maker</code></h4>
@@ -838,8 +848,9 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
   <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
 <h5 id="response-stream-1">Response stream</h5>
@@ -865,8 +876,9 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
 <h4 id="webtaker"><code class="language-plaintext highlighter-rouge">WebTaker</code></h4>
@@ -900,8 +912,9 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
 <h5 id="response-stream-2">Response stream</h5>
@@ -919,8 +932,9 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
   <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer.</li>
-  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
+to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
             </div>
@@ -928,7 +942,7 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#api-overview" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API overview</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#rfq-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#authentication" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Authentication</a></li><li class=""><a href="#methods-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#api-overview" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API overview</a></li><li class=""><a href="#health" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Health</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#rfq-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#authentication" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Authentication</a></li><li class=""><a href="#methods-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
