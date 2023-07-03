@@ -36,13 +36,21 @@ makers to return signed offers. Takers can then execute those signed offers
 via Seaport. The Auth service enables users to authenticate themselves and obtain the necessary
 credentials to access the other services provided by the API.
 
+## Health
+
+The Valorem Trade API uses
+the [gRPC health checking protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md)
+to provide a general health check endpoint, as well as endpoints for each of the services.
+Health checks for each service are available via `valorem.trade.v1.<service>`.
+
 ## Errors and status codes
 
 The Valorem Trade API uses the [gRPC richer error model](https://grpc.io/docs/guides/error/#richer-error-model).
 It additionally uses [standard gRPC status codes](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) to
 indicate the success or failure of an API call.
 
-More detail to come.
+This allows the client to programmatically determine the cause of an error and
+take appropriate action.
 
 ## Primitive data types
 
@@ -437,7 +445,7 @@ trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay
 
 ```protobuf
 service RFQ {
-  ...
+    ...
 }
 ```
 
@@ -479,8 +487,9 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request.
-- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
 ##### Response stream
 
@@ -497,8 +506,9 @@ message QuoteResponse {
 - `ulid` (`H128`, optional): The unique identifier for the quote request.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer.
-- `seaport_address` (`H160`, optional): The Seaport address for the offer.
+- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
 #### `Maker`
 
@@ -524,8 +534,9 @@ message QuoteResponse {
 - `ulid` (`H128`, optional): The unique identifier for the quote request.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer.
-- `seaport_address` (`H160`, optional): The Seaport address for the offer.
+- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
 ##### Response stream
 
@@ -550,8 +561,9 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request.
-- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
 #### `WebTaker`
 
@@ -585,8 +597,9 @@ message QuoteRequest {
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request.
-- `seaport_address` (`H160`, optional): The Seaport address for the quote request.
+- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
 ##### Response stream
 
@@ -603,5 +616,6 @@ message QuoteResponse {
 - `ulid` (`H128`, optional): The unique identifier for the quote request.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer.
-- `seaport_address` (`H160`, optional): The Seaport address for the offer.
+- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
+  to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
