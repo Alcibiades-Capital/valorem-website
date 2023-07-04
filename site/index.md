@@ -59,10 +59,6 @@ page_blocks:
     label: Audited by
     image_path: /assets/images/partners/zellic.png
     image_alt: Zellic
-  - _id: partner_featured
-    label: Made possible by
-    image_path: /assets/images/partners/DACM.png
-    image_alt: DACM
     button:
       text: See more contributors
       url: /about/
