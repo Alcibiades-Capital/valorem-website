@@ -47,6 +47,8 @@ GEM
       rmagick (>= 2.0, < 5.0)
     jekyll-sass-converter (3.0.0)
       sass-embedded (~> 1.54)
+    jekyll-seo-tag (2.8.0)
+      jekyll (>= 3.8, < 5.0)
     jekyll-sitemap (1.4.0)
       jekyll (>= 3.7, < 5.0)
     jekyll-tabs (1.1.1)
@@ -97,6 +99,7 @@ DEPENDENCIES
   jekyll-paginate-v2
   jekyll-redirect-from
   jekyll-responsive-image
+  jekyll-seo-tag
   jekyll-sitemap
   jekyll-tabs
   liquid

@@ -5,6 +5,8 @@ description: Overview of Valorem Clear, a clearing and settlement primitive for 
 redirect_from:
   - /docs/smart-contracts-overview/
   - /docs/clearinghouse-overview/
+author:
+  twitter: neodaoist
 ---
 
 [Valorem](https://valorem.xyz/) Clear is a DeFi money lego, enabling writing covered calls and cash-secured puts, physically

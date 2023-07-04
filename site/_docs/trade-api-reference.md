@@ -1,7 +1,9 @@
 ---
 date: 2023-06-07 00:00:00
 title: Trade API Reference
-description: Reference documentation for the Valorem Trade API. 
+description: Reference documentation for the Valorem Trade API.
+author:
+  twitter: 0xAlcibiades
 ---
 
 Version: RFC-preliminary

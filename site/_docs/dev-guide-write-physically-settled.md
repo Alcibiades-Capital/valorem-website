@@ -2,6 +2,8 @@
 date: 2023-06-06 00:00:00
 title: How to write physically settled options
 description: Developer guide for writing physically settled options on digital assets with Valorem Clear.
+author:
+  twitter: neodaoist
 ---
 
 In this developer guide, we will walk through how to write physically settled options on digital assets using Valorem Clear.

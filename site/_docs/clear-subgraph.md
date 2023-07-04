@@ -2,6 +2,8 @@
 date: 2023-04-12 00:00:00
 title: Querying the Clear Subgraph
 description: Developer documentation for Valorem Clear subgraph.
+author:
+  twitter: neodaoist
 ---
 
 The Clear Subgraph indexes data on the Valorem Clear smart contracts using a GraphQL interface.

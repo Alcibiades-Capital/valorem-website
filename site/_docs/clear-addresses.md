@@ -2,6 +2,8 @@
 date: 2023-04-12 00:00:00
 title: Clear Deployed Addresses 
 description: Deployed addresses for the Valorem Clear smart contracts.
+author:
+  twitter: neodaoist
 ---
 
 The following are the deployed addresses for Valorem Clear.
