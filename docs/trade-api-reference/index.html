@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-06T20:00:00-04:00",
         "dateCreated":"2023-06-06T20:00:00-04:00",
-        "dateModified":"2023-07-04T11:44:43-04:00",
+        "dateModified":"2023-08-17T07:30:34-04:00",
         "description":"Reference documentation for the Valorem Trade API.
 ",
         "url":"https://valorem.xyz/docs/trade-api-reference/",
@@ -706,13 +706,14 @@ Upon successful verification, the Auth session is updated.</p>
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">body</code> (<code class="language-plaintext highlighter-rouge">string</code>): a JSON-encoded, signed, <a href="https://eips.ethereum.org/EIPS/eip-191">EIP-191</a> signature scheme message.</li>
+  <li><code class="language-plaintext highlighter-rouge">body</code> (<code class="language-plaintext highlighter-rouge">string</code>): a JSON-encoded, signed, <a href="https://eips.ethereum.org/EIPS/eip-191">EIP-191</a> signature scheme message.
+The message must contain the following string: <code class="language-plaintext highlighter-rouge">I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy</code></li>
 </ul>
 
 <p>Example signed and JSON encoded message:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app.valorem.xyz wants you to sign in with your Ethereum account:</span><span class="se">\n</span><span class="s2">&lt;wallet&gt;</span><span class="se">\n\n</span><span class="s2">We use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.</span><span class="se">\n\n</span><span class="s2">URI: https://app.valorem.xyz</span><span class="se">\n</span><span class="s2">Version: 1</span><span class="se">\n</span><span class="s2">Chain ID: 421613</span><span class="se">\n</span><span class="s2">Nonce: &lt;nonce&gt;</span><span class="se">\n</span><span class="s2">Issued At: 2023-06-10T03:37:23.858Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app.valorem.xyz wants you to sign in with your Ethereum account:</span><span class="se">\n</span><span class="s2">&lt;wallet&gt;</span><span class="se">\n\n</span><span class="s2">I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy</span><span class="se">\n\n</span><span class="s2">URI: https://app.valorem.xyz</span><span class="se">\n</span><span class="s2">Version: 1</span><span class="se">\n</span><span class="s2">Chain ID: 421613</span><span class="se">\n</span><span class="s2">Nonce: &lt;nonce&gt;</span><span class="se">\n</span><span class="s2">Issued At: 2023-06-10T03:37:23.858Z"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"signature"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;ECDSA signature signing the message&gt;"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
