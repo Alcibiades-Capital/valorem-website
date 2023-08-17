@@ -388,12 +388,13 @@ message VerifyText {
 ```
 
 - `body` (`string`): a JSON-encoded, signed, [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature scheme message.
+  The message must contain the following string: `I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy`
 
 Example signed and JSON encoded message:
 
 ```json
 {
-  "message": "app.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nWe use Sign In With Ethereum (SIWE) to authenticate connections to our backend and provide the best possible user experience.\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z",
+  "message": "app.valorem.xyz wants you to sign in with your Ethereum account:\n<wallet>\n\nI accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy\n\nURI: https://app.valorem.xyz\nVersion: 1\nChain ID: 421613\nNonce: <nonce>\nIssued At: 2023-06-10T03:37:23.858Z",
   "signature": "<ECDSA signature signing the message>"
 }
 ```
