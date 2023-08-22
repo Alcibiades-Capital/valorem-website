@@ -266,13 +266,13 @@ message Order {
   on-chain (i.e. calling `validate`).
 - `zone`: An optional secondary account attached to the
   order with two additional privileges:
-  - The zone may cancel orders where it is named as the zone by calling
-    cancel. (Note that `offerer`s can also cancel their own orders, either
-    individually or for all orders signed with their current counter at
-    once by calling `incrementCounter`).
-  - "Restricted" orders (as specified by the `order_type`) must either be
-    executed by the zone or the `offerer`, or must be approved as indicated
-    by a call to an `validateOrder` on the `zone`.
+    - The zone may cancel orders where it is named as the zone by calling
+      cancel. (Note that `offerer`s can also cancel their own orders, either
+      individually or for all orders signed with their current counter at
+      once by calling `incrementCounter`).
+    - "Restricted" orders (as specified by the `order_type`) must either be
+      executed by the zone or the `offerer`, or must be approved as indicated
+      by a call to an `validateOrder` on the `zone`.
 - `offer`: Contains an array of items that may be transferred
   from the `offerer`'s account.
 - `consideration`: Contains an array of items that must be received
@@ -388,7 +388,8 @@ message VerifyText {
 ```
 
 - `body` (`string`): a JSON-encoded, signed, [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature scheme message.
-  The message must contain the following string: `I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy`
+  The message must contain the following
+  string: `I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy`
 
 Example signed and JSON encoded message:
 
@@ -506,6 +507,7 @@ message TradeFees {
 - `spot_bps` (`int32`): A fee or rebate on spot value traded expressed in basis points.
 - `flat` (`int32`): A flat relayer fee or rebate expressed in 1e-6 USDC (dust) - used for non-valued
   offers/considerations such as NFTs.
+- 
 
 ## RFQ service
 
@@ -532,7 +534,8 @@ The fees must be included in the offer as follows:
 
 For a long Valorem option buy:
 
-Two offer items, one of which is the RFQ'd option long token in the correct quantity, the second of which is a maker fee'/rebate in USDC (if any).
+Two offer items, one of which is the RFQ'd option long token in the correct quantity, the second of which is a maker
+fee'/rebate in USDC (if any).
 
 Two consideration items, the USDC premia, and a taker fee/rebate in USDC (if any).
 
