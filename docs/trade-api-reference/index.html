@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-06T20:00:00-04:00",
         "dateCreated":"2023-06-06T20:00:00-04:00",
-        "dateModified":"2023-08-17T07:30:34-04:00",
+        "dateModified":"2023-08-22T00:13:20-04:00",
         "description":"Reference documentation for the Valorem Trade API.
 ",
         "url":"https://valorem.xyz/docs/trade-api-reference/",
@@ -707,7 +707,8 @@ Upon successful verification, the Auth session is updated.</p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">body</code> (<code class="language-plaintext highlighter-rouge">string</code>): a JSON-encoded, signed, <a href="https://eips.ethereum.org/EIPS/eip-191">EIP-191</a> signature scheme message.
-The message must contain the following string: <code class="language-plaintext highlighter-rouge">I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy</code></li>
+The message must contain the following
+string: <code class="language-plaintext highlighter-rouge">I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy</code></li>
 </ul>
 
 <p>Example signed and JSON encoded message:</p>
@@ -752,6 +753,76 @@ address for an Auth session.</p>
 
 </code></pre></div></div>
 
+<h2 id="fees-service">Fees service</h2>
+
+<p>The Fees Service in Valorem Trade API provides information about the fees which
+must be paid to use the API. The Fees service uses session cookies to store
+authentication, and requires authentication to access because of fee tiers for
+various users.</p>
+
+<p>Non-browser clients must implement cookie storage and management themselves.</p>
+
+<p>This service supports gRPC and gRPC-web clients.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">service</span> <span class="n">Fees</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="methods-1">Methods</h3>
+
+<h4 id="getfeestructure"><code class="language-plaintext highlighter-rouge">getFeeStructure</code></h4>
+
+<p>Returns the <code class="language-plaintext highlighter-rouge">FeeStructure</code> for a user.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">getFeeStructure</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">FeeStructure</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h5 id="unary-request-3">Unary request</h5>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<h5 id="unary-response-3">Unary response</h5>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">FeeStructure</span> <span class="p">{</span>
+  <span class="n">TradeFees</span> <span class="na">maker</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">TradeFees</span> <span class="na">taker</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">clear_write_notional_bps</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">clear_redeemed_notional_bps</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">clear_exercise_notional_bps</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="n">H160</span> <span class="na">address</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">maker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fees for a maker.</li>
+  <li><code class="language-plaintext highlighter-rouge">taker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fees for a taker.</li>
+  <li><code class="language-plaintext highlighter-rouge">clear_write_notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on notional value written via Clear expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">clear_redeemed_notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on underlying asset notional value redeemed via Clear
+expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">clear_exercise_notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on notional value exercised via Clear expressed in basis
+points.</li>
+  <li><code class="language-plaintext highlighter-rouge">address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The address fees must be paid to or rebates are received from.</li>
+</ul>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">TradeFees</span> <span class="p">{</span>
+  <span class="kt">int32</span> <span class="na">notional_bps</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">premium_bps</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">spot_bps</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="kt">int32</span> <span class="na">flat</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on notional value traded expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">premium_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on premia or credit value traded expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">spot_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on spot value traded expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">flat</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A flat relayer fee or rebate expressed in 1e-6 USDC (dust) - used for non-valued
+offers/considerations such as NFTs.</li>
+  <li></li>
+</ul>
+
 <h2 id="rfq-service">RFQ service</h2>
 
 <p>The RFQ (Request for Quote) service of the Valorem Trade API allows authenticated
@@ -768,7 +839,43 @@ trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay
 
 <p>Only authenticated users can access the RFQ service.</p>
 
-<h3 id="methods-1">Methods</h3>
+<h3 id="fees">Fees</h3>
+
+<p>Responses from the RFQ service are subject to fees.
+Fees are determined by the maker and taker <code class="language-plaintext highlighter-rouge">FeeStructure</code> from the <a href="#fees-service">Fees service</a>.
+The fees must be included in the offer as follows:</p>
+
+<p>For a long Valorem option buy:</p>
+
+<p>Two offer items, one of which is the RFQ’d option long token in the correct quantity, the second of which is a maker
+fee’/rebate in USDC (if any).</p>
+
+<p>Two consideration items, the USDC premia, and a taker fee/rebate in USDC (if any).</p>
+
+<p>For a long Valorem option sell:</p>
+
+<p>Two offer items, one of which is the USDC credit, the other of which is a maker fee in USDC (if any).</p>
+
+<p>Two consideration items, one of which is the RFQ option long token in the correct quantity, the second of which is a
+taker fee in fee/rebate in USDC (if any).</p>
+
+<p>For a short Valorem option buy:</p>
+
+<p>Two offer items, one of which is an unexercised claim for the RFQ’d option type in the correct quantity, the second of
+which is the maker fee/rebate in USDC (if any).</p>
+
+<p>Three consideration items, &gt;= the USDC notional value at spot as quoted from uniswap, the USDC premia, the taker
+fee/rebate in USDC (if any).</p>
+
+<p>For a short Valorem option sell:</p>
+
+<p>Three offer items, &gt;= the USDC notional value at spot as quoted from uniswap, the USDC premia, the maker fee/rebate in
+USDC (if any).</p>
+
+<p>Two consideration items, one of which is an unexercised claim for the RFQ’d option type in the correct quantity, the
+second of which is the taker fee/rebate in USDC (if any).</p>
+
+<h3 id="methods-2">Methods</h3>
 
 <h4 id="taker"><code class="language-plaintext highlighter-rouge">Taker</code></h4>
 
@@ -890,7 +997,7 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">WebTaker</span> <span class="p">(</span><span class="n">QuoteRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteResponse</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request-3">Unary request</h5>
+<h5 id="unary-request-4">Unary request</h5>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -943,7 +1050,7 @@ to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#api-overview" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API overview</a></li><li class=""><a href="#health" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Health</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#rfq-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#authentication" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Authentication</a></li><li class=""><a href="#methods-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#api-overview" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API overview</a></li><li class=""><a href="#health" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Health</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#fees-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fees service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#rfq-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#authentication" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Authentication</a></li><li class=""><a href="#fees" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fees</a></li><li class=""><a href="#methods-2" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
