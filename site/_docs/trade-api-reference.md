@@ -266,13 +266,13 @@ message Order {
   on-chain (i.e. calling `validate`).
 - `zone`: An optional secondary account attached to the
   order with two additional privileges:
-  - The zone may cancel orders where it is named as the zone by calling
-    cancel. (Note that `offerer`s can also cancel their own orders, either
-    individually or for all orders signed with their current counter at
-    once by calling `incrementCounter`).
-  - "Restricted" orders (as specified by the `order_type`) must either be
-    executed by the zone or the `offerer`, or must be approved as indicated
-    by a call to an `validateOrder` on the `zone`.
+    - The zone may cancel orders where it is named as the zone by calling
+      cancel. (Note that `offerer`s can also cancel their own orders, either
+      individually or for all orders signed with their current counter at
+      once by calling `incrementCounter`).
+    - "Restricted" orders (as specified by the `order_type`) must either be
+      executed by the zone or the `offerer`, or must be approved as indicated
+      by a call to an `validateOrder` on the `zone`.
 - `offer`: Contains an array of items that may be transferred
   from the `offerer`'s account.
 - `consideration`: Contains an array of items that must be received
@@ -388,7 +388,8 @@ message VerifyText {
 ```
 
 - `body` (`string`): a JSON-encoded, signed, [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature scheme message.
-  The message must contain the following string: `I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy`
+  The message must contain the following
+  string: `I accept the Valorem Terms of Service at https://app.valorem.xyz/tos and Privacy Policy at https://app.valorem.xyz/privacy`
 
 Example signed and JSON encoded message:
 
@@ -437,6 +438,77 @@ message H160 {
 
 ```
 
+## Fees service
+
+The Fees Service in Valorem Trade API provides information about the fees which
+must be paid to use the API. The Fees service uses session cookies to store
+authentication, and requires authentication to access because of fee tiers for
+various users.
+
+Non-browser clients must implement cookie storage and management themselves.
+
+This service supports gRPC and gRPC-web clients.
+
+```protobuf
+service Fees {
+    ...
+}
+```
+
+### Methods
+
+#### `getFeeStructure`
+
+Returns the `FeeStructure` for a user.
+
+```protobuf
+rpc getFeeStructure(Empty) returns (FeeStructure);
+```
+
+##### Unary request
+
+```protobuf
+message Empty {}
+```
+
+##### Unary response
+
+```protobuf
+message FeeStructure {
+  TradeFees maker = 1;
+  TradeFees taker = 2;
+  int32 clear_write_notional_bps = 3;
+  int32 clear_redeemed_notional_bps = 4;
+  int32 clear_exercise_notional_bps = 5;
+  H160 address = 6;
+}
+```
+
+- `maker` (`TradeFees`): The fees for a maker.
+- `taker` (`TradeFees`): The fees for a taker.
+- `clear_write_notional_bps` (`int32`): A fee or rebate on notional value written via Clear expressed in basis points.
+- `clear_redeemed_notional_bps` (`int32`): A fee or rebate on underlying asset notional value redeemed via Clear
+  expressed in basis points.
+- `clear_exercise_notional_bps` (`int32`): A fee or rebate on notional value exercised via Clear expressed in basis
+  points.
+- `address` (`H160`): The address fees must be paid to or rebates are received from.
+
+```protobuf
+message TradeFees {
+  int32 notional_bps = 1;
+  int32 premium_bps = 2;
+  int32 spot_bps = 3;
+  int32 flat = 4;
+}
+```
+
+- `notional_bps` (`int32`): A fee or rebate on notional value traded expressed in basis points.
+- `premium_bps` (`int32`): A fee or rebate on premia or credit value traded expressed in basis points.
+- `spot_bps` (`int32`): A fee or rebate on spot value traded expressed in basis points.
+- `flat` (`int32`): A flat relayer fee or rebate expressed in 1e-6 USDC (dust) - used for non-valued
+  offers/considerations such as NFTs.
+- 
+
 ## RFQ service
 
 The RFQ (Request for Quote) service of the Valorem Trade API allows authenticated
@@ -453,6 +525,42 @@ service RFQ {
 ### Authentication
 
 Only authenticated users can access the RFQ service.
+
+### Fees
+
+Responses from the RFQ service are subject to fees.
+Fees are determined by the maker and taker `FeeStructure` from the [Fees service](#fees-service).
+The fees must be included in the offer as follows:
+
+For a long Valorem option buy:
+
+Two offer items, one of which is the RFQ'd option long token in the correct quantity, the second of which is a maker
+fee'/rebate in USDC (if any).
+
+Two consideration items, the USDC premia, and a taker fee/rebate in USDC (if any).
+
+For a long Valorem option sell:
+
+Two offer items, one of which is the USDC credit, the other of which is a maker fee in USDC (if any).
+
+Two consideration items, one of which is the RFQ option long token in the correct quantity, the second of which is a
+taker fee in fee/rebate in USDC (if any).
+
+For a short Valorem option buy:
+
+Two offer items, one of which is an unexercised claim for the RFQ'd option type in the correct quantity, the second of
+which is the maker fee/rebate in USDC (if any).
+
+Three consideration items, >= the USDC notional value at spot as quoted from uniswap, the USDC premia, the taker
+fee/rebate in USDC (if any).
+
+For a short Valorem option sell:
+
+Three offer items, >= the USDC notional value at spot as quoted from uniswap, the USDC premia, the maker fee/rebate in
+USDC (if any).
+
+Two consideration items, one of which is an unexercised claim for the RFQ'd option type in the correct quantity, the
+second of which is the taker fee/rebate in USDC (if any).
 
 ### Methods
 
