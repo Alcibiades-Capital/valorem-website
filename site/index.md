@@ -9,7 +9,7 @@ hero:
     - text: Launch app
       url: https://app.valorem.xyz/
     - text: Join Discord
-      url: https://discord.gg/MyPUGGqDZU
+      url: https://discord.gg/valorem
 page_blocks:
   - _id: use_cases
     cards:

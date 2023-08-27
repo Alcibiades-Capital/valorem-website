@@ -11,7 +11,7 @@ We started building a new option protocol last month. We've been working
 rapidly towards a minimum viable product, and are pleased to announce that 
 Valorem will be launching on the Harmony testnet later this week. We are 
 excited to start onboarding some Alpha testers via our
-[Discord](https://discord.gg/MyPUGGqDZU).
+[Discord](https://discord.gg/valorem).
 Please join and let us know if you want to be an early tester.
 
 ### Where we are going
