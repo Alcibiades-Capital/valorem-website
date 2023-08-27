@@ -32,7 +32,7 @@ navigation_links:
       - footer
     group:
       - social
-  - url: https://discord.gg/MyPUGGqDZU
+  - url: https://discord.gg/valorem
     name: Discord
     visible:
       - footer
