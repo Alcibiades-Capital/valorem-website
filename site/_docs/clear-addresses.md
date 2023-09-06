@@ -4,8 +4,9 @@ title: Clear Deployed Addresses
 description: Deployed addresses for the Valorem Clear smart contracts.
 ---
 
-The following are the deployed addresses for Valorem Clear.
+The following are the deployed addresses for Valorem Clear v1.0.1.
 
 | Network         | Address                                      |
 |-----------------|----------------------------------------------|
-| Arbitrum Goerli | `0x7513F78472606625A9B505912e3C80762f6C9Efb` |
+| Arbitrum Goerli | `0x402A401B1944EBb5A3030F36Aa70d6b5794190c9` |
+| Arbitrum One    | `0x402A401B1944EBb5A3030F36Aa70d6b5794190c9` |
