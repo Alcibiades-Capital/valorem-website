@@ -86,6 +86,10 @@ navigation_links_docs:
     group:
       - trade
 
+  - url: /docs/user-docs-fees/
+    name: Fees
+    group:
+      - user docs
 
   - url: /docs/dev-guide-write-physically-settled/
     name: Write physically settled options
@@ -96,4 +100,5 @@ docs_groups:
   - research
   - clear
   - trade
+  - user docs
   - developer guides
