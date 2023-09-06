@@ -4,7 +4,7 @@ title: Fees
 description: User guide describing the Valorem Clear and Trade fee model.
 ---
 
-Valorem has a maker-taker fee model for relaying trades, meaning that actions which provide liquidity may have different fees assessed than actions that take liquidity. Likewise for clearing and settlement — different fees may be assessed for option writers versus option holders.
+Valorem has a maker-taker fee model for relaying trades, meaning actions which provide liquidity may have different fees assessed than actions that take liquidity. Likewise for clearing and settlement — different fees may be assessed for option writers and option holders.
 
 ## Trade Relay Fees
 
