@@ -1,12 +1,12 @@
 ---
-date: 2023-09-07 00:00:00
+date: 2023-09-06 00:00:00
 title: Fees
 description: User guide describing the Valorem Clear and Trade fee model.
 ---
 
 Valorem has a maker-taker fee model for relaying trades, meaning actions which provide liquidity may have different fees assessed than actions that take liquidity. Likewise for clearing and settlement — different fees may be assessed for option writers and option holders.
 
-## Trade Relay Fees
+### Trade Relay Fees
 
 Taker fees: 1.25% of option premium
 
@@ -14,7 +14,7 @@ Taker fees: 1.25% of option premium
 
 Maker fees: None currently
 
-## Clearing and Settlement Fees
+### Clearing and Settlement Fees
 
 Write fee: 0.15% of optional notional (assessed in the underlying asset)
 
@@ -24,7 +24,7 @@ Exercise fee: 0.15% of option notional (assessed in the exercise asset)
 
 `option_notional * quantity * 0.0015`
 
-## Example Scenario
+### Example Scenario
 
 - Symbol: ETH-8SEP23-1650-C
 - Type: Call

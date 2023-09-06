@@ -86,7 +86,7 @@ navigation_links_docs:
     group:
       - trade
 
-  - url: /docs/user-docs-fees
+  - url: /docs/user-docs-fees/
     name: Fees
     group:
       - user docs
