@@ -97,7 +97,7 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom option in minutes.
+    heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
     buttons:
       - text: Launch app
         url: https://app.valorem.xyz/

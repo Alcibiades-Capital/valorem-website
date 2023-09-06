@@ -36,6 +36,7 @@ page_blocks:
   - _id: roadmap
     heading: When can I use Valorem?
     text_markdown: |
+      Our 
       We’re already in beta on Arbitrum Görli, and will launch Clear, our options settlement layer, on Arbitrum mainnet soon. Here's what's coming next. 
     events:
       - heading: Clear
@@ -51,7 +52,7 @@ page_blocks:
           Margining, oracles and other ecosystem research and development will allow users to pursue advanced options strategies and structure novel products. 
         eta: Beyond
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom option on Arbitrum Görli in seconds.
+    heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
     buttons:
       - text: Launch app
         url: https://app.valorem.xyz/
