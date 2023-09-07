@@ -4,7 +4,7 @@ site:
   description: |
     Permissionless clearing and trading of DeFi options.
 banner_markdown: |
-  Open beta available now! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+  Live on Arbitrum One! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
 footer_markdown: |
   Valorem helps DeFi power users pursue advanced options strategies permissionlessly on any ERC20 token pair.
 default_cta:

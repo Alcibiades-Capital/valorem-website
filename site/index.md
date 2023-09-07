@@ -2,8 +2,8 @@
 title:
 description:
 hero:
-  label: Open beta!
-  heading: Permissionlessly Clear and Trade options, on any ERC20 token.
+  label: Live now on Arbitrum One!
+  heading: Permissionlessly trade options, on any ERC20 token.
   text_markdown:
   buttons:
     - text: Launch app
@@ -36,22 +36,22 @@ page_blocks:
   - _id: roadmap
     heading: When can I use Valorem?
     text_markdown: |
-      We’re already in beta on Arbitrum Görli, and will launch Clear, our options settlement layer, on Arbitrum mainnet soon. Here's what's coming next. 
+      We're live on Arbitrum One. Here's what's coming next. 
     events:
       - heading: Clear
         text_markdown: |
           Clear, the Valorem option underwriting system and clearinghouse will allow users to write, hold and transfer custom options positions on any ERC20 token.
-        eta: Next
+        eta: Now
       - heading: Trade
         text_markdown: |
           Trade, the Valorem peer-to-peer exchange, will allow users to trade Clear options with anyone, over the counter, or via RFQ liquidity. 
-        eta: After
+        eta: Next
       - heading: Structure
         text_markdown: |
-          Margining, oracles and other ecosystem research and development will allow users to pursue advanced options strategies and structure novel products. 
-        eta: Beyond
+          Margining, oracles, and other ecosystem research and development will allow users to pursue advanced options strategies and structure novel products. 
+        eta: Later
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and write your first custom option on Arbitrum Görli in seconds.
+    heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
     buttons:
       - text: Launch app
         url: https://app.valorem.xyz/
