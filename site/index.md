@@ -36,7 +36,7 @@ page_blocks:
   - _id: roadmap
     heading: When can I use Valorem?
     text_markdown: |
-      We've live on Arbitrum One. Here's what's coming next. 
+      We're live on Arbitrum One. Here's what's coming next. 
     events:
       - heading: Clear
         text_markdown: |
