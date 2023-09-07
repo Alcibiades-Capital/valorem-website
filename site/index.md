@@ -2,8 +2,8 @@
 title:
 description:
 hero:
-  label: Live now!
-  heading: The permissionless options protocol.
+  label: Live now on Arbitrum One!
+  heading: Permissionlessly trade options, on any ERC20 token.
   text_markdown:
   buttons:
     - text: Launch app
