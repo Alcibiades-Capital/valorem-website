@@ -40,10 +40,10 @@
     <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 
     
-    <link rel="alternate" type="application/atom+xml" title="Valorem Protocol" href="/feed.xml" title="Valorem Protocol">
+    <link rel="alternate" type="application/atom+xml" title="Trade options on digital assets | Valorem" href="/feed.xml" title="Trade options on digital assets | Valorem">
 
     
-    <title>Clear Litepaper | Valorem Protocol</title>
+    <title>Clear Litepaper | Trade options on digital assets | Valorem</title>
 <meta property="og:title" content="Clear Litepaper
 " />
 <meta name="author" content="Valorem Protocol Team" />
@@ -54,7 +54,7 @@
 " />
 <link rel="canonical" href="https://valorem.xyz/docs/clear-litepaper/" />
 <meta property="og:url" content="https://valorem.xyz/docs/clear-litepaper/" />
-<meta property="og:site_name" content="Valorem Protocol" />
+<meta property="og:site_name" content="Trade options on digital assets | Valorem" />
 <meta property="og:image" content="https://valorem.xyz/assets/images/1-default.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2022-04-12T19:00:00-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="https://valorem.xyz/assets/images/1-default.jpg" />
@@ -86,7 +86,7 @@
                 "@type":"ImageObject",
                 "url":""
             },
-            "name":"Valorem Protocol"
+            "name":"Trade options on digital assets | Valorem"
         }
     }
     </script>
@@ -446,36 +446,36 @@ option.</li>
 <p>A Valorem option is represented with the following <a href="/docs/clear-contracts#option">data structure</a>, packed into
 4 storage slots:</p>
 
-<pre><code class="language-solidity">struct Option {
-    address underlyingAsset;
-    uint96 underlyingAmount;
-    address exerciseAsset;
-    uint96 exerciseAmount;
-    uint40 exerciseTimestamp;
-    uint40 expiryTimestamp;
-    uint160 settlementSeed;
-    uint96 nextClaimKey;
-}
-</code></pre>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Option</span> <span class="p">{</span>
+    <span class="kt">address</span> <span class="n">underlyingAsset</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">underlyingAmount</span><span class="p">;</span>
+    <span class="kt">address</span> <span class="n">exerciseAsset</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">exerciseAmount</span><span class="p">;</span>
+    <span class="kt">uint40</span> <span class="n">exerciseTimestamp</span><span class="p">;</span>
+    <span class="kt">uint40</span> <span class="n">expiryTimestamp</span><span class="p">;</span>
+    <span class="kt">uint160</span> <span class="n">settlementSeed</span><span class="p">;</span>
+    <span class="kt">uint96</span> <span class="n">nextClaimKey</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>The key of an option type is defined as the unique tuple with regard to the option
 contract’s properties, which comprise a unique hash:</p>
 
-<pre><code class="language-solidity">uint160 optionKey = uint160(
-    bytes20(
-        keccak256(
-            abi.encode(
-                underlyingAsset,
-                underlyingAmount,
-                exerciseAsset,
-                exerciseAmount,
-                exerciseTimestamp,
-                expiryTimestamp
-            )
-        )
-    )
-);
-</code></pre>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint160</span> <span class="n">optionKey</span> <span class="o">=</span> <span class="kt">uint160</span><span class="p">(</span>
+    <span class="kt">bytes20</span><span class="p">(</span>
+        <span class="nb">keccak256</span><span class="p">(</span>
+            <span class="n">abi</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span>
+                <span class="n">underlyingAsset</span><span class="p">,</span>
+                <span class="n">underlyingAmount</span><span class="p">,</span>
+                <span class="n">exerciseAsset</span><span class="p">,</span>
+                <span class="n">exerciseAmount</span><span class="p">,</span>
+                <span class="n">exerciseTimestamp</span><span class="p">,</span>
+                <span class="n">expiryTimestamp</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div>
 
 <p>This <code class="language-plaintext highlighter-rouge">uint160 optionKey</code> is used to determine if that type of option already
 exists and, if it doesn’t, create it.</p>
@@ -485,13 +485,13 @@ exists and, if it doesn’t, create it.</p>
 <p>A Valorem claim is represented with the following virtual <a href="/docs/clear-contracts#claim">data structure</a>, which
 is not represented directly in storage:</p>
 
-<pre><code class="language-solidity">
-    struct Claim {
-        uint256 amountWritten;
-        uint256 amountExercised;
-        uint256 optionId;
-    }
-</code></pre>
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    <span class="k">struct</span> <span class="n">Claim</span> <span class="p">{</span>
+        <span class="kt">uint256</span> <span class="n">amountWritten</span><span class="p">;</span>
+        <span class="kt">uint256</span> <span class="n">amountExercised</span><span class="p">;</span>
+        <span class="kt">uint256</span> <span class="n">optionId</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
 
 <h4 id="token-address-space">Token address space</h4>
 
