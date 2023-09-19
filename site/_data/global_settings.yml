@@ -1,8 +1,7 @@
 site:
-  title: Valorem Protocol
+  title: "Trade options on digital assets | Valorem"
   copyright: Valorem Labs Inc
-  description: |
-    Permissionless clearing and trading of DeFi options.
+  description: Permissionlessly trade options, on any ERC20 token.
 banner_markdown: |
   Live on Arbitrum One! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
 footer_markdown: |
