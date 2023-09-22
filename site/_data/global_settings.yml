@@ -7,7 +7,8 @@ banner_markdown: |
 footer_markdown: |
   Valorem helps DeFi power users pursue advanced options strategies permissionlessly on any ERC20 token pair.
 default_cta:
-  heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
+  heading: Get involved in the community. We love your feedback on our options trading experience.
+
   buttons:
     - text: Join Discord
       url: https://discord.gg/valorem
