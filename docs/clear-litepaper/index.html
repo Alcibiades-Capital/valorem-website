@@ -594,34 +594,33 @@ partial exercise which occur.</p>
 
 <p>Because of the bucketing mechanism and ability to add additional options to
 an existing claim, Valorem claims are comprised of claim index data structures
-which are stored for each bucket $ i $ the claim is written into as $ I_{wi} $,
+which are stored for each bucket $ i $ the claim is written into as $ I_{w}(i) $,
 the amount of options written by that claim to bucket $ i $. Thus, calculating
 a claim position involves summations over the claim’s member buckets.</p>
 
 <h4 id="calculating-exercise-state-for-a-claim">Calculating exercise state for a claim</h4>
 
-<p>Given $B_{ei}$, the amount of options exercised from bucket $ i $, and
-$ B_{wi} $, the amount of options written into bucket $ i $, and
-$ B_{ui} = B_{wi} - B_{ei} $, the amount of options unexercised in
+<p>Given $B_{e}(i)$, the amount of options exercised from bucket $ i $, and
+$ B_{w}(i) $, the amount of options written into bucket $ i $, and
+$ B_{u}(i) = B_{w}(i) - B_{e}(i) $, the amount of options unexercised in
 bucket $ i $, we can calculate $ C_e $, the amount of options exercised for a claim,
 and $ C_u $ the amount of options unexercised for a claim using the following
 summations:</p>
 
-\[C_e = \sum_{i=1}^n C_{ei} = {B_{ei} I_{wi} \over B_{wi}} + \ldots + {B_{en} I_{wn} \over B_{wn}}\]
+\[C_e = \sum_{i=1}^n {B_{e}(i) I_{w}(i) \over B_{w}(i)} = {B_{e}(1) I_{w}(1) \over B_{w}(1)} + \ldots + {B_{e}(n) I_{w}(n) \over B_{w}(n)}\]
 
 <p>and,</p>
 
-\[C_u = \sum_{i=1}^n C_{ui} = {B_{ui} I_{wi} \over B_{wi}} + \ldots + {B_{un} I_{wn} \over B_{wn}}\]
+\[C_u = \sum_{i=1}^n {B_{u}(i) I_{w}(i) \over B_{w}(i)} = {B_{u}(1) I_{w}(1) \over B_{w}(1)} + \ldots + {B_{u}(n) I_{w}(n) \over B_{w}(n)}\]
 
 <p>and we can verify that $ C_e + C_u = C_w $, options written for a given claim
 $ C $,</p>
 
-\[C_w = \sum_{i=1}^n C_{wi} = ({B_{ei} I_{wi} \over B_{wi}} + {B_{ui} I_{wi} \over B_{wi}}) + \ldots + ({B_{en} I_{wn}
-\over B_{wn}} + {B_{un} I_{wn} \over B_{wn}})\]
+\[C_w = \sum_{i=1}^n {B_{e}(i) I_{w}(i) \over B_{w}(i)} + {B_{u}(i) I_{w}(i) \over B_{w}(i)}\]
 
 <p>which simplifies to,</p>
 
-\[C_w = \sum_{i=1}^n C_{wi} = I_{wi} + \ldots + I_{wn}\]
+\[C_w = \sum_{i=1}^n I_{w}(i)\]
 
 <p>which is the sum of options written by a claim to each of it’s member buckets.</p>
 
@@ -633,11 +632,11 @@ tokens collateralizing a claim by multiplying the amount of the exercise
 asset, $ O_e $, and the underlying asset, $ O_u $, before performing any
 division. Resulting in the following summations:</p>
 
-\[P_e = \sum_{i=1}^n P_{ei} = {B_{ei} O_e I_{wi} \over B_{wi}} + \ldots + {B_{en} O_e I_{wn} \over B_{wn}}\]
+\[P_e = \sum_{i=1}^n {B_{e}(i) I_{w}(i) O_e \over B_{w}(i)}\]
 
 <p>and</p>
 
-\[P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + {B_{un} O_u I_{wn} \over B_{wn}}\]
+\[P_u = \sum_{i=1}^n {B_{u}(i) I_{w}(i) O_u \over B_{w}(i)}\]
 
 <h3 id="redeeming-claims">Redeeming claims</h3>
 
