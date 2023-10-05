@@ -8,13 +8,13 @@ hero:
 page_blocks:
   - _id: partners_all
     cards:
-      - label: CEO and protocol architect
+      - label: CEO and Protocol Architect
         image_path: /assets/images/partners/alcibiades.jpg
         image_alt: "Alcibiades’ profile picture"
         heading: Alcibiades
         subheading: "@0xAlcibiades"
         url: https://twitter.com/0xAlcibiades
-      - label: Head of product
+      - label: Head of Product
         image_path: /assets/images/partners/neodaoist.png
         image_alt: "Neodaoist’s profile picture"
         heading: Neodaoist
@@ -26,12 +26,12 @@ page_blocks:
         heading: Nick
         subheading: "@nickadams0n"
         url: https://twitter.com/nickadams0n
-      - label: Protocol Developer
-        image_path: /assets/images/partners/flip.jpg
-        image_alt: "Flip’s profile picture"
-        heading: Flip
-        subheading: "@flip_liquide"
-        url: https://twitter.com/flip_liquide
+      - label: Backend Developer
+        image_path: /assets/images/partners/megs.jpg
+        image_alt: "Megs’s profile picture"
+        heading: Megs
+        subheading: "@megsdevs"
+        url: https://twitter.com/megsdevs
       - label: Advisor
         image_path: /assets/images/partners/thogard.jpg
         image_alt: "Thogard’s profile picture"

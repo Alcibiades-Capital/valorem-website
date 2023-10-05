@@ -5,26 +5,29 @@ description: Valorem is live on Arbitrum One!!
 image: '/assets/images/posts/Valorem-defi-options-protocol-launch.jpeg'
 ---
 
-## 1
+## Valorem is live on Arbitrum!
 
-XYZ
+Today marks a significant milestone in the evolution of DeFi. Valorem, your go-to platform for digital asset options,
+is now live on Arbitrum! We've live on one of the fastest-growing Layer-2s, bringing you lower fees, faster trades, 
+and a smoother trading experience.
 
-![DeFi Wallet Connect v2](/assets/images/posts/defi-wallet-connect-v2.png)
+![Valorem Live on Arbitrum for DeFi Options](/assets/images/posts/valorem-live-on-arbitrum-defi-options.jpeg)
 
-## 2
+## Mobile-forward trading experience
 
-XYZ
+The primacy of mobility in today's fast-paced world. Your finger on the pulse of the options market, anytime, anywhere.
+All possible with Valorem's new mobile-forward trading experience. Crafted with precision, our user-friendly interface
+ensures beginners and pros alike have a seamless experience.
 
-![DeFi Wallet Connect v2](/assets/images/posts/defi-wallet-connect-v2.png)
+![Valorem vertical view](/assets/images/posts/valorem-launch-vertical-view.png)
 
-## 3
+## Choose your options strategy
 
-XYZ
+Whether you're a hedger, a speculator, or somewhere in between, prepare to execute your unique strategy.
+Dive into Strategy Builder, and customize, explore, and execute with confidence. More strategies coming soon!
 
-![DeFi Wallet Connect v2](/assets/images/posts/defi-wallet-connect-v2.png)
+![Valorem Strategy Builder with bullish sentiment](/assets/images/posts/valorem-strategy-builder-bullish-sentiment.png)
 
-## Improvements and fixes
+## Come trade with us
 
-- X
-- Y
-- Z
+[Join our Discord](https://discord.gg/valorem) to request an early access pass, or [start trading](https://app.valorem.xyz/) today if you already have one!
