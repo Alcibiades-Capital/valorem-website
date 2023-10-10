@@ -36,20 +36,20 @@ page_blocks:
   - _id: roadmap
     heading: When can I use Valorem?
     text_markdown: |
-      We're live on Arbitrum One. Here's what's coming next. 
+      We're live on Arbitrum One. Here's what we're building. 
     events:
       - heading: Clear
         text_markdown: |
-          Clear, the Valorem option underwriting system and clearinghouse will allow users to write, hold and transfer custom options positions on any ERC20 token.
-        eta: Now
+          Clear, the Valorem option settlement and clearinghouse system allows users to write, hold, and transfer custom options positions on any ERC20 token.
+        eta: Clearing
       - heading: Trade
         text_markdown: |
-          Trade, the Valorem peer-to-peer exchange, will allow users to trade Clear options with anyone, over the counter, or via RFQ liquidity. 
-        eta: Next
+          Trade, the Valorem peer-to-peer signature relay, allows users to trade Clear options with anyone, over the counter or via RFQ liquidity. 
+        eta: Trading
       - heading: Structure
         text_markdown: |
-          Margining, oracles, and other ecosystem research and development will allow users to pursue advanced options strategies and structure novel products. 
-        eta: Later
+          Margining, oracles, and other ecosystem research and development will allow users to unlock better capital efficiency and create novel structured products.
+        eta: Structuring
   - _id: cta
     heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
     buttons:
