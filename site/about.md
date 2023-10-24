@@ -1,37 +1,25 @@
 ---
-title: About us
-description: We are building infrastructure for a more robust options ecosystem in DeFi.
+title: About Valorem
+description: We help on-chain derivatives traders, market makers, and protocol integrators who are in need of competitive, liquid markets succeed by providing secure, standardized clearing and settlement systems.
 hero:
-  heading: Valorem develops decentralized options.
+  heading: Our passion lies in supercharging the on-chain derivatives landscape.
   text_markdown: |
-    We are building infrastructure for a more robust options ecosystem in DeFi. Find out more about our contributors, advisors, and backers below.
+    We envision digital asset derivatives marketplaces that are permissionless, standardized, and teeming with liquidity, all underpinned by capital-efficient clearing systems. We believe in a borderless financial future, one where every individual and organization can effortlessly control, leverage, and fulfill their on-chain intents.
 page_blocks:
   - _id: partners_all
     cards:
-      - label: CEO and Protocol Architect
+      - label: CEO and protocol architect
         image_path: /assets/images/partners/alcibiades.jpg
         image_alt: "Alcibiades’ profile picture"
         heading: Alcibiades
         subheading: "@0xAlcibiades"
         url: https://twitter.com/0xAlcibiades
-      - label: Head of Product
-        image_path: /assets/images/partners/neodaoist.png
-        image_alt: "Neodaoist’s profile picture"
-        heading: Neodaoist
-        subheading: "@neodaoist"
-        url: https://twitter.com/neodaoist
       - label: Frontend Developer
         image_path: /assets/images/partners/nick.png
         image_alt: "Nick’s profile picture"
         heading: Nick
         subheading: "@nickadams0n"
         url: https://twitter.com/nickadams0n
-      - label: Backend Developer
-        image_path: /assets/images/partners/megs.jpg
-        image_alt: "Megs’s profile picture"
-        heading: Megs
-        subheading: "@megsdevs"
-        url: https://twitter.com/megsdevs
       - label: Advisor
         image_path: /assets/images/partners/thogard.jpg
         image_alt: "Thogard’s profile picture"
@@ -85,7 +73,7 @@ page_blocks:
   - _id: connect
     heading: Want to get involved?
     text_markdown: |
-      Help us enable more flexible on-chain options. Join our Discord server, get involved in the conversation, or make direct contributions to the protocol.
+      We’re on a mission to supercharge liquidity, spearhead interoperability, and strengthen connectivity for on-chain derivatives traders, market makers, and protocol integrators. Join us.
     links:
       - heading: Discord
         subheading: Join the conversation
@@ -97,8 +85,10 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
+    heading: Want to lean more?
+    text_markdown: |
+      Unveil the possibilities that Valorem offers. Our comprehensive documentation provides a transparent, in-depth look into the mechanics and principles behind our platform. Don't just take our word for it; empower yourself with knowledge. Dive into our docs and discover why Valorem is the future of on-chain derivatives.
     buttons:
-      - text: Launch app
-        url: https://app.valorem.xyz/
+      - text: Dive deeper
+        url: /docs/
 ---

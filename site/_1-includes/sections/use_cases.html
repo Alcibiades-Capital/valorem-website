@@ -1,5 +1,6 @@
 <section class="s-lg bg-gray-200">
   <div class="max-w-screen-xl mx-auto space-y-12">
+    <div class="max-w-screen-md mx-auto text-gray-600 text-xl lg:text-2xl text-center">{{ item.why | markdownify }}</div>
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
       {% for item in item.cards %}
       <div class="bg-white cd-md w-full rounded-2xl shadow-lg space-y-6 col-span-full md:col-span-6 md:first:col-start-4 md:first:row-start-1 md:row-start-2 micro-float group">
@@ -15,7 +16,7 @@
       <div class="max-w-screen-md mx-auto text-gray-600 text-xl lg:text-2xl">{{ item.text_markdown | markdownify }}</div>
       <div class="pt-2 space-x-3 lg:space-x-6">
         {% for item in item.buttons limit:2 %}
-        <a class="btn btn-purple-500 btn--outlined even:btn--ghost" href="{{ item.url }}"{% if item.url contains "app.valorem.xyz" %} data-analytics='"CTA", {"props":{"location":"use_cases"}}'{% endif %}>{{ item.text }}</a>
+        <a class="btn btn-purple-500 btn--outlined even:btn--ghost" href="{{ item.url }}"{% if item.url contains "discord.gg" %} data-analytics='"CTA", {"props":{"location":"use_cases"}}'{% endif %}>{{ item.text }}</a>
         {% endfor %}
       </div>
     </div>

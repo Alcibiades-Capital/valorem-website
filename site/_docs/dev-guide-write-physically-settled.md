@@ -1,12 +1,13 @@
 ---
 date: 2023-06-06 00:00:00
-title: How to write physically settled options
-description: Developer guide for writing physically settled options on digital assets with Valorem Clear.
+title: Writing Physically Settled ERC20 Options with Valorem Clear - A Developer Guide
+description: Master the process of writing physically settled options on digital assets using Valorem Clear. Dive into step-by-step Solidity and CLI code examples covering option creation, transfer, exercise, and claim redemption.
 ---
 
-In this developer guide, we will walk through how to write physically settled options on digital assets using Valorem Clear.
-
-We'll write call options on WETH as Alice, transfer some to Bob, Bob will exercise their options (because they're in the money), and finally we'll redeem our claim over the underlying/exercise assets from the Clearinghouse.
+Welcome to the developer guide on constructing physically settled options with Valorem Clear. Whether you're interested 
+in call or put options, this comprehensive tutorial provides hands-on Solidity and CLI examples to get you started. 
+From option creation, transferring positions, exercising options, to the final steps of claim redemption, we cover it 
+all. Ready to leverage the power of Valorem Clear for optimized option writing? Let's dive in!
 
 All code examples are provided in Solidity // `forge` and CLI // `cast` (more languages to come).
 

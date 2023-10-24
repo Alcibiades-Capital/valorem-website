@@ -1,8 +1,14 @@
 ---
 date: 2023-09-06 00:00:00
-title: Fees
-description: User guide describing the Valorem Clear and Trade fee model.
+title: Understanding Valorem Protocol Fees
+description: Dive deep into Valorem's fee structure, breaking down the maker-taker fee model for trade relays, and the associated costs for clearing and settlement. Use real-world examples to simplify the process of calculating fees when writing, trading, and exercising options on the Valorem platform.
 ---
+
+Embarking on the Valorem platform journey? Ensure you're armed with insights on its  fee structure. This guide 
+elucidates Valorem's unique maker-taker fee model for trade relays and offers a clear understanding of clearing and 
+settlement costs. With illustrative examples centered around real trades and options, we'll simplify the arithmetic 
+behind each transaction fee, empowering you to navigate the Valorem ecosystem efficiently and confidently. Let's 
+decode and demystify Valorem's protocol fees together.
 
 Valorem has a maker-taker fee model for relaying trades, meaning actions which provide liquidity may have different fees assessed than actions that take liquidity. Likewise for clearing and settlement — different fees may be assessed for option writers and option holders.
 

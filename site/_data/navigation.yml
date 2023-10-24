@@ -13,15 +13,15 @@ navigation_links:
       - footer
     group:
       - main
-  - url: /docs/clear-litepaper/
+  - url: /docs/
     name: Docs
     visible:
       - header
       - footer
     group:
       - main
-  - url: https://app.valorem.xyz/
-    name: Launch app
+  - url: https://discord.gg/valorem
+    name: Join Discord
     visible:
       - header
     group:

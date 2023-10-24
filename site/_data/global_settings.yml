@@ -1,14 +1,14 @@
 site:
-  title: "Trade options on digital assets | Valorem"
+  title: Valorem - Pioneering On-Chain Derivatives Trading with Unmatched Liquidity
   copyright: Valorem Labs Inc
-  description: Permissionlessly trade options, on any ERC20 token.
+  description: |
+    Experience next-gen on-chain options trading with Valorem. Merging the power of off-chain price discovery with secure on-chain settlement, ensuring unparalleled liquidity and precision. Dive into the future of tokenized derivatives.
 banner_markdown: |
-  Live on Arbitrum One! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+  Get exclusive early access to the future of options trading on Arbitrum! <a href="https://discord.gg/valorem" data-analytics='"CTA", {"props":{"location":"banner"}}'>Join Discord →</a>
 footer_markdown: |
-  Valorem helps DeFi power users pursue advanced options strategies permissionlessly on any ERC20 token pair.
+  Valorem empowers on-chain options traders with unparalleled liquidity and precision, merging the power of off-chain price discovery with the security of on-chain settlement.
 default_cta:
-  heading: Get involved in the community. We love your feedback on our options trading experience.
-
+  heading: Live on Arbitrum One! Join our discord to get early access.
   buttons:
     - text: Join Discord
       url: https://discord.gg/valorem

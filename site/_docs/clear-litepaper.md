@@ -2,11 +2,11 @@
 date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-05-29 00:00:00 +01
 title: Clear Litepaper
+description: Discover how Valorem revolutionizes options clearing in the decentralized space, offering unparalleled flexibility, reduced execution costs, and a promise of permission-less interactions. Explore the novel mechanisms that steer away from traditional constraints, enabling a future where decentralized finance evolves, adapts, and thrives. Embrace a new era of options clearing with Valorem Clear.
 usemathjax: true
 redirect_from:
   - /docs/options-litepaper/
   - /docs/valorem-options-litepaper/
-description: This paper outlines Valorem Clear, an oracle-free, permissionless, clearing and settling system for options on ERC20 tokens.
 ---
 
 ## Introduction
@@ -14,7 +14,7 @@ description: This paper outlines Valorem Clear, an oracle-free, permissionless, 
 In this paper, we present [Valorem](https://valorem.xyz/) Clear, an option contract clearing and settlement system
 implemented for the
 [Ethereum Virtual Machine](https://ethereum.github.io/yellowpaper/paper.pdf).
-The design of the Valorem Options protocol aims to provide superior
+The design of the Valorem Clear protocol aims to provide superior
 flexibility and execution costs when compared with existing options protocols, by removing price
 oracles, reliance on existing DeFi primitives, and premium value assumptions.
 Valorem Options are settled physically using a novel fair settlement
@@ -262,33 +262,34 @@ partial exercise which occur.
 
 Because of the bucketing mechanism and ability to add additional options to
 an existing claim, Valorem claims are comprised of claim index data structures
-which are stored for each bucket $ i $ the claim is written into as $ I_{w}(i) $,
+which are stored for each bucket $ i $ the claim is written into as $ I_{wi} $,
 the amount of options written by that claim to bucket $ i $. Thus, calculating
 a claim position involves summations over the claim's member buckets.
 
 #### Calculating exercise state for a claim
 
-Given $B_{e}(i)$, the amount of options exercised from bucket $ i $, and
-$ B_{w}(i) $, the amount of options written into bucket $ i $, and
-$ B_{u}(i) = B_{w}(i) - B_{e}(i) $, the amount of options unexercised in
+Given $B_{ei}$, the amount of options exercised from bucket $ i $, and
+$ B_{wi} $, the amount of options written into bucket $ i $, and
+$ B_{ui} = B_{wi} - B_{ei} $, the amount of options unexercised in
 bucket $ i $, we can calculate $ C_e $, the amount of options exercised for a claim,
 and $ C_u $ the amount of options unexercised for a claim using the following
 summations:
 
-$$ C_e = \sum_{i=1}^n {B_{e}(i) I_{w}(i) \over B_{w}(i)} = {B_{e}(1) I_{w}(1) \over B_{w}(1)} + \ldots + {B_{e}(n) I_{w}(n) \over B_{w}(n)} $$
+$$ C_e = \sum_{i=1}^n C_{ei} = {B_{ei} I_{wi} \over B_{wi}} + \ldots + {B_{en} I_{wn} \over B_{wn}} $$
 
 and,
 
-$$ C_u = \sum_{i=1}^n {B_{u}(i) I_{w}(i) \over B_{w}(i)} = {B_{u}(1) I_{w}(1) \over B_{w}(1)} + \ldots + {B_{u}(n) I_{w}(n) \over B_{w}(n)} $$
+$$ C_u = \sum_{i=1}^n C_{ui} = {B_{ui} I_{wi} \over B_{wi}} + \ldots + {B_{un} I_{wn} \over B_{wn}} $$
 
 and we can verify that $ C_e + C_u = C_w $, options written for a given claim
 $ C $,
 
-$$ C_w = \sum_{i=1}^n {B_{e}(i) I_{w}(i) \over B_{w}(i)} + {B_{u}(i) I_{w}(i) \over B_{w}(i)} $$
+$$ C_w = \sum_{i=1}^n C_{wi} = ({B_{ei} I_{wi} \over B_{wi}} + {B_{ui} I_{wi} \over B_{wi}}) + \ldots + ({B_{en} I_{wn}
+\over B_{wn}} + {B_{un} I_{wn} \over B_{wn}}) $$
 
 which simplifies to,
 
-$$ C_w = \sum_{i=1}^n I_{w}(i) $$
+$$ C_w = \sum_{i=1}^n C_{wi} = I_{wi} + \ldots + I_{wn} $$
 
 which is the sum of options written by a claim to each of it's member buckets.
 
@@ -300,11 +301,11 @@ tokens collateralizing a claim by multiplying the amount of the exercise
 asset, $ O_e $, and the underlying asset, $ O_u $, before performing any
 division. Resulting in the following summations:
 
-$$ P_e = \sum_{i=1}^n {B_{e}(i) I_{w}(i) O_e \over B_{w}(i)} $$
+$$ P_e = \sum_{i=1}^n P_{ei} = {B_{ei} O_e I_{wi} \over B_{wi}} + \ldots + {B_{en} O_e I_{wn} \over B_{wn}} $$
 
 and
 
-$$ P_u = \sum_{i=1}^n {B_{u}(i) I_{w}(i) O_u \over B_{w}(i)} $$
+$$ P_u = \sum_{i=1}^n P_{ui} = {B_{ui} O_u I_{wi} \over B_{wi}} + \ldots + {B_{un} O_u I_{wn} \over B_{wn}} $$
 
 ### Redeeming claims
 
