@@ -2,13 +2,13 @@ site:
   title: Valorem Protocol
   copyright: Valorem Labs Inc
   description: |
-    Permissionless clearing and trading of DeFi options.
+    Clear and Trade crypto options on Arbitrum with the Valorem protocol.
 banner_markdown: |
-  Live on Arbitrum One! Help shape the future of DeFi options. <a href="https://app.valorem.xyz/" data-analytics='"CTA", {"props":{"location":"banner"}}'>Launch app →</a>
+  Live on Arbitrum One! Help shape the future of decentralized derivatives. <a href="https://discord.gg/valorem" data-analytics='"CTA", {"props":{"location":"banner"}}'>Join Discord →</a>
 footer_markdown: |
-  Valorem helps DeFi power users pursue advanced options strategies permissionlessly on any ERC20 token pair.
+  Clear and trade crypto options on Arbitrum with the Valorem protocol.
 default_cta:
-  heading: Mainnet is coming soon. In the meantime, join our Discord server and give us feedback on our testnet beta.
+  heading: Live on Arbitrum One! Join our discord to get early access.
   buttons:
     - text: Join Discord
       url: https://discord.gg/valorem

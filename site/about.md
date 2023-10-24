@@ -1,10 +1,10 @@
 ---
-title: About us
-description: We are building infrastructure for a more robust options ecosystem in DeFi.
+title: About Valorem
+description: We help on-chain derivatives traders, market makers, and protocol integrators who are in need of competitive, liquid markets succeed by providing secure, standardized clearing and settlement systems.
 hero:
-  heading: Valorem develops decentralized options.
+  heading: Valorem is an intent based derivatives clearing and settlement protocol.
   text_markdown: |
-    We are building infrastructure for a more robust options ecosystem in DeFi. Find out more about our contributors, advisors, and backers below.
+    We help on-chain derivatives traders, market makers, and protocol integrators who are in need of competitive, liquid markets succeed by providing secure, standardized clearing and settlement systems.
 page_blocks:
   - _id: partners_all
     cards:
@@ -14,24 +14,12 @@ page_blocks:
         heading: Alcibiades
         subheading: "@0xAlcibiades"
         url: https://twitter.com/0xAlcibiades
-      - label: Head of product
-        image_path: /assets/images/partners/neodaoist.png
-        image_alt: "Neodaoist’s profile picture"
-        heading: Neodaoist
-        subheading: "@neodaoist"
-        url: https://twitter.com/neodaoist
       - label: Frontend Developer
         image_path: /assets/images/partners/nick.png
         image_alt: "Nick’s profile picture"
         heading: Nick
         subheading: "@nickadams0n"
         url: https://twitter.com/nickadams0n
-      - label: Protocol Developer
-        image_path: /assets/images/partners/flip.jpg
-        image_alt: "Flip’s profile picture"
-        heading: Flip
-        subheading: "@flip_liquide"
-        url: https://twitter.com/flip_liquide
       - label: Advisor
         image_path: /assets/images/partners/thogard.jpg
         image_alt: "Thogard’s profile picture"
@@ -85,7 +73,7 @@ page_blocks:
   - _id: connect
     heading: Want to get involved?
     text_markdown: |
-      Help us enable more flexible on-chain options. Join our Discord server, get involved in the conversation, or make direct contributions to the protocol.
+      We’re on a mission to supercharge liquidity, spearhead interoperability, and strengthen connectivity for on-chain derivatives traders, market makers, and protocol integrators.
     links:
       - heading: Discord
         subheading: Join the conversation
@@ -97,8 +85,8 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
-    heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
+    heading: Join our discord community to get an early access pass and be a part of the future of on-chain derivatives.
     buttons:
-      - text: Launch app
-        url: https://app.valorem.xyz/
+      - text: Join Discord
+        url: https://discord.gg/valorem
 ---

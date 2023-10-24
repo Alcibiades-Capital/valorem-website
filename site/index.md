@@ -3,34 +3,35 @@ title:
 description:
 hero:
   label: Live now on Arbitrum One!
-  heading: Permissionlessly trade options, on any ERC20 token.
-  text_markdown:
+  heading: Trade options on on-chain.
+  text_markdown: |
+    Our intent based RFQ supercharges liquidity, connecting traders to on-chain options markets with off-chain pricing - securely cleared by our capital-efficient clearing system.
   buttons:
-    - text: Launch app
-      url: https://app.valorem.xyz/
     - text: Join Discord
       url: https://discord.gg/valorem
+    - text: Learn more
+      url: /docs/
 page_blocks:
   - _id: use_cases
     cards:
-      - heading: Flexible and composable
+      - heading: Intent Based Liquidity
         text_markdown: |
-          Clear, our options settlement layer, takes a unique approach to time specificity, strike price, and premium, enabling American and European options with no pricing assumptions. 
+          We boost liquidity with our groundbreaking intent based RFQ, Trade, connecting traders to competitive options markets, and makers to unified intent streams. 
         icon: sl-vest
-      - heading: Permissionless and efficient
+      - heading: Interoperable Clearing
         text_markdown: |
-          Clear options are permissionless. Write options on any ERC20 token, and transact with anyone. Our options use the ERC-1155 standard, lowering the viscosity of risk settlement.
+          We spearhead interoperability with our standardized and tokenized self-custody options clearing system, Clear, which is compatible across all EVM chains and ERC20 tokens.
         icon: sl-hedge
-      - heading: Fair and secure
+      - heading: Efficient Markets
         text_markdown: |
-          Clear settles options physically via a novel fair settlement algorithm. This minimizes counterparty risk, so you can securely hedge your risk. 
+          We strengthen market connectivity through a low-latency streaming network of traders and market makers which provides off-chain price discovery with secure on-chain clearing and settlement. 
         icon: sl-ppn
-    heading: Valorem is building a foundation for DeFi options.
+    heading: Valorem is an options clearing and settlement protocol.
     text_markdown: |
-      We’re building Valorem to unlock advanced options strategies in DeFi, and enable more mature financial markets for digital assets.
+      We help on-chain options traders, market makers, and protocol integrators connect to form competitive, liquid markets underpinned by secure, standardized clearing and settlement systems.
     buttons:
-      - text: Launch app
-        url: https://app.valorem.xyz/
+      - text: Join Discord
+        url: https://discord.gg/valorem
       - text: Learn more
         url: /docs/clear-litepaper/
   - _id: roadmap
@@ -53,8 +54,8 @@ page_blocks:
   - _id: cta
     heading: Getting started is easy. Connect a wallet and make your first option trade on Valorem in seconds.
     buttons:
-      - text: Launch app
-        url: https://app.valorem.xyz/
+      - text: Join Discord 
+        url: https://discord.gg/valorem
   - _id: partner_featured
     label: Audited by
     image_path: /assets/images/partners/zellic.png
