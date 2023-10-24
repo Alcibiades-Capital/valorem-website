@@ -1,5 +1,6 @@
 <section class="s-lg bg-gray-200">
   <div class="max-w-screen-xl mx-auto space-y-12">
+    <div class="max-w-screen-md mx-auto text-gray-600 text-xl lg:text-2xl text-center">{{ item.why | markdownify }}</div>
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
       {% for item in item.cards %}
       <div class="bg-white cd-md w-full rounded-2xl shadow-lg space-y-6 col-span-full md:col-span-6 md:first:col-start-4 md:first:row-start-1 md:row-start-2 micro-float group">

@@ -13,7 +13,7 @@ navigation_links:
       - footer
     group:
       - main
-  - url: /docs/clear-litepaper/
+  - url: /docs/
     name: Docs
     visible:
       - header

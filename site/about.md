@@ -2,9 +2,9 @@
 title: About Valorem
 description: We help on-chain derivatives traders, market makers, and protocol integrators who are in need of competitive, liquid markets succeed by providing secure, standardized clearing and settlement systems.
 hero:
-  heading: Valorem is an intent based derivatives clearing and settlement protocol.
+  heading: Our passion lies in supercharging the on-chain derivatives landscape.
   text_markdown: |
-    We help on-chain derivatives traders, market makers, and protocol integrators who are in need of competitive, liquid markets succeed by providing secure, standardized clearing and settlement systems.
+    We envision digital asset derivatives marketplaces that are permissionless, standardized, and teeming with liquidity, all underpinned by capital-efficient clearing systems. We believe in a borderless financial future, one where every individual and organization can effortlessly control, leverage, and fulfill their on-chain intents.
 page_blocks:
   - _id: partners_all
     cards:
@@ -73,7 +73,7 @@ page_blocks:
   - _id: connect
     heading: Want to get involved?
     text_markdown: |
-      We’re on a mission to supercharge liquidity, spearhead interoperability, and strengthen connectivity for on-chain derivatives traders, market makers, and protocol integrators.
+      We’re on a mission to supercharge liquidity, spearhead interoperability, and strengthen connectivity for on-chain derivatives traders, market makers, and protocol integrators. Join us.
     links:
       - heading: Discord
         subheading: Join the conversation
@@ -85,8 +85,10 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
-    heading: Join our discord community to get an early access pass and be a part of the future of on-chain derivatives.
+    heading: Want to lean more?
+    text_markdown: |
+      Unveil the possibilities that Valorem offers. Our comprehensive documentation provides a transparent, in-depth look into the mechanics and principles behind our platform. Don't just take our word for it; empower yourself with knowledge. Dive into our docs and discover why Valorem is the future of on-chain derivatives.
     buttons:
-      - text: Join Discord
-        url: https://discord.gg/valorem
+      - text: Dive deeper
+        url: /docs/
 ---
