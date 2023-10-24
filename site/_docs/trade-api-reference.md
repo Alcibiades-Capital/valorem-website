@@ -1,10 +1,8 @@
 ---
 date: 2023-06-07 00:00:00
-title: Trade API Reference
-description: Reference documentation for the Valorem Trade API. 
+title: Valorem Trade API - Low-latency off-chain intent based RFQ
+description: Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem's advanced intent based RFQ. 
 ---
-
-Version: RFC-preliminary
 
 The Valorem Trade API enables peer-to-peer, signature based, noncustodial
 digital asset trading via low latency [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) and

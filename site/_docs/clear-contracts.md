@@ -1,7 +1,7 @@
 ---
 date: 2022-11-30 00:00:00
 title: Clear Smart Contract ABI
-description: Developer documentation for the Valorem Clear smart contracts.
+description: Explore Valorem Clear's ABI — An interface to efficient option contract clearing and settlement system compatible with all EVMs and ERC20s. A must-read for developers integrating with the Valorem protocol.
 ---
 
 [Valorem Clear](/docs/clear-overview) is a persistent, non-upgradable smart contract written in Solidity,

@@ -2,6 +2,7 @@
 date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-05-29 00:00:00 +01
 title: Clear Litepaper
+description: Discover how Valorem revolutionizes options trading in the decentralized space, offering unparalleled flexibility, reduced execution costs, and a promise of permission-less interactions. Explore the novel mechanisms that steer away from traditional constraints, enabling a future where decentralized finance evolves, adapts, and thrives. Embrace a new era of options clearing with Valorem Clear.
 usemathjax: true
 redirect_from:
   - /docs/options-litepaper/
