@@ -76,7 +76,7 @@
         },
         "datePublished":"2022-11-29T19:00:00-05:00",
         "dateCreated":"2022-11-29T19:00:00-05:00",
-        "dateModified":"2023-10-24T01:28:21-04:00",
+        "dateModified":"2023-10-24T21:52:22-04:00",
         "description":"Explore Valorem Clear’s ABI — An interface to efficient option contract clearing and settlement system compatible with all EVMs and ERC20s. A must-read for developers integrating with the Valorem protocol.
 ",
         "url":"https://valorem.xyz/docs/clear-contracts/",
@@ -451,15 +451,13 @@ in terms of the underlying and exercise ERC20 tokens.</p>
   <li><code class="language-plaintext highlighter-rouge">expiryTimestamp</code>: The timestamp before which this option type can be exercised.</li>
 </ul>
 
-<pre><code class="language-solidity">event NewOptionType(
-uint256 optionId,
-address indexed exerciseAsset,
-address indexed underlyingAsset,
-uint96 exerciseAmount,
-uint96 underlyingAmount,
-uint40 exerciseTimestamp,
-uint40 indexed expiryTimestamp
-);
+<pre><code class="language-solidity">event NewOptionType(uint256 optionId,
+                    address indexed exerciseAsset,
+                    address indexed underlyingAsset,
+                    uint96 exerciseAmount,
+                    uint96 underlyingAmount,
+                    uint40 exerciseTimestamp,
+                    uint40 indexed expiryTimestamp);
 </code></pre>
 
 <h4 id="optionswritten">OptionsWritten</h4>
@@ -473,7 +471,10 @@ uint40 indexed expiryTimestamp
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of options contracts written.</li>
 </ul>
 
-<pre><code class="language-solidity">event OptionsWritten(uint256 indexed optionId, address indexed writer, uint256 indexed claimId, uint112 amount);
+<pre><code class="language-solidity">event OptionsWritten(uint256 indexed optionId, 
+                     address indexed writer, 
+                     uint256 indexed claimId, 
+                     uint112 amount);
 </code></pre>
 
 <h4 id="bucketwritteninto">BucketWrittenInto</h4>
@@ -487,9 +488,10 @@ uint40 indexed expiryTimestamp
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of options contracts written.</li>
 </ul>
 
-<pre><code class="language-solidity">event BucketWrittenInto(
-uint256 indexed optionId, uint256 indexed claimId, uint96 indexed bucketIndex, uint112 amount
-);
+<pre><code class="language-solidity">event BucketWrittenInto(uint256 indexed optionId, 
+                        uint256 indexed claimId,
+                        uint96 indexed bucketIndex,
+                        uint112 amount);
 </code></pre>
 
 <h3 id="redeem-events">Redeem events</h3>
@@ -506,13 +508,11 @@ uint256 indexed optionId, uint256 indexed claimId, uint96 indexed bucketIndex, u
   <li><code class="language-plaintext highlighter-rouge">underlyingAmountRedeemed</code>: The amount of option.underlyingAsset redeemed.</li>
 </ul>
 
-<pre><code class="language-solidity">event ClaimRedeemed(
-uint256 indexed claimId,
-uint256 indexed optionId,
-address indexed redeemer,
-uint256 exerciseAmountRedeemed,
-uint256 underlyingAmountRedeemed
-);
+<pre><code class="language-solidity">event ClaimRedeemed(uint256 indexed claimId,
+                    uint256 indexed optionId,
+                    address indexed redeemer,
+                    uint256 exerciseAmountRedeemed,
+                    uint256 underlyingAmountRedeemed);
 </code></pre>
 
 <h3 id="exercise-events">Exercise events</h3>
@@ -527,7 +527,9 @@ uint256 underlyingAmountRedeemed
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of option contracts exercised.</li>
 </ul>
 
-<pre><code class="language-solidity">event OptionsExercised(uint256 indexed optionId, address indexed exerciser, uint112 amount);
+<pre><code class="language-solidity">event OptionsExercised(uint256 indexed optionId, 
+                       address indexed exerciser,
+                       uint112 amount);
 </code></pre>
 
 <h4 id="bucketassignedexercise">BucketAssignedExercise</h4>
@@ -540,7 +542,9 @@ uint256 underlyingAmountRedeemed
   <li><code class="language-plaintext highlighter-rouge">amountAssigned</code>: The amount of options contracts assigned exercise in the given bucket.</li>
 </ul>
 
-<pre><code class="language-solidity">event BucketAssignedExercise(uint256 indexed optionId, uint96 indexed bucketIndex, uint112 amountAssigned);
+<pre><code class="language-solidity">event BucketAssignedExercise(uint256 indexed optionId, 
+                             uint96 indexed bucketIndex,
+                             uint112 amountAssigned);
 </code></pre>
 
 <h3 id="fee-events">Fee events</h3>
@@ -559,7 +563,10 @@ uint256 underlyingAmountRedeemed
 <p><em>Dev note — Emitted on write() when fees are accrued on the underlying asset, or exercise() when fees are accrued on the
 exercise asset. Will not be emitted when feesEnabled is false.</em></p>
 
-<pre><code class="language-solidity">event FeeAccrued(uint256 indexed optionId, address indexed asset, address indexed payer, uint256 amount);
+<pre><code class="language-solidity">event FeeAccrued(uint256 indexed optionId, 
+                 address indexed asset, 
+                 address indexed payer,
+                 uint256 amount);
 </code></pre>
 
 <h4 id="feeswept">FeeSwept</h4>
@@ -572,7 +579,9 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The total amount swept.</li>
 </ul>
 
-<pre><code class="language-solidity">event FeeSwept(address indexed asset, address indexed feeTo, uint256 amount);
+<pre><code class="language-solidity">event FeeSwept(address indexed asset,
+               address indexed feeTo,
+               uint256 amount);
 </code></pre>
 
 <h4 id="feeswitchupdated">FeeSwitchUpdated</h4>
@@ -584,7 +593,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">enabled</code>: Whether fees are enabled or disabled.</li>
 </ul>
 
-<pre><code class="language-solidity">event FeeSwitchUpdated(address feeTo, bool enabled);
+<pre><code class="language-solidity">event FeeSwitchUpdated(address feeTo, 
+                       bool enabled);
 </code></pre>
 
 <h3 id="access-control-events">Access control events</h3>
@@ -624,7 +634,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">permissioned</code>: The address which has the requisite permissions.</li>
 </ul>
 
-<pre><code class="language-solidity">error AccessControlViolation(address accessor, address permissioned);
+<pre><code class="language-solidity">error AccessControlViolation(address accessor, 
+                             address permissioned);
 </code></pre>
 
 <h3 id="input-errors">Input errors</h3>
@@ -656,7 +667,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of option contracts which the caller attempted to exercise.</li>
 </ul>
 
-<pre><code class="language-solidity">error CallerHoldsInsufficientOptions(uint256 optionId, uint112 amount);
+<pre><code class="language-solidity">error CallerHoldsInsufficientOptions(uint256 optionId,
+                                     uint112 amount);
 </code></pre>
 
 <h4 id="claimtoosoon">ClaimTooSoon</h4>
@@ -668,7 +680,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">expiry</code>: The timestamp at which the option type expires.</li>
 </ul>
 
-<pre><code class="language-solidity">error ClaimTooSoon(uint256 claimId, uint40 expiry);
+<pre><code class="language-solidity">error ClaimTooSoon(uint256 claimId,
+                   uint40 expiry);
 </code></pre>
 
 <h4 id="exercisetooearly">ExerciseTooEarly</h4>
@@ -680,7 +693,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">exercise</code>: The time after which the option can be exercised.</li>
 </ul>
 
-<pre><code class="language-solidity">error ExerciseTooEarly(uint256 optionId, uint40 exercise);
+<pre><code class="language-solidity">error ExerciseTooEarly(uint256 optionId,
+                       uint40 exercise);
 </code></pre>
 
 <h4 id="exercisewindowtooshort">ExerciseWindowTooShort</h4>
@@ -703,7 +717,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">expiry</code>: The expiry time for the supplied option id.</li>
 </ul>
 
-<pre><code class="language-solidity">error ExpiredOption(uint256 optionId, uint40 expiry);
+<pre><code class="language-solidity">error ExpiredOption(uint256 optionId,
+                    uint40 expiry);
 </code></pre>
 
 <h4 id="expirywindowtooshort">ExpiryWindowTooShort</h4>
@@ -737,7 +752,8 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">asset2</code>: Supplied ERC20 asset.</li>
 </ul>
 
-<pre><code class="language-solidity">error InvalidAssets(address asset1, address asset2);
+<pre><code class="language-solidity">error InvalidAssets(address asset1,
+                    address asset2);
 </code></pre>
 
 <h4 id="invalidclaim">InvalidClaim</h4>
@@ -910,7 +926,7 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
 
 <p><em>Dev note — optionId can be precomputed using:</em></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>uint160 optionKey = uint160(
+<pre><code class="language-solidity">uint160 optionKey = uint160(
     bytes20(
         keccak256(
             abi.encode(
@@ -927,7 +943,7 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
     )
 );
 optionId = uint256(optionKey) &lt;&lt; OPTION_ID_PADDING;
-</code></pre></div></div>
+</code></pre>
 
 <p><em>and then</em> <code class="language-plaintext highlighter-rouge">tokenType(optionId) == TokenType.Option</code> <em>to check if the option already exists.</em></p>
 
@@ -953,7 +969,8 @@ existing claim.</li>
 
 <p>Returns <code class="language-plaintext highlighter-rouge">claimId</code>: The token id of the claim NFT which was input or created.</p>
 
-<pre><code class="language-solidity">function write(uint256 tokenId, uint112 amount) external returns (uint256 claimId);
+<pre><code class="language-solidity">function write(uint256 tokenId,
+               uint112 amount) external returns (uint256 claimId);
 </code></pre>
 
 <h2 id="redeem-claims">Redeem claims</h2>
