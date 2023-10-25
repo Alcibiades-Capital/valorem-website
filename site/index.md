@@ -13,7 +13,7 @@ hero:
       url: /docs/
 page_blocks:
   - _id: use_cases
-    why: Harness the Valorem’s robust ecosystem. Streamlined, secure, and ready to supercharge your options trading experience.
+    why: Harness Valorem’s robust ecosystem. Streamlined, secure, and ready to supercharge your options trading experience.
     cards:
       - heading: Unparalleled Liquidity
         text_markdown: |

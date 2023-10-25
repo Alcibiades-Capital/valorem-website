@@ -111,15 +111,13 @@ Emitted when a new option type is created.
 - `expiryTimestamp`: The timestamp before which this option type can be exercised.
 
 ```solidity
-event NewOptionType(
-uint256 optionId,
-address indexed exerciseAsset,
-address indexed underlyingAsset,
-uint96 exerciseAmount,
-uint96 underlyingAmount,
-uint40 exerciseTimestamp,
-uint40 indexed expiryTimestamp
-);
+event NewOptionType(uint256 optionId,
+                    address indexed exerciseAsset,
+                    address indexed underlyingAsset,
+                    uint96 exerciseAmount,
+                    uint96 underlyingAmount,
+                    uint40 exerciseTimestamp,
+                    uint40 indexed expiryTimestamp);
 ```
 
 #### OptionsWritten
@@ -132,7 +130,10 @@ Emitted when new options contracts are written.
 - `amount`: The amount of options contracts written.
 
 ```solidity
-event OptionsWritten(uint256 indexed optionId, address indexed writer, uint256 indexed claimId, uint112 amount);
+event OptionsWritten(uint256 indexed optionId, 
+                     address indexed writer, 
+                     uint256 indexed claimId, 
+                     uint112 amount);
 ```
 
 #### BucketWrittenInto
@@ -145,9 +146,10 @@ Emitted when options contracts are written into a bucket.
 - `amount`: The amount of options contracts written.
 
 ```solidity
-event BucketWrittenInto(
-uint256 indexed optionId, uint256 indexed claimId, uint96 indexed bucketIndex, uint112 amount
-);
+event BucketWrittenInto(uint256 indexed optionId, 
+                        uint256 indexed claimId,
+                        uint96 indexed bucketIndex,
+                        uint112 amount);
 ```
 
 ### Redeem events
@@ -163,13 +165,11 @@ Emitted when a claim is redeemed.
 - `underlyingAmountRedeemed`: The amount of option.underlyingAsset redeemed.
 
 ```solidity
-event ClaimRedeemed(
-uint256 indexed claimId,
-uint256 indexed optionId,
-address indexed redeemer,
-uint256 exerciseAmountRedeemed,
-uint256 underlyingAmountRedeemed
-);
+event ClaimRedeemed(uint256 indexed claimId,
+                    uint256 indexed optionId,
+                    address indexed redeemer,
+                    uint256 exerciseAmountRedeemed,
+                    uint256 underlyingAmountRedeemed);
 ```
 
 ### Exercise events
@@ -183,7 +183,9 @@ Emitted when option contract(s) is(are) exercised.
 - `amount`: The amount of option contracts exercised.
 
 ```solidity
-event OptionsExercised(uint256 indexed optionId, address indexed exerciser, uint112 amount);
+event OptionsExercised(uint256 indexed optionId, 
+                       address indexed exerciser,
+                       uint112 amount);
 ```
 
 #### BucketAssignedExercise
@@ -195,7 +197,9 @@ Emitted when a bucket is assigned exercise.
 - `amountAssigned`: The amount of options contracts assigned exercise in the given bucket.
 
 ```solidity
-event BucketAssignedExercise(uint256 indexed optionId, uint96 indexed bucketIndex, uint112 amountAssigned);
+event BucketAssignedExercise(uint256 indexed optionId, 
+                             uint96 indexed bucketIndex,
+                             uint112 amountAssigned);
 ```
 
 ### Fee events
@@ -212,8 +216,12 @@ Emitted when protocol fees are accrued for a given asset.
 _Dev note — Emitted on write() when fees are accrued on the underlying asset, or exercise() when fees are accrued on the
 exercise asset. Will not be emitted when feesEnabled is false._
 
+
 ```solidity
-event FeeAccrued(uint256 indexed optionId, address indexed asset, address indexed payer, uint256 amount);
+event FeeAccrued(uint256 indexed optionId, 
+                 address indexed asset, 
+                 address indexed payer,
+                 uint256 amount);
 ```
 
 #### FeeSwept
@@ -224,8 +232,11 @@ Emitted when accrued protocol fees for a given ERC20 asset are swept to the feeT
 - `feeTo`: The account to which fees were swept.
 - `amount`: The total amount swept.
 
+
 ```solidity
-event FeeSwept(address indexed asset, address indexed feeTo, uint256 amount);
+event FeeSwept(address indexed asset,
+               address indexed feeTo,
+               uint256 amount);
 ```
 
 #### FeeSwitchUpdated
@@ -235,8 +246,10 @@ Emitted when protocol fees are enabled or disabled.
 - `feeTo`: The address which enabled or disabled fees.
 - `enabled`: Whether fees are enabled or disabled.
 
+
 ```solidity
-event FeeSwitchUpdated(address feeTo, bool enabled);
+event FeeSwitchUpdated(address feeTo, 
+                       bool enabled);
 ```
 
 ### Access control events
@@ -247,6 +260,7 @@ Emitted when feeTo address is updated.
 
 - `newFeeTo`: The new feeTo address.
 
+
 ```solidity
 event FeeToUpdated(address indexed newFeeTo);
 ```
@@ -256,6 +270,7 @@ event FeeToUpdated(address indexed newFeeTo);
 Emitted when TokenURIGenerator is updated.
 
 - `newTokenURIGenerator`: The new TokenURIGenerator address.
+
 
 ```solidity
 event TokenURIGeneratorUpdated(address indexed newTokenURIGenerator);
@@ -272,8 +287,10 @@ The caller doesn't have permission to access that function.
 - `accessor`: The requesting address.
 - `permissioned`: The address which has the requisite permissions.
 
+
 ```solidity
-error AccessControlViolation(address accessor, address permissioned);
+error AccessControlViolation(address accessor, 
+                             address permissioned);
 ```
 
 ### Input errors
@@ -281,6 +298,7 @@ error AccessControlViolation(address accessor, address permissioned);
 #### AmountWrittenCannotBeZero
 
 The amount of option contracts written must be greater than zero.
+
 
 ```solidity
 error AmountWrittenCannotBeZero();
@@ -291,6 +309,7 @@ error AmountWrittenCannotBeZero();
 This claim is not owned by the caller.
 
 - `claimId`: Supplied claim ID.
+
 
 ```solidity
 error CallerDoesNotOwnClaimId(uint256 claimId);
@@ -303,8 +322,10 @@ The caller does not have enough option contracts to exercise the amount specifie
 - `optionId`: The supplied option id.
 - `amount`: The amount of option contracts which the caller attempted to exercise.
 
+
 ```solidity
-error CallerHoldsInsufficientOptions(uint256 optionId, uint112 amount);
+error CallerHoldsInsufficientOptions(uint256 optionId,
+                                     uint112 amount);
 ```
 
 #### ClaimTooSoon
@@ -314,8 +335,10 @@ Claims cannot be redeemed before expiry.
 - `claimId`: Supplied claim ID.
 - `expiry`: The timestamp at which the option type expires.
 
+
 ```solidity
-error ClaimTooSoon(uint256 claimId, uint40 expiry);
+error ClaimTooSoon(uint256 claimId,
+                   uint40 expiry);
 ```
 
 #### ExerciseTooEarly
@@ -325,8 +348,10 @@ This option cannot yet be exercised.
 - `optionId`: Supplied option ID.
 - `exercise`: The time after which the option can be exercised.
 
+
 ```solidity
-error ExerciseTooEarly(uint256 optionId, uint40 exercise);
+error ExerciseTooEarly(uint256 optionId,
+                       uint40 exercise);
 ```
 
 #### ExerciseWindowTooShort
@@ -334,6 +359,7 @@ error ExerciseTooEarly(uint256 optionId, uint40 exercise);
 The option exercise window is too short.
 
 - `exercise`: The timestamp supplied for exercise.
+
 
 ```solidity
 error ExerciseWindowTooShort(uint40 exercise);
@@ -346,8 +372,10 @@ The optionId specified has already expired.
 - `optionId`: The id of the expired option.
 - `expiry`: The expiry time for the supplied option id.
 
+
 ```solidity
-error ExpiredOption(uint256 optionId, uint40 expiry);
+error ExpiredOption(uint256 optionId,
+                    uint40 expiry);
 ```
 
 #### ExpiryWindowTooShort
@@ -355,6 +383,7 @@ error ExpiredOption(uint256 optionId, uint40 expiry);
 The expiry timestamp is too soon.
 
 - `expiry`: The expiry timestamp.
+
 
 ```solidity
 error ExpiryWindowTooShort(uint40 expiry);
@@ -377,8 +406,10 @@ The assets specified are invalid or duplicate.
 - `asset1`: Supplied ERC20 asset.
 - `asset2`: Supplied ERC20 asset.
 
+
 ```solidity
-error InvalidAssets(address asset1, address asset2);
+error InvalidAssets(address asset1,
+                    address asset2);
 ```
 
 #### InvalidClaim
@@ -545,7 +576,8 @@ Returns `optionId`: The token id for the new option type created by this call.
 
 _Dev note — optionId can be precomputed using:_
 
-```
+
+```solidity
 uint160 optionKey = uint160(
     bytes20(
         keccak256(
@@ -566,6 +598,7 @@ optionId = uint256(optionKey) << OPTION_ID_PADDING;
 ```
 
 _and then_ `tokenType(optionId) == TokenType.Option` _to check if the option already exists._
+
 
 ```solidity
 function newOptionType(
@@ -588,8 +621,10 @@ Writes a specified amount of the specified option.
 
 Returns `claimId`: The token id of the claim NFT which was input or created.
 
+
 ```solidity
-function write(uint256 tokenId, uint112 amount) external returns (uint256 claimId);
+function write(uint256 tokenId,
+               uint112 amount) external returns (uint256 claimId);
 ```
 
 ## Redeem claims
@@ -600,6 +635,7 @@ Redeems a claim NFT, transfers the underlying/exercise tokens to the caller. Can
 timestamp (inclusive).
 
 - `claimId`: The ID of the claim to redeem.
+
 
 ```solidity
 function redeem(uint256 claimId) external;
@@ -615,6 +651,7 @@ requirements are met. Can be called from exercise timestamp (inclusive), until o
 - `optionId`: The option token id of the option type to exercise.
 - `amount`: The amount of option contracts to exercise.
 
+
 ```solidity
 function exercise(uint256 optionId, uint112 amount) external;
 ```
@@ -627,6 +664,7 @@ Enables or disables protocol fees.
 
 - `enabled`: Whether protocol fees should be enabled.
 
+
 ```solidity
 function setFeesEnabled(bool enabled) external;
 ```
@@ -638,6 +676,7 @@ complete. See also acceptFeeTo().
 
 - `newFeeTo`: The new address to which fees should be swept.
 
+
 ```solidity
 function setFeeTo(address newFeeTo) external;
 ```
@@ -648,6 +687,7 @@ Accepts the new feeTo address and completes the update. See also setFeeTo(addres
 
 _See also setFeeTo(address newFeeTo)._
 
+
 ```solidity
 function acceptFeeTo() external;
 ```
@@ -657,6 +697,7 @@ function acceptFeeTo() external;
 Updates the contract address for generating token URIs for tokens.
 
 - `newTokenURIGenerator`: The address of the new ITokenURIGenerator contract.
+
 
 ```solidity
 function setTokenURIGenerator(address newTokenURIGenerator) external;
