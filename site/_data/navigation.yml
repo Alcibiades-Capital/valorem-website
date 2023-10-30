@@ -20,8 +20,8 @@ navigation_links:
       - footer
     group:
       - main
-  - url: https://discord.gg/valorem
-    name: Join Discord
+  - url: https://app.valorem.xyz
+    name: Start Trading
     visible:
       - header
     group:

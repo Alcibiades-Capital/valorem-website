@@ -1,39 +1,37 @@
 ---
-title:
-description:
+title: Valorem - Pioneering On-Chain Derivatives
+description: Dive into Valorem, the revolutionary on-chain derivatives platform. Seamlessly leverage your digital assets, connect with a thriving community, and experience cutting-edge, liquid markets.
 hero:
   label: Live now on Arbitrum One!
   heading: Claim your edge in on-chain options.
   text_markdown: |
     Trade on-chain options with unparalleled liquidity and unmatched pricing — straight from your Arbitrum wallet.
   buttons:
+    - text: Start Trading
+      url: https://app.valorem.xyz
     - text: Join Discord
       url: https://discord.gg/valorem
-    - text: Dive deeper
-      url: /docs/
 page_blocks:
   - _id: use_cases
-    why: Harness Valorem’s robust ecosystem. Streamlined, secure, and ready to supercharge your options trading experience.
+    why: DeFi derivatives markets exist. Efficient, transparent, and free DeFi derivatives markets do not. Valorem provides the infrastructure necessary for efficient, secure, and genuinely free-market on-chain derivatives trading.
     cards:
-      - heading: Unparalleled Liquidity
+      - heading: Increased liquidity
         text_markdown: |
-          With our unique intent-based RFQ, access the world of thriving on-chain options markets. Efficient pricing for traders, streaming intents for market makers.
+          We increase liquidity with our intent-based RFQ, enabling thriving on-chain derivatives markets. Efficient pricing for traders, streaming intents for market makers.
         icon: sl-vest
-      - heading: True Interoperability
+      - heading: Boosted interoperability
         text_markdown: |
-          With standardized derivatives tokens and clearing systems, we champion seamless options clearing and settlement across all EVM chains and ERC20 tokens.
+          We boost interoperability with standardized derivatives tokens and a clearing system which is interoperable across all EVM chains and ERC20 tokens.
         icon: sl-hedge
-      - heading: Efficient Markets
+      - heading: Strengthened connectivity
         text_markdown: |
-          Our low-latency network of traders and market makers fast-tracks off-chain price discovery, secured by on-chain clearing and settlement. 
+          We strengthen connectivity through a low-latency network of derivatives traders and market makers, combining off-chain price discovery with secure on-chain clearing and settlement.
         icon: sl-ppn
-    heading: Embark on your voyage with Valorem.
-    text_markdown: |
-      Ready to reshape your on-chain options trading experience? Immerse yourself in our documentation to integrate with Valorem or join our thriving Discord community.
+    heading: Seamlessly trade options on Arbitrum with Valorem.
     buttons:
-      - text: Join Discord
-        url: https://discord.gg/valorem
-      - text: Explore docs
+      - text: Start Trading
+        url: https://app.valorem.xyz
+      - text: Dive Deeper
         url: /docs/
   - _id: cta
     heading: Get access to the future of options trading.
