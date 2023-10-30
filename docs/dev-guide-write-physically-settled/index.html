@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-05T20:00:00-04:00",
         "dateCreated":"2023-06-05T20:00:00-04:00",
-        "dateModified":"2023-10-24T21:52:22-04:00",
+        "dateModified":"2023-10-29T21:21:01-04:00",
         "description":"Master the process of writing physically settled options on digital assets using Valorem Clear. Dive into step-by-step Solidity and CLI code examples covering option creation, transfer, exercise, and claim redemption.
 ",
         "url":"https://valorem.xyz/docs/dev-guide-write-physically-settled/",
@@ -134,8 +134,8 @@
             class="p-2 rounded bg-white hover:bg-gray-200">Docs</a>
           
           
-          <a href="https://discord.gg/valorem"
-            class="btn btn-purple-500 text-base px-5 py-2 rounded-xl" data-analytics='"CTA", {"props":{"location":"header"}}'>Join Discord</a>
+          <a href="https://app.valorem.xyz"
+            class="btn btn-purple-500 text-base px-5 py-2 rounded-xl" data-analytics='"CTA", {"props":{"location":"header"}}'>Start Trading</a>
           
         </div>
         
@@ -223,8 +223,8 @@
       
       <hr class="border-gray-400">
       
-      <a href="https://discord.gg/valorem"
-        class="btn btn-purple-500 text-base px-5 py-2 rounded-xl mx-auto" data-analytics='"CTA", {"props":{"location":"header"}}'>Join Discord</a>
+      <a href="https://app.valorem.xyz"
+        class="btn btn-purple-500 text-base px-5 py-2 rounded-xl mx-auto" data-analytics='"CTA", {"props":{"location":"header"}}'>Start Trading</a>
       
     </nav>
   </div>
@@ -369,7 +369,7 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="d6ebf9be-ce07-4895-858e-1e0c8daba9f1" data-name="log">
+<ul class="tab" data-tab="32de6969-2f81-4106-bdcb-5c103911adb4" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -380,7 +380,7 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
       </li>
   
 </ul>
-<ul class="tab-content" id="d6ebf9be-ce07-4895-858e-1e0c8daba9f1" data-name="log">
+<ul class="tab-content" id="32de6969-2f81-4106-bdcb-5c103911adb4" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice creates a new option type.
@@ -415,7 +415,7 @@ uint256 optionId = clearinghouse.newOptionType({
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="3c8c8c99-7b42-40d1-9ca4-6952dbddd917" data-name="log">
+<ul class="tab" data-tab="725071da-c04b-4679-bf1d-7752f7dcded4" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -426,7 +426,7 @@ uint256 optionId = clearinghouse.newOptionType({
       </li>
   
 </ul>
-<ul class="tab-content" id="3c8c8c99-7b42-40d1-9ca4-6952dbddd917" data-name="log">
+<ul class="tab-content" id="725071da-c04b-4679-bf1d-7752f7dcded4" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice writes 10 options.
@@ -448,7 +448,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="739a5924-566d-432b-9658-c14ea5477198" data-name="log">
+<ul class="tab" data-tab="760465bc-1428-41e9-9fa0-9b281168dbee" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -459,7 +459,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
       </li>
   
 </ul>
-<ul class="tab-content" id="739a5924-566d-432b-9658-c14ea5477198" data-name="log">
+<ul class="tab-content" id="760465bc-1428-41e9-9fa0-9b281168dbee" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice transfers 4 options to Bob.
@@ -482,7 +482,7 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="5cd2b3db-89c0-47d7-98d5-812e6eedd0e1" data-name="log">
+<ul class="tab" data-tab="67eb3e3b-4a50-4f3c-9376-37458e75ab8f" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -493,7 +493,7 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
       </li>
   
 </ul>
-<ul class="tab-content" id="5cd2b3db-89c0-47d7-98d5-812e6eedd0e1" data-name="log">
+<ul class="tab-content" id="67eb3e3b-4a50-4f3c-9376-37458e75ab8f" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the exercise timestamp.
@@ -524,7 +524,7 @@ clearinghouse.exercise(optionId, 4);
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="13405bc5-8b81-44b3-8c6a-2fe74df3470e" data-name="log">
+<ul class="tab" data-tab="8e3c2de7-3ff6-4c11-9991-eab6ee1d6169" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -535,7 +535,7 @@ clearinghouse.exercise(optionId, 4);
       </li>
   
 </ul>
-<ul class="tab-content" id="13405bc5-8b81-44b3-8c6a-2fe74df3470e" data-name="log">
+<ul class="tab-content" id="8e3c2de7-3ff6-4c11-9991-eab6ee1d6169" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the expiry timestamp.
