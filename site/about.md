@@ -85,7 +85,7 @@ page_blocks:
         subheading: Build with us
         url: https://github.com/valorem-labs-inc/valorem-core
   - _id: cta
-    heading: Want to lean more?
+    heading: Want to learn more?
     text_markdown: |
       Unveil the possibilities that Valorem offers. Our comprehensive documentation provides a transparent, in-depth look into the mechanics and principles behind our platform. Don't just take our word for it; empower yourself with knowledge. Dive into our docs and discover why Valorem is the future of on-chain derivatives.
     buttons:
