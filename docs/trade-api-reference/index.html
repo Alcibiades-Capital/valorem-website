@@ -55,7 +55,7 @@
 <link rel="canonical" href="https://valorem.xyz/docs/trade-api-reference/" />
 <meta property="og:url" content="https://valorem.xyz/docs/trade-api-reference/" />
 <meta property="og:site_name" content="Valorem - Pioneering On-Chain Derivatives Trading with Unmatched Liquidity" />
-<meta property="og:image" content="https://valorem.xyz/assets/images/1-default.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-06-06T20:00:00-04:00" />
+<meta property="og:image" content="https://valorem.xyz/assets/images/1-default.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-11-02T20:03:16-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="https://valorem.xyz/assets/images/1-default.jpg" />
 <meta property="twitter:title" content="Valorem Trade API - Low-latency off-chain intent based RFQ
@@ -74,9 +74,9 @@
             "name":"Alcibiades",
             "url":"https://valorem.xyz/about"
         },
-        "datePublished":"2023-06-06T20:00:00-04:00",
-        "dateCreated":"2023-06-06T20:00:00-04:00",
-        "dateModified":"2023-11-02T08:47:37-04:00",
+        "datePublished":"2023-11-02T20:03:16-04:00",
+        "dateCreated":"2023-11-02T20:03:16-04:00",
+        "dateModified":"2023-11-03T03:17:39-04:00",
         "description":"Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem’s advanced intent based RFQ.
 ",
         "url":"https://valorem.xyz/docs/trade-api-reference/",
@@ -341,16 +341,22 @@
             <div class="prose">
                 <h1>Valorem Trade API - Low-latency off-chain intent based RFQ</h1>
                 <hr>
-                <p>The Valorem Trade API enables peer-to-peer, signature based, noncustodial
+                <p><em>Version: 1.0.4</em></p>
+
+<h2 id="background">Background</h2>
+
+<p>The Valorem Trade API enables peer-to-peer, signature-based, noncustodial
 digital asset trading via low latency <a href="https://grpc.io/docs/what-is-grpc/introduction/">gRPC</a> and
 <a href="https://github.com/grpc/grpc-web">gRPC-web</a>
 TLS-encrypted <a href="https://protobuf.dev/programming-guides/proto3/">version 3 protocol buffer</a>
 interfaces, with order settlement via
 the <a href="https://github.com/ProjectOpenSea/seaport">Seaport smart contracts</a>.
-The complete protocol buffer definitions can be found
-in <a href="https://github.com/valorem-labs-inc/trade-interfaces">this repository</a>.</p>
+The complete protobuf definitions can be found
+<a href="https://github.com/valorem-labs-inc/trade-interfaces/tree/main/proto/">here</a>.</p>
 
-<p>The public endpoint for the exchange is <code class="language-plaintext highlighter-rouge">https://trade.valorem.xyz</code>.</p>
+<h2 id="deployments">Deployments</h2>
+
+<p>The public endpoint for the Valorem Trade API is <code class="language-plaintext highlighter-rouge">https://trade.valorem.xyz</code>.</p>
 
 <h2 id="user-roles">User roles</h2>
 
@@ -358,30 +364,36 @@ in <a href="https://github.com/valorem-labs-inc/trade-interfaces">this repositor
 
 <ul>
   <li>
-    <p><strong>Maker</strong>: Makers are users who sign offers in response to a request for quote.
-They are responsible for fulfilling orders when a taker agrees to their quotes.</p>
+    <p><strong>Maker</strong>: Makers sign offers in response to requests for quotes (RFQs).
+They are responsible for having the requisite assets when a taker optionally
+fills their signed offer. Makers are presently required to request access to
+the maker API via the <a href="https://discord.gg/valorem">Valorem discord</a>.</p>
   </li>
   <li>
-    <p><strong>Taker</strong>: Takers are users who request quotes from makers and optionally
-execute signed offers via the Seaport smart contracts.</p>
+    <p><strong>Taker</strong>: Takers request quotes from makers and optionally
+execute signed offers via the Seaport smart contracts. Takers are presently
+required to possess a <a href="https://opensea.io/collection/valorem-access-pass">Valorem Access Pass</a> to access the API.</p>
   </li>
 </ul>
 
-<h2 id="api-overview">API overview</h2>
+<p>These protections are in place to ensure that the API is not abused during the
+early access period.</p>
 
-<p>The Valorem Trade API is composed of an RFQ (request-for-quote) service, and an Auth service
-using <a href="https://docs.login.xyz/general-information/siwe-overview">SIWE (Sign-In with Ethereum)</a>.
-The RFQ service allows authenticated takers to request quotes from makers, and authenticated
-makers to return signed offers. Takers can then execute those signed offers
-via Seaport. The Auth service enables users to authenticate themselves and obtain the necessary
-credentials to access the other services provided by the API.</p>
+<h2 id="tls-certificate-authority">TLS Certificate Authority</h2>
 
-<h2 id="health">Health</h2>
+<p>The Valorem Trade API uses the GoDaddy Root TLS certificate authority (CA) to
+issue certificates; some protobuf clients may need to add this CA, which can be
+found <a href="certs/trade.valorem.xyz.pem">here</a>.</p>
 
-<p>The Valorem Trade API uses
-the <a href="https://github.com/grpc/grpc/blob/master/doc/health-checking.md">gRPC health checking protocol</a>
-to provide a general health check endpoint, as well as endpoints for each of the services.
-Health checks for each service are available via <code class="language-plaintext highlighter-rouge">valorem.trade.v1.&lt;service&gt;</code>.</p>
+<h2 id="alpn">ALPN</h2>
+
+<p>The Valorem Trade API supports HTTP/2 via the <code class="language-plaintext highlighter-rouge">h2</code> ALPN protocol.</p>
+
+<h2 id="keepalives-and-timeouts">Keepalives and timeouts</h2>
+
+<p>The Valorem Trade API sends HTTP/2 keepalives every 75 seconds and times out
+after 10 seconds if a response is not received. Users of the API should use HTTP/2
+keepalives, and not issue TCP keepalives.</p>
 
 <h2 id="errors-and-status-codes">Errors and status codes</h2>
 
@@ -391,6 +403,12 @@ indicate the success or failure of an API call.</p>
 
 <p>This allows the client to programmatically determine the cause of an error and
 take appropriate action.</p>
+
+<h2 id="rate-limiting">Rate limiting</h2>
+
+<p>Rate limits are applied to certain services and methods in the Valorem Trade API.
+These rate limits are subject to change and are not guaranteed. Details about
+any applied rate limits can be found on the service and method documentation.</p>
 
 <h2 id="primitive-data-types">Primitive data types</h2>
 
@@ -653,19 +671,36 @@ tokens.</li>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h2 id="auth-service">Auth service</h2>
+<h2 id="api-services">API Services</h2>
+
+<h3 id="health">Health</h3>
+
+<p>The Valorem Trade API uses
+the <a href="https://github.com/grpc/grpc/blob/master/doc/health-checking.md">gRPC health checking protocol</a>
+to provide a general health check endpoint, as well as endpoints for each of the services.
+Health checks for each service are available via <code class="language-plaintext highlighter-rouge">grpc.health.v1.Health</code>, queryable
+by passing the Valorem service name <code class="language-plaintext highlighter-rouge">valorem.trade.v1.&lt;service&gt;</code>.</p>
+
+<h3 id="reflection">Reflection</h3>
+
+<p>The Valorem Trade API uses the <a href="https://github.com/grpc/grpc/blob/master/doc/server-reflection.md">gRPC reflection protocol</a>
+to provide service discovery and reflection. Reflection is available
+via <code class="language-plaintext highlighter-rouge">grpc.reflection.v1alpha.ServerReflection</code>.</p>
+
+<h3 id="auth-service">Auth service</h3>
 
 <p>The Authentication Service in Valorem Trade API enables users to authenticate
-themselves via SIWE, and receive the necessary credentials to access the other
+themselves via <a href="https://docs.login.xyz/general-information/siwe-overview">Sign-In with Ethereum</a> (SIWE),
+and receive the necessary credentials to access the other
 services provided by the API. The Auth service uses session cookies to store
 authentication information. Auth sessions are backed by
 cryptographically signed cookies. These cookies are generated when they’re
 not found or are otherwise invalid. When a valid, known cookie is received
-in a request, the session is hydrated from this cookie. These cookies validated
-server-side. This provides compatibility with both browser and
-non-browser clients “out of the box”.</p>
+in a request, the session is hydrated from this cookie. These cookies are validated
+server-side. This provides “out-of-the-box” compatibility with both browser and
+non-browser clients.</p>
 
-<p>Non browser clients must implement cookie storage and management themselves.</p>
+<p>Non-browser clients must implement cookie storage and management themselves.</p>
 
 <p>This service supports gRPC and gRPC-web clients.</p>
 
@@ -674,9 +709,9 @@ non-browser clients “out of the box”.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="methods">Methods</h3>
+<h4 id="methods">Methods</h4>
 
-<h4 id="nonce"><code class="language-plaintext highlighter-rouge">Nonce</code></h4>
+<h5 id="nonce"><code class="language-plaintext highlighter-rouge">Nonce</code></h5>
 
 <p>Returns an <a href="https://eips.ethereum.org/EIPS/eip-4361">EIP-4361</a> nonce for the
 session and invalidates any existing session. This method resets session cookie,
@@ -685,14 +720,14 @@ which is passed back on the request.</p>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Nonce</span> <span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">NonceText</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request">Unary request</h5>
+<h6 id="unary-request">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
 </code></pre></div></div>
 
-<h5 id="unary-response">Unary response</h5>
+<h6 id="unary-response">Unary response</h6>
 
-<h6 id="0-ok">0 OK</h6>
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
 
 <p>The request was successful.</p>
 
@@ -706,7 +741,7 @@ which is passed back on the request.</p>
 used to prevent replay attacks, at least 8 alphanumeric characters UTF-8 encoded as plaintext.</li>
 </ul>
 
-<h4 id="verify"><code class="language-plaintext highlighter-rouge">Verify</code></h4>
+<h5 id="verify"><code class="language-plaintext highlighter-rouge">Verify</code></h5>
 
 <p>Verifies a valid SIWE message and returns the Ethereum address of the signer.
 Upon successful verification, the Auth session is updated.</p>
@@ -714,7 +749,7 @@ Upon successful verification, the Auth session is updated.</p>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Verify</span> <span class="p">(</span><span class="n">VerifyText</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">H160</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request-1">Unary request</h5>
+<h6 id="unary-request-1">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">VerifyText</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">body</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -735,9 +770,9 @@ string: <code class="language-plaintext highlighter-rouge">I accept the Valorem 
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<h5 id="unary-response-1">Unary response</h5>
+<h6 id="unary-response-1">Unary response</h6>
 
-<h6 id="0-ok-1">0 OK</h6>
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
 
 <p>The request was successful, the response is the verified 160-bit address as an <code class="language-plaintext highlighter-rouge">H160</code>.</p>
 
@@ -745,7 +780,7 @@ string: <code class="language-plaintext highlighter-rouge">I accept the Valorem 
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="authenticate"><code class="language-plaintext highlighter-rouge">Authenticate</code></h4>
+<h5 id="authenticate"><code class="language-plaintext highlighter-rouge">Authenticate</code></h5>
 
 <p>Checks if a given connection is authenticated and returns the authenticated
 address for an Auth session.</p>
@@ -753,14 +788,14 @@ address for an Auth session.</p>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Authenticate</span> <span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">H160</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request-2">Unary request</h5>
+<h6 id="unary-request-2">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
 </code></pre></div></div>
 
-<h5 id="unary-response-2">Unary response</h5>
+<h6 id="unary-response-2">Unary response</h6>
 
-<h6 id="0-ok-2">0 OK</h6>
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
 
 <p>The request was successful, the response is the authenticated 160-bit address as an <code class="language-plaintext highlighter-rouge">H160</code>.</p>
 
@@ -769,7 +804,7 @@ address for an Auth session.</p>
 
 </code></pre></div></div>
 
-<h2 id="fees-service">Fees service</h2>
+<h3 id="fees">Fees</h3>
 
 <p>The Fees Service in Valorem Trade API provides information about the fees which
 must be paid to use the API. The Fees service uses session cookies to store
@@ -785,21 +820,21 @@ various users.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="methods-1">Methods</h3>
+<h4 id="methods-1">Methods</h4>
 
-<h4 id="getfeestructure"><code class="language-plaintext highlighter-rouge">getFeeStructure</code></h4>
+<h5 id="getfeestructure"><code class="language-plaintext highlighter-rouge">getFeeStructure</code></h5>
 
 <p>Returns the <code class="language-plaintext highlighter-rouge">FeeStructure</code> for a user.</p>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">getFeeStructure</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">FeeStructure</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request-3">Unary request</h5>
+<h6 id="unary-request-3">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
 </code></pre></div></div>
 
-<h5 id="unary-response-3">Unary response</h5>
+<h6 id="unary-response-3">Unary response</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">FeeStructure</span> <span class="p">{</span>
   <span class="n">TradeFees</span> <span class="na">maker</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -811,9 +846,11 @@ various users.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
+<p>Fees expressed as positive integers, rebates are expressed as negative integers.</p>
+
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">maker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fees for a maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">taker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fees for a taker.</li>
+  <li><code class="language-plaintext highlighter-rouge">maker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fee or rebate for a maker.</li>
+  <li><code class="language-plaintext highlighter-rouge">taker</code> (<code class="language-plaintext highlighter-rouge">TradeFees</code>): The fee or rebate for a taker.</li>
   <li><code class="language-plaintext highlighter-rouge">clear_write_notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on notional value written via Clear expressed in basis points.</li>
   <li><code class="language-plaintext highlighter-rouge">clear_redeemed_notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on underlying asset notional value redeemed via Clear
 expressed in basis points.</li>
@@ -832,14 +869,13 @@ points.</li>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">notional_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on notional value traded expressed in basis points.</li>
-  <li><code class="language-plaintext highlighter-rouge">premium_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on premia or credit value traded expressed in basis points.</li>
+  <li><code class="language-plaintext highlighter-rouge">premium_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on premium value traded expressed in basis points.</li>
   <li><code class="language-plaintext highlighter-rouge">spot_bps</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A fee or rebate on spot value traded expressed in basis points.</li>
   <li><code class="language-plaintext highlighter-rouge">flat</code> (<code class="language-plaintext highlighter-rouge">int32</code>): A flat relayer fee or rebate expressed in 1e-6 USDC (dust) - used for non-valued
 offers/considerations such as NFTs.</li>
-  <li></li>
 </ul>
 
-<h2 id="rfq-service">RFQ service</h2>
+<h3 id="rfq">RFQ</h3>
 
 <p>The RFQ (Request for Quote) service of the Valorem Trade API allows authenticated
 takers to request quotes from makers, for those makers to respond with signed
@@ -851,11 +887,45 @@ trades on the Seaport smart contracts. It acts as a peer-to-peer signature relay
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="authentication">Authentication</h3>
+<h4 id="trading-valorem-clear-options">Trading Valorem Clear Options</h4>
 
-<p>Only authenticated users can access the RFQ service.</p>
+<p>These constraints must be followed to get a hard-quote for a Valorem Clear option via the RFQ:</p>
 
-<h3 id="fees">Fees</h3>
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">ItemType</code> must be <code class="language-plaintext highlighter-rouge">Erc1155</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">token_address</code> must be <code class="language-plaintext highlighter-rouge">0x402A401B1944EBb5A3030F36Aa70d6b5794190c9</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> must be the <code class="language-plaintext highlighter-rouge">optionId</code> of the long options token.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">amount</code> must not <code class="language-plaintext highlighter-rouge">None</code> and non-zero (i.e. you are looking to buy/sell options)</li>
+  <li>The <code class="language-plaintext highlighter-rouge">action</code> must be <code class="language-plaintext highlighter-rouge">Buy</code> or <code class="language-plaintext highlighter-rouge">Sell</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">seaport_address</code> must be set to seaport 1.5 (<code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>, which is version 1.5)</li>
+  <li>The <code class="language-plaintext highlighter-rouge">chain_id</code> is supported (i.e. either Arbitrum One <code class="language-plaintext highlighter-rouge">42161</code>, or Arbitrum Goerli <code class="language-plaintext highlighter-rouge">421613</code>).</li>
+  <li>The given <code class="language-plaintext highlighter-rouge">optionId</code> is an <code class="language-plaintext highlighter-rouge">Option</code> and not a <code class="language-plaintext highlighter-rouge">Claim</code> or <code class="language-plaintext highlighter-rouge">None</code> (this is
+determined by calling the <code class="language-plaintext highlighter-rouge">token_type</code> function on the Clear contract).</li>
+  <li>The given <code class="language-plaintext highlighter-rouge">optionId</code> exists (i.e., somebody has called <code class="language-plaintext highlighter-rouge">newOptionType</code> on the
+Clear contract to create the <code class="language-plaintext highlighter-rouge">optionId</code>).</li>
+  <li>The maker supports the <code class="language-plaintext highlighter-rouge">exercise</code> and <code class="language-plaintext highlighter-rouge">underlying</code> tokens:
+    <ul>
+      <li>Presently for Arbitrum One: USDC.e (<code class="language-plaintext highlighter-rouge">0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8</code>),
+and WETH (<code class="language-plaintext highlighter-rouge">0x82aF49447D8a07e3bd95BD0d56f35241523fBab1</code>)</li>
+      <li>For testnet: USDC (<code class="language-plaintext highlighter-rouge">0x8AE0EeedD35DbEFe460Df12A20823eFDe9e03458</code>),
+MAGIC (<code class="language-plaintext highlighter-rouge">0xb795f8278458443f6C43806C020a84EB5109403c</code>),
+GMX (<code class="language-plaintext highlighter-rouge">0x5337deF26Da2506e08e37682b0d6E50b26a704BB</code>),
+WBTC (<code class="language-plaintext highlighter-rouge">0xf8Fe24D6Ea205dd5057aD2e5FE5e313AeFd52f2e</code>),
+WETH (<code class="language-plaintext highlighter-rouge">0x618b9a2Db0CF23Bb20A849dAa2963c72770C1372</code>),
+and LUSD (<code class="language-plaintext highlighter-rouge">0x42dED0b3d65510B5d1857bF26466b3b0b9e0BbbA</code>).
+        <ul>
+          <li>Note: The testnet tokens all have open mints *</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The <code class="language-plaintext highlighter-rouge">exercise</code>, <code class="language-plaintext highlighter-rouge">underlying</code> amounts are not <code class="language-plaintext highlighter-rouge">0</code></li>
+  <li>For a <code class="language-plaintext highlighter-rouge">Buy</code>, it is not less than 30 minutes until the <code class="language-plaintext highlighter-rouge">expiry</code> of the <code class="language-plaintext highlighter-rouge">optionId</code>, and the <code class="language-plaintext highlighter-rouge">optionId</code> is not expired.</li>
+  <li>USDC must be either the <code class="language-plaintext highlighter-rouge">underlying</code> or <code class="language-plaintext highlighter-rouge">exercise</code> asset.</li>
+  <li>A maker must have the liquidity to support the option.</li>
+</ul>
+
+<h5 id="fees-1">Fees</h5>
 
 <p>Responses from the RFQ service are subject to fees.
 Fees are determined by the maker and taker <code class="language-plaintext highlighter-rouge">FeeStructure</code> from the <a href="#fees-service">Fees service</a>.
@@ -863,37 +933,45 @@ The fees must be included in the offer as follows:</p>
 
 <p>For a long Valorem option buy:</p>
 
-<p>Two offer items, one of which is the RFQ’d option long token in the correct quantity, the second of which is a maker
-fee’/rebate in USDC (if any).</p>
-
-<p>Two consideration items, the USDC premia, and a taker fee/rebate in USDC (if any).</p>
+<ul>
+  <li>Two offer items:
+    <ul>
+      <li>the RFQ’d option long token in the correct quantity,</li>
+      <li>a maker fee/rebate in USDC (if any).</li>
+    </ul>
+  </li>
+  <li>Two consideration items:
+    <ul>
+      <li>the USDC premium debit,</li>
+      <li>a taker fee/rebate in USDC (if any).</li>
+    </ul>
+  </li>
+</ul>
 
 <p>For a long Valorem option sell:</p>
 
-<p>Two offer items, one of which is the USDC credit, the other of which is a maker fee in USDC (if any).</p>
+<ul>
+  <li>Two offer items:
+    <ul>
+      <li>the USDC premium credit,</li>
+      <li>a maker fee/rebate in USDC (if any).</li>
+    </ul>
+  </li>
+  <li>Two consideration items:
+    <ul>
+      <li>the RFQ option long token in the correct quantity,</li>
+      <li>a taker fee in fee/rebate in USDC (if any).</li>
+    </ul>
+  </li>
+</ul>
 
-<p>Two consideration items, one of which is the RFQ option long token in the correct quantity, the second of which is a
-taker fee in fee/rebate in USDC (if any).</p>
+<h4 id="authentication-and-authorization">Authentication and authorization</h4>
 
-<p>For a short Valorem option buy:</p>
+<p>Only authenticated and authorized users can access the RFQ service.</p>
 
-<p>Two offer items, one of which is an unexercised claim for the RFQ’d option type in the correct quantity, the second of
-which is the maker fee/rebate in USDC (if any).</p>
+<h4 id="methods-2">Methods</h4>
 
-<p>Three consideration items, &gt;= the USDC notional value at spot as quoted from uniswap, the USDC premia, the taker
-fee/rebate in USDC (if any).</p>
-
-<p>For a short Valorem option sell:</p>
-
-<p>Three offer items, &gt;= the USDC notional value at spot as quoted from uniswap, the USDC premia, the maker fee/rebate in
-USDC (if any).</p>
-
-<p>Two consideration items, one of which is an unexercised claim for the RFQ’d option type in the correct quantity, the
-second of which is the taker fee/rebate in USDC (if any).</p>
-
-<h3 id="methods-2">Methods</h3>
-
-<h4 id="taker"><code class="language-plaintext highlighter-rouge">Taker</code></h4>
+<h5 id="taker"><code class="language-plaintext highlighter-rouge">Taker</code></h5>
 
 <p>Request quotes from makers via a stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code> messages and receive
 a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messages.</p>
@@ -901,7 +979,7 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Taker</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteResponse</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="request-stream">Request stream</h5>
+<h6 id="request-stream">Request stream</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -917,19 +995,20 @@ a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</co
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This gets populated by the API.</li>
   <li><code class="language-plaintext highlighter-rouge">taker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the taker, used to tailor an RFQ for the taker.</li>
   <li><code class="language-plaintext highlighter-rouge">item_type</code> (<code class="language-plaintext highlighter-rouge">ItemType</code>): The type of item for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">token_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The token address for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request. Must specify a supported chain.
+Supported chains are <code class="language-plaintext highlighter-rouge">[42161, 421613]</code>. Defaults to <code class="language-plaintext highlighter-rouge">421613</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
-<h5 id="response-stream">Response stream</h5>
+<h6 id="response-stream">Response stream</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -941,15 +1020,15 @@ to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
-<h4 id="maker"><code class="language-plaintext highlighter-rouge">Maker</code></h4>
+<h5 id="maker"><code class="language-plaintext highlighter-rouge">Maker</code></h5>
 
 <p>Send quotes to takers via a stream of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messages and receive a
 stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code> messages.</p>
@@ -957,7 +1036,7 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Maker</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteResponse</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteRequest</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="request-stream-1">Request stream</h5>
+<h6 id="request-stream-1">Request stream</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -969,15 +1048,15 @@ stream of <code class="language-plaintext highlighter-rouge">QuoteRequest</code>
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
-<h5 id="response-stream-1">Response stream</h5>
+<h6 id="response-stream-1">Response stream</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -993,19 +1072,20 @@ to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">taker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the taker.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This gets populated by the API.</li>
+  <li><code class="language-plaintext highlighter-rouge">taker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the taker, used to tailor an RFQ for the taker.</li>
   <li><code class="language-plaintext highlighter-rouge">item_type</code> (<code class="language-plaintext highlighter-rouge">ItemType</code>): The type of item for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">token_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The token address for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request. Must specify a supported chain.
+Supported chains are <code class="language-plaintext highlighter-rouge">[42161, 421613]</code>. Defaults to <code class="language-plaintext highlighter-rouge">421613</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
-<h4 id="webtaker"><code class="language-plaintext highlighter-rouge">WebTaker</code></h4>
+<h5 id="webtaker"><code class="language-plaintext highlighter-rouge">WebTaker</code></h5>
 
 <p>Quotes from makers via a unary <code class="language-plaintext highlighter-rouge">QuoteRequest</code> message and receive a stream
 of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messages for use by gRPC-web clients such as browsers.</p>
@@ -1013,7 +1093,7 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">WebTaker</span> <span class="p">(</span><span class="n">QuoteRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteResponse</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h5 id="unary-request-4">Unary request</h5>
+<h6 id="unary-request-4">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -1029,19 +1109,20 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">taker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the taker.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This gets populated by the API.</li>
+  <li><code class="language-plaintext highlighter-rouge">taker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the taker, used to tailor an RFQ for the taker.</li>
   <li><code class="language-plaintext highlighter-rouge">item_type</code> (<code class="language-plaintext highlighter-rouge">ItemType</code>): The type of item for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">token_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The token address for which a quote is being requested.</li>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The identifier or criteria for the item.</li>
   <li><code class="language-plaintext highlighter-rouge">amount</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The amount of the item.</li>
   <li><code class="language-plaintext highlighter-rouge">action</code> (<code class="language-plaintext highlighter-rouge">Action</code>): The action (<code class="language-plaintext highlighter-rouge">BUY</code> or <code class="language-plaintext highlighter-rouge">SELL</code>) for the quote request.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the quote request. Must specify a supported chain.
+Supported chains are <code class="language-plaintext highlighter-rouge">[42161, 421613]</code>. Defaults to <code class="language-plaintext highlighter-rouge">421613</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the quote request, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
 
-<h5 id="response-stream-2">Response stream</h5>
+<h6 id="response-stream-2">Response stream</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteResponse</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -1053,10 +1134,10 @@ to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf
 </code></pre></div></div>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request.</li>
+  <li><code class="language-plaintext highlighter-rouge">ulid</code> (<code class="language-plaintext highlighter-rouge">H128</code>, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.</li>
   <li><code class="language-plaintext highlighter-rouge">maker_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The address of the maker making the offer.</li>
   <li><code class="language-plaintext highlighter-rouge">order</code> (<code class="language-plaintext highlighter-rouge">SignedOrder</code>): The order and signature from the maker.</li>
-  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer, defaults to chainid <code class="language-plaintext highlighter-rouge">42161</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.</li>
   <li><code class="language-plaintext highlighter-rouge">seaport_address</code> (<code class="language-plaintext highlighter-rouge">H160</code>, optional): The Seaport address for the offer, defaults
 to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC</code>.</li>
 </ul>
@@ -1066,7 +1147,7 @@ to <code class="language-plaintext highlighter-rouge">0x00000000000000ADc04C56Bf
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#api-overview" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API overview</a></li><li class=""><a href="#health" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Health</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#fees-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fees service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#methods-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li><li class=""><a href="#rfq-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ service</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#authentication" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Authentication</a></li><li class=""><a href="#fees" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fees</a></li><li class=""><a href="#methods-2" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Methods</a></li></ol></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#background" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Background</a></li><li class=""><a href="#deployments" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Deployments</a></li><li class=""><a href="#user-roles" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">User roles</a></li><li class=""><a href="#tls-certificate-authority" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">TLS Certificate Authority</a></li><li class=""><a href="#alpn" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ALPN</a></li><li class=""><a href="#keepalives-and-timeouts" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Keepalives and timeouts</a></li><li class=""><a href="#errors-and-status-codes" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors and status codes</a></li><li class=""><a href="#rate-limiting" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Rate limiting</a></li><li class=""><a href="#primitive-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Primitive data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#h40" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H40</a></li><li class=""><a href="#h96" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H96</a></li><li class=""><a href="#h128" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H128</a></li><li class=""><a href="#h160" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H160</a></li><li class=""><a href="#h256" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">H256</a></li><li class=""><a href="#empty" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Empty</a></li><li class=""><a href="#ethsignature" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">EthSignature</a></li></ol></li><li class=""><a href="#seaport-data-types" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Seaport data types</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#itemtype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ItemType</a></li><li class=""><a href="#considerationitem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">ConsiderationItem</a></li><li class=""><a href="#offeritem" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OfferItem</a></li><li class=""><a href="#ordertype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">OrderType</a></li><li class=""><a href="#order" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Order</a></li><li class=""><a href="#signedorder" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">SignedOrder</a></li></ol></li><li class=""><a href="#api-services" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">API Services</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#health" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Health</a></li><li class=""><a href="#reflection" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Reflection</a></li><li class=""><a href="#auth-service" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Auth service</a></li><li class=""><a href="#fees" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fees</a></li><li class=""><a href="#rfq" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">RFQ</a></li></ol></li></ol>
             </div>
         </nav>
     </div>
