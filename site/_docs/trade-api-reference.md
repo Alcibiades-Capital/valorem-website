@@ -1,45 +1,58 @@
 ---
-date: 2023-06-07 00:00:00
+date: 2023-11-03 00:03:16
+
 title: Valorem Trade API - Low-latency off-chain intent based RFQ
 description: Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem's advanced intent based RFQ. 
 ---
 
-The Valorem Trade API enables peer-to-peer, signature based, noncustodial
+*Version: 1.0.4*
+
+## Background
+
+The Valorem Trade API enables peer-to-peer, signature-based, noncustodial
 digital asset trading via low latency [gRPC](https://grpc.io/docs/what-is-grpc/introduction/) and
 [gRPC-web](https://github.com/grpc/grpc-web)
 TLS-encrypted [version 3 protocol buffer](https://protobuf.dev/programming-guides/proto3/)
 interfaces, with order settlement via
 the [Seaport smart contracts](https://github.com/ProjectOpenSea/seaport).
-The complete protocol buffer definitions can be found
-in [this repository](https://github.com/valorem-labs-inc/trade-interfaces).
+The complete protobuf definitions can be found
+[here](https://github.com/valorem-labs-inc/trade-interfaces/tree/main/proto/).
 
-The public endpoint for the exchange is `https://trade.valorem.xyz`.
+## Deployments
+
+The public endpoint for the Valorem Trade API is `https://trade.valorem.xyz`.
 
 ## User roles
 
 There are two principal user roles in the Valorem Trade API:
 
-- **Maker**: Makers are users who sign offers in response to a request for quote.
-  They are responsible for fulfilling orders when a taker agrees to their quotes.
+- **Maker**: Makers sign offers in response to requests for quotes (RFQs).
+  They are responsible for having the requisite assets when a taker optionally
+  fills their signed offer. Makers are presently required to request access to
+  the maker API via the [Valorem discord](https://discord.gg/valorem).
 
-- **Taker**: Takers are users who request quotes from makers and optionally
-  execute signed offers via the Seaport smart contracts.
+- **Taker**: Takers request quotes from makers and optionally
+  execute signed offers via the Seaport smart contracts. Takers are presently
+  required to possess a [Valorem Access Pass](https://opensea.io/collection/valorem-access-pass) to access the API.
 
-## API overview
+These protections are in place to ensure that the API is not abused during the
+early access period.
 
-The Valorem Trade API is composed of an RFQ (request-for-quote) service, and an Auth service
-using [SIWE (Sign-In with Ethereum)](https://docs.login.xyz/general-information/siwe-overview).
-The RFQ service allows authenticated takers to request quotes from makers, and authenticated
-makers to return signed offers. Takers can then execute those signed offers
-via Seaport. The Auth service enables users to authenticate themselves and obtain the necessary
-credentials to access the other services provided by the API.
+## TLS Certificate Authority
 
-## Health
+The Valorem Trade API uses the GoDaddy Root TLS certificate authority (CA) to
+issue certificates; some protobuf clients may need to add this CA, which can be
+found [here](certs/trade.valorem.xyz.pem).
 
-The Valorem Trade API uses
-the [gRPC health checking protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md)
-to provide a general health check endpoint, as well as endpoints for each of the services.
-Health checks for each service are available via `valorem.trade.v1.<service>`.
+## ALPN
+
+The Valorem Trade API supports HTTP/2 via the `h2` ALPN protocol.
+
+## Keepalives and timeouts
+
+The Valorem Trade API sends HTTP/2 keepalives every 75 seconds and times out
+after 10 seconds if a response is not received. Users of the API should use HTTP/2
+keepalives, and not issue TCP keepalives.
 
 ## Errors and status codes
 
@@ -49,6 +62,12 @@ indicate the success or failure of an API call.
 
 This allows the client to programmatically determine the cause of an error and
 take appropriate action.
+
+## Rate limiting
+
+Rate limits are applied to certain services and methods in the Valorem Trade API.
+These rate limits are subject to change and are not guaranteed. Details about
+any applied rate limits can be found on the service and method documentation.
 
 ## Primitive data types
 
@@ -264,13 +283,13 @@ message Order {
   on-chain (i.e. calling `validate`).
 - `zone`: An optional secondary account attached to the
   order with two additional privileges:
-    - The zone may cancel orders where it is named as the zone by calling
-      cancel. (Note that `offerer`s can also cancel their own orders, either
-      individually or for all orders signed with their current counter at
-      once by calling `incrementCounter`).
-    - "Restricted" orders (as specified by the `order_type`) must either be
-      executed by the zone or the `offerer`, or must be approved as indicated
-      by a call to an `validateOrder` on the `zone`.
+  - The zone may cancel orders where it is named as the zone by calling
+    cancel. (Note that `offerer`s can also cancel their own orders, either
+    individually or for all orders signed with their current counter at
+    once by calling `incrementCounter`).
+  - "Restricted" orders (as specified by the `order_type`) must either be
+    executed by the zone or the `offerer`, or must be approved as indicated
+    by a call to an `validateOrder` on the `zone`.
 - `offer`: Contains an array of items that may be transferred
   from the `offerer`'s account.
 - `consideration`: Contains an array of items that must be received
@@ -313,19 +332,36 @@ message SignedOrder {
 }
 ```
 
-## Auth service
+## API Services
+
+### Health
+
+The Valorem Trade API uses
+the [gRPC health checking protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md)
+to provide a general health check endpoint, as well as endpoints for each of the services.
+Health checks for each service are available via `grpc.health.v1.Health`, queryable
+by passing the Valorem service name `valorem.trade.v1.<service>`.
+
+### Reflection
+
+The Valorem Trade API uses the [gRPC reflection protocol](https://github.com/grpc/grpc/blob/master/doc/server-reflection.md)
+to provide service discovery and reflection. Reflection is available
+via `grpc.reflection.v1alpha.ServerReflection`.
+
+### Auth service
 
 The Authentication Service in Valorem Trade API enables users to authenticate
-themselves via SIWE, and receive the necessary credentials to access the other
+themselves via [Sign-In with Ethereum](https://docs.login.xyz/general-information/siwe-overview) (SIWE),
+and receive the necessary credentials to access the other
 services provided by the API. The Auth service uses session cookies to store
 authentication information. Auth sessions are backed by
 cryptographically signed cookies. These cookies are generated when they’re
 not found or are otherwise invalid. When a valid, known cookie is received
-in a request, the session is hydrated from this cookie. These cookies validated
-server-side. This provides compatibility with both browser and
-non-browser clients "out of the box".
+in a request, the session is hydrated from this cookie. These cookies are validated
+server-side. This provides "out-of-the-box" compatibility with both browser and
+non-browser clients.
 
-Non browser clients must implement cookie storage and management themselves.
+Non-browser clients must implement cookie storage and management themselves.
 
 This service supports gRPC and gRPC-web clients.
 
@@ -335,9 +371,9 @@ service Auth {
 }
 ```
 
-### Methods
+#### Methods
 
-#### `Nonce`
+##### `Nonce`
 
 Returns an [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) nonce for the
 session and invalidates any existing session. This method resets session cookie,
@@ -347,15 +383,15 @@ which is passed back on the request.
 rpc Nonce (Empty) returns (NonceText);
 ```
 
-##### Unary request
+###### Unary request
 
 ```protobuf
 message Empty {}
 ```
 
-##### Unary response
+###### Unary response
 
-###### 0 OK
+`0 OK`
 
 The request was successful.
 
@@ -368,7 +404,7 @@ message NonceText {
 - `nonce` (`string`): a randomized token typically chosen by the Trade API, and
   used to prevent replay attacks, at least 8 alphanumeric characters UTF-8 encoded as plaintext.
 
-#### `Verify`
+##### `Verify`
 
 Verifies a valid SIWE message and returns the Ethereum address of the signer.
 Upon successful verification, the Auth session is updated.
@@ -377,7 +413,7 @@ Upon successful verification, the Auth session is updated.
 rpc Verify (VerifyText) returns (H160);
 ```
 
-##### Unary request
+###### Unary request
 
 ```protobuf
 message VerifyText {
@@ -398,9 +434,9 @@ Example signed and JSON encoded message:
 }
 ```
 
-##### Unary response
+###### Unary response
 
-###### 0 OK
+`0 OK`
 
 The request was successful, the response is the verified 160-bit address as an `H160`.
 
@@ -409,7 +445,7 @@ message H160 {
 }
 ```
 
-#### `Authenticate`
+##### `Authenticate`
 
 Checks if a given connection is authenticated and returns the authenticated
 address for an Auth session.
@@ -418,15 +454,15 @@ address for an Auth session.
 rpc Authenticate (Empty) returns (H160);
 ```
 
-##### Unary request
+###### Unary request
 
 ```protobuf
 message Empty {}
 ```
 
-##### Unary response
+###### Unary response
 
-###### 0 OK
+`0 OK`
 
 The request was successful, the response is the authenticated 160-bit address as an `H160`.
 
@@ -436,7 +472,7 @@ message H160 {
 
 ```
 
-## Fees service
+### Fees
 
 The Fees Service in Valorem Trade API provides information about the fees which
 must be paid to use the API. The Fees service uses session cookies to store
@@ -453,9 +489,9 @@ service Fees {
 }
 ```
 
-### Methods
+#### Methods
 
-#### `getFeeStructure`
+##### `getFeeStructure`
 
 Returns the `FeeStructure` for a user.
 
@@ -463,13 +499,13 @@ Returns the `FeeStructure` for a user.
 rpc getFeeStructure(Empty) returns (FeeStructure);
 ```
 
-##### Unary request
+###### Unary request
 
 ```protobuf
 message Empty {}
 ```
 
-##### Unary response
+###### Unary response
 
 ```protobuf
 message FeeStructure {
@@ -482,8 +518,10 @@ message FeeStructure {
 }
 ```
 
-- `maker` (`TradeFees`): The fees for a maker.
-- `taker` (`TradeFees`): The fees for a taker.
+Fees expressed as positive integers, rebates are expressed as negative integers.
+
+- `maker` (`TradeFees`): The fee or rebate for a maker.
+- `taker` (`TradeFees`): The fee or rebate for a taker.
 - `clear_write_notional_bps` (`int32`): A fee or rebate on notional value written via Clear expressed in basis points.
 - `clear_redeemed_notional_bps` (`int32`): A fee or rebate on underlying asset notional value redeemed via Clear
   expressed in basis points.
@@ -501,13 +539,12 @@ message TradeFees {
 ```
 
 - `notional_bps` (`int32`): A fee or rebate on notional value traded expressed in basis points.
-- `premium_bps` (`int32`): A fee or rebate on premia or credit value traded expressed in basis points.
+- `premium_bps` (`int32`): A fee or rebate on premium value traded expressed in basis points.
 - `spot_bps` (`int32`): A fee or rebate on spot value traded expressed in basis points.
 - `flat` (`int32`): A flat relayer fee or rebate expressed in 1e-6 USDC (dust) - used for non-valued
   offers/considerations such as NFTs.
-- 
 
-## RFQ service
+### RFQ
 
 The RFQ (Request for Quote) service of the Valorem Trade API allows authenticated
 takers to request quotes from makers, for those makers to respond with signed
@@ -520,11 +557,37 @@ service RFQ {
 }
 ```
 
-### Authentication
+#### Trading Valorem Clear Options
 
-Only authenticated users can access the RFQ service.
+These constraints must be followed to get a hard-quote for a Valorem Clear option via the RFQ:
 
-### Fees
+- The `ItemType` must be `Erc1155`
+- The `token_address` must be `0x402A401B1944EBb5A3030F36Aa70d6b5794190c9`
+- The `identifier_or_criteria` must be the `optionId` of the long options token.
+- The `amount` must not `None` and non-zero (i.e. you are looking to buy/sell options)
+- The `action` must be `Buy` or `Sell`
+- The `seaport_address` must be set to seaport 1.5 (`0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`, which is version 1.5)
+- The `chain_id` is supported (i.e. either Arbitrum One `42161`, or Arbitrum Goerli `421613`).
+- The given `optionId` is an `Option` and not a `Claim` or `None` (this is
+  determined by calling the `token_type` function on the Clear contract).
+- The given `optionId` exists (i.e., somebody has called `newOptionType` on the
+  Clear contract to create the `optionId`).
+- The maker supports the `exercise` and `underlying` tokens:
+  - Presently for Arbitrum One: USDC.e (`0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8`),
+    and WETH (`0x82aF49447D8a07e3bd95BD0d56f35241523fBab1`)
+  - For testnet: USDC (`0x8AE0EeedD35DbEFe460Df12A20823eFDe9e03458`),
+    MAGIC (`0xb795f8278458443f6C43806C020a84EB5109403c`),
+    GMX (`0x5337deF26Da2506e08e37682b0d6E50b26a704BB`),
+    WBTC (`0xf8Fe24D6Ea205dd5057aD2e5FE5e313AeFd52f2e`),
+    WETH (`0x618b9a2Db0CF23Bb20A849dAa2963c72770C1372`),
+    and LUSD (`0x42dED0b3d65510B5d1857bF26466b3b0b9e0BbbA`).
+    * Note: The testnet tokens all have open mints *
+- The `exercise`, `underlying` amounts are not `0`
+- For a `Buy`, it is not less than 30 minutes until the `expiry` of the `optionId`, and the `optionId` is not expired.
+- USDC must be either the `underlying` or `exercise` asset.
+- A maker must have the liquidity to support the option.
+
+##### Fees
 
 Responses from the RFQ service are subject to fees.
 Fees are determined by the maker and taker `FeeStructure` from the [Fees service](#fees-service).
@@ -532,37 +595,29 @@ The fees must be included in the offer as follows:
 
 For a long Valorem option buy:
 
-Two offer items, one of which is the RFQ'd option long token in the correct quantity, the second of which is a maker
-fee'/rebate in USDC (if any).
-
-Two consideration items, the USDC premia, and a taker fee/rebate in USDC (if any).
+- Two offer items:
+  - the RFQ'd option long token in the correct quantity,
+  - a maker fee/rebate in USDC (if any).
+- Two consideration items:
+  - the USDC premium debit,
+  - a taker fee/rebate in USDC (if any).
 
 For a long Valorem option sell:
 
-Two offer items, one of which is the USDC credit, the other of which is a maker fee in USDC (if any).
+- Two offer items:
+  - the USDC premium credit,
+  - a maker fee/rebate in USDC (if any).
+- Two consideration items:
+  - the RFQ option long token in the correct quantity,
+  - a taker fee in fee/rebate in USDC (if any).
 
-Two consideration items, one of which is the RFQ option long token in the correct quantity, the second of which is a
-taker fee in fee/rebate in USDC (if any).
+#### Authentication and authorization
 
-For a short Valorem option buy:
+Only authenticated and authorized users can access the RFQ service.
 
-Two offer items, one of which is an unexercised claim for the RFQ'd option type in the correct quantity, the second of
-which is the maker fee/rebate in USDC (if any).
+#### Methods
 
-Three consideration items, >= the USDC notional value at spot as quoted from uniswap, the USDC premia, the taker
-fee/rebate in USDC (if any).
-
-For a short Valorem option sell:
-
-Three offer items, >= the USDC notional value at spot as quoted from uniswap, the USDC premia, the maker fee/rebate in
-USDC (if any).
-
-Two consideration items, one of which is an unexercised claim for the RFQ'd option type in the correct quantity, the
-second of which is the taker fee/rebate in USDC (if any).
-
-### Methods
-
-#### `Taker`
+##### `Taker`
 
 Request quotes from makers via a stream of `QuoteRequest` messages and receive
 a stream of `QuoteResponse` messages.
@@ -571,7 +626,7 @@ a stream of `QuoteResponse` messages.
 rpc Taker (stream QuoteRequest) returns (stream QuoteResponse);
 ```
 
-##### Request stream
+###### Request stream
 
 ```protobuf
 message QuoteRequest {
@@ -587,18 +642,19 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This gets populated by the API.
 - `taker_address` (`H160`, optional): The address of the taker, used to tailor an RFQ for the taker.
 - `item_type` (`ItemType`): The type of item for which a quote is being requested.
 - `token_address` (`H160`, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the quote request. Must specify a supported chain.
+  Supported chains are `[42161, 421613]`. Defaults to `421613`.
 - `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
-##### Response stream
+###### Response stream
 
 ```protobuf
 message QuoteResponse {
@@ -610,14 +666,14 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.
 - `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
-#### `Maker`
+##### `Maker`
 
 Send quotes to takers via a stream of `QuoteResponse` messages and receive a
 stream of `QuoteRequest` messages.
@@ -626,7 +682,7 @@ stream of `QuoteRequest` messages.
 rpc Maker (stream QuoteResponse) returns (stream QuoteRequest);
 ```
 
-##### Request stream
+###### Request stream
 
 ```protobuf
 message QuoteResponse {
@@ -638,14 +694,14 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.
 - `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
-##### Response stream
+###### Response stream
 
 ```protobuf
 message QuoteRequest {
@@ -661,18 +717,19 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
-- `taker_address` (`H160`, optional): The address of the taker.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This gets populated by the API.
+- `taker_address` (`H160`, optional): The address of the taker, used to tailor an RFQ for the taker.
 - `item_type` (`ItemType`): The type of item for which a quote is being requested.
 - `token_address` (`H160`, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the quote request. Must specify a supported chain.
+  Supported chains are `[42161, 421613]`. Defaults to `421613`.
 - `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
-#### `WebTaker`
+##### `WebTaker`
 
 Quotes from makers via a unary `QuoteRequest` message and receive a stream
 of `QuoteResponse` messages for use by gRPC-web clients such as browsers.
@@ -681,7 +738,7 @@ of `QuoteResponse` messages for use by gRPC-web clients such as browsers.
 rpc WebTaker (QuoteRequest) returns (stream QuoteResponse);
 ```
 
-##### Unary request
+###### Unary request
 
 ```protobuf
 message QuoteRequest {
@@ -697,18 +754,19 @@ message QuoteRequest {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
-- `taker_address` (`H160`, optional): The address of the taker.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This gets populated by the API.
+- `taker_address` (`H160`, optional): The address of the taker, used to tailor an RFQ for the taker.
 - `item_type` (`ItemType`): The type of item for which a quote is being requested.
 - `token_address` (`H160`, optional): The token address for which a quote is being requested.
 - `identifier_or_criteria` (`H256`, optional): The identifier or criteria for the item.
 - `amount` (`H256`): The amount of the item.
 - `action` (`Action`): The action (`BUY` or `SELL`) for the quote request.
-- `chain_id` (`H256`, optional): The chain ID for the quote request, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the quote request. Must specify a supported chain.
+  Supported chains are `[42161, 421613]`. Defaults to `421613`.
 - `seaport_address` (`H160`, optional): The Seaport address for the quote request, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
 
-##### Response stream
+###### Response stream
 
 ```protobuf
 message QuoteResponse {
@@ -720,9 +778,9 @@ message QuoteResponse {
 }
 ```
 
-- `ulid` (`H128`, optional): The unique identifier for the quote request.
+- `ulid` (`H128`, optional): The unique identifier for the quote request. This must match a quote request to be received by a taker.
 - `maker_address` (`H160`, optional): The address of the maker making the offer.
 - `order` (`SignedOrder`): The order and signature from the maker.
-- `chain_id` (`H256`, optional): The chain ID for the offer, defaults to chainid `42161`.
+- `chain_id` (`H256`, optional): The chain ID for the offer. This must match the quote request chain ID. Defaults to the quote request chain ID matched by ulid.
 - `seaport_address` (`H160`, optional): The Seaport address for the offer, defaults
   to `0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC`.
