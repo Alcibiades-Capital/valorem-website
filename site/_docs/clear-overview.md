@@ -7,27 +7,27 @@ redirect_from:
   - /docs/clearinghouse-overview/
 ---
 
-Welcome to [Valorem's](https://valorem.xyz/) next-gen innovation – Valorem Clear. This powerful clearing system 
-empowers enthusiasts to navigate the world of covered calls, cash-secured puts, and various option types, be it 
+Welcome to [Valorem's](https://valorem.xyz/) next-gen innovation – Valorem Clear. This powerful clearing system
+empowers enthusiasts to navigate the world of covered calls, cash-secured puts, and various option types, be it
 American, European, or Exotic.
 
 ### Dive Into the Blueprint
 
-Version 1 of Valorem Clear is much more than just an engine — it's a symphony of clearing and settling. Users can 
-effortlessly pen options, bring them to fruition, and assert claims on their assets. The elegance lies in the 
-engine's capability to fairly match exercises with written claims. Designed for optimal gas efficiency, this 
+Version 1 of Valorem Clear is much more than just an engine — it's a symphony of clearing and settling. Users can
+effortlessly write options, bring them to fruition, and assert claims on their assets. The elegance lies in the
+engine's capability to fairly match exercises with written claims. Designed for optimal gas efficiency, this
 minimalistic powerhouse offers a rock-solid foundation for building advanced derivatives structures.
 
-Here's the gist: Valorem Clear is in harmony with the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) ethos. So, you can script options for any compliant ERC-20 duo, with a few exceptions. Once penned, these options manifest as semi-fungible Option tokens—tradeable, transferrable, and tangible.
+Here's the gist: Valorem Clear is in harmony with the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) ethos. So, you can create options for any compliant ERC-20 duo, with a few exceptions. Once written, these options manifest as semi-fungible Option tokens—tradeable, transferrable, and tangible.
 
-For those who pen options, their stake in the underlying assets is depicted through a unique Claim token. This token can be redeemed, reflecting the asset's current status, be it exercised or not.
+For those who write options, their stake in the underlying assets is depicted through a unique Claim token. This token can be redeemed, reflecting the asset's current status, be it exercised or not.
 
 To provide a snapshot:
 - **Underlying Asset & Amount:** The ERC-20 asset you'll receive when you exercise.
 - **Exercise Asset & Amount:** The requisite ERC-20 asset and amount for option exercise.
 - **Exercise & Expiry Timestamp:** The windows defining when the option can be exercised.
 
-The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where you purchase it, its profitability upon exercise—Valorem doesn't judge. With every penned option backed to the hilt, the settlement is swift and gas-friendly.
+The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where you purchase it, its profitability upon exercise—Valorem doesn't judge. With every option written, the settlement is swift and gas-friendly.
 
 ## Trust Landscape
 
