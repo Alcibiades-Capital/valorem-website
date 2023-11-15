@@ -150,4 +150,4 @@ While Valorem Clear v1.0.0 has been diligently audited, it is essential to note 
 - Connect with our Security Guardians: info@valorem.xyz
 
 
-\* Valorem Clear is currently not compatible with ERC-20 tokens that have a fee on transfer.
+\* Valorem Clear currently does not support fee-on-transfer or rebasing ERC-20 tokens. Any tokens which alter the quantity a user holds would need to be wrapped in order to be compatible.
