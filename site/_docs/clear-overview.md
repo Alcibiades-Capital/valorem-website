@@ -56,7 +56,7 @@ Valorem Clear.
 
 You can create new option types with clear using the `newOptionType` function,
 specifying the option parameters, and then write using the `write` funtion.
-See the [Clear smart contract ABI](/docs/clear-contracts/) for more detail.
+See the [Clear smart contract ABI](/docs/clear-contracts#write-options) for more detail.
 
 #### Call Option
 A call option gives the holder the right to buy an asset at a specified price
