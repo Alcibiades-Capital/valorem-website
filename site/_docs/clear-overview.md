@@ -22,10 +22,11 @@ capability to fairly match exercises with written claims. Designed for optimal
 gas efficiency, this minimalistic powerhouse offers a foundation for building
 advanced derivatives structures.
 
-Here's the gist: Valorem Clear utilises the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155)
-capabilities. You can create options for any compliant ERC-20 duo. Once written,
-these options manifest as semi-fungible option tokens — tradeable,
-transferrable, and tangible.
+Here's the gist: Valorem Clear utilises the
+[ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155)
+capabilities. You can create options for any compliant ERC-20 duo, with a few
+exceptions*. Once written, these options manifest as semi-fungible option tokens
+ — tradeable, transferrable, and tangible.
 
 For those who write options, their stake in the underlying assets is depicted
 through a unique Claim token, representing the short positon. This token can be
@@ -44,28 +45,29 @@ every option written, the settlement is swift and gas-friendly.
 
 ### Venture Into Creating Options On-Chain
 Valorem is pioneering a new era of flexible permissionless derivatives.
-Every Valorem option is crafted through a set of 6 parameters, providing
-the unparalleled flexibility to conceive options for any pair of ERC-20 assets.
-This is however a novel way of thinking, but we have designed it to be
-lightweight and intuitive for any options trader to transition into the world of
-on-chain options.
+Every Valorem option is crafted through a set of 6 parameters, providing the
+unparalleled flexibility to conceive options for any pair of ERC-20 assets. This
+can be a somewhat unfamiliar way of thinking about options, but we have designed
+it to be lightweight and intuitive for any options trader to transition into the
+world of on-chain options.
 
-Here we will walk through how to create a vanilla call and put, directly with Valorem Clear.
+Here we will walk through how to create a vanilla call and put, directly with
+Valorem Clear.
 
 You can create new option types with clear using the `newOptionType` function,
 specifying the option parameters, and then write using the `write` funtion.
 See the [Clear smart contract ABI](/docs/clear-contracts/) for more detail.
 
 #### Call Option
-A call option gives the holder the right to buy an asset at a specified price (strike
-price) within the exercise window. The option writer (or whoever holds the short
-side token) is obligated to sell the asset at the strike price if the option is
-exercised. For Valorem options, the short side token is the Claim token minted
-upon writing options. This gives the holder claim to the corresponding assets,
-which can be redeemed after the option expires.
+A call option gives the holder the right to buy an asset at a specified price
+(strike price) within the exercise window. The option writer (or whoever holds
+the short side token) is obligated to sell the asset at the strike price if the
+option is exercised. For Valorem options, the short side token is the Claim
+token minted upon writing options. This gives the holder claim to the
+corresponding assets, which can be redeemed after the option expires.
 
-This is how one would construct an American ETH call option, with a strike price of
-$4000, and expiry 2 days from now.
+This is how one would construct an American ETH call option, with a strike price
+of $4000, and expiry 2 days from now.
 
 - `underlyingAsset`: The contract address of WETH
 - `underlyingAmount`: 1 ETH in wei ($1 \times 10^{18}$)
@@ -74,16 +76,16 @@ $4000, and expiry 2 days from now.
 - `exerciseTimestamp`: The timestamp of now
 - `expiryTimestamp`: The timestamp of 2 days from now
 
-The option writer can then `write` their desired number of option contracts, specifying the
-option token id unique to these parameters.
+The option writer can then `write` their desired number of option contracts,
+specifying the option token id unique to these parameters.
 
 #### Put Option
 For a put option, the holder has the right to sell an asset at a specified
 price. Valorem allows put options to be created by swapping the underlying and
 exercise assets. This draws upon a concept called put-call parity.
 
-This is how one would construct an American ETH call option, with a strike price of
-$4000, and expiry 2 days from now.
+This is how one would construct an American ETH call option, with a strike price
+of $4000, and expiry 2 days from now.
 
 - `underlyingAsset`: The contract address of USDC
 - `underlyingAmount`: 4000 USDC in wei ($4000 \times 10^{6}$)
@@ -146,3 +148,6 @@ While Valorem Clear v1.0.0 has been diligently audited, it is essential to note 
 
 - Deep Dives: [Audit Chronicles](https://github.com/valorem-labs-inc/valorem-core/tree/master/audits)
 - Connect with our Security Guardians: info@valorem.xyz
+
+
+\* Valorem Clear is currently not compatible with ERC-20 assets that have a fee on transfer.
