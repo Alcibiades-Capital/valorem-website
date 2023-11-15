@@ -1,33 +1,97 @@
 ---
 date: 2022-11-30 00:00:00
-title: Unraveling Valorem Clear - A Revolution in DeFi Options Clearing
-description: Learn about the transformative capabilities of Valorem Clear, a cutting-edge DeFi clearing and settlement system for options. Understand how it streamlines covered calls, cash-secured puts, and more.
+title: Valorem Clear Ovierview
+description: Learn about the capabilities of Valorem Clear, a cutting-edge DeFi clearing and settlement system for options. Understand how it streamlines covered calls, cash-secured puts, and more.
+usemathjax: true
 redirect_from:
   - /docs/smart-contracts-overview/
   - /docs/clearinghouse-overview/
 ---
 
-Welcome to [Valorem's](https://valorem.xyz/) next-gen innovation – Valorem Clear. This powerful clearing system
-empowers enthusiasts to navigate the world of covered calls, cash-secured puts, and various option types, be it
-American, European, or Exotic.
+Welcome to the heart of Valorem's innovation – Valorem Clear. This powerful
+clearing system empowers enthusiasts to navigate the world of covered calls,
+cash-secured puts, and various option types, be it American, European, or
+Exotic.
 
 ### Dive Into the Blueprint
 
-Version 1 of Valorem Clear is much more than just an engine — it's a symphony of clearing and settling. Users can
-effortlessly write options, bring them to fruition, and assert claims on their assets. The elegance lies in the
-engine's capability to fairly match exercises with written claims. Designed for optimal gas efficiency, this
-minimalistic powerhouse offers a rock-solid foundation for building advanced derivatives structures.
+Version 1 of Valorem Clear is much more than just an engine — it's a symphony
+of clearing and settling. Users can effortlessly write options, bring them to
+fruition, and assert claims on their assets. The elegance lies in the engine's
+capability to fairly match exercises with written claims. Designed for optimal
+gas efficiency, this minimalistic powerhouse offers a foundation for building
+advanced derivatives structures.
 
-Here's the gist: Valorem Clear is in harmony with the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155) ethos. So, you can create options for any compliant ERC-20 duo, with a few exceptions. Once written, these options manifest as semi-fungible Option tokens—tradeable, transferrable, and tangible.
+Here's the gist: Valorem Clear utilises the [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155)
+capabilities. You can create options for any compliant ERC-20 duo. Once written,
+these options manifest as semi-fungible option tokens — tradeable,
+transferrable, and tangible.
 
-For those who write options, their stake in the underlying assets is depicted through a unique Claim token. This token can be redeemed, reflecting the asset's current status, be it exercised or not.
+For those who write options, their stake in the underlying assets is depicted
+through a unique Claim token, representing the short positon. This token can be
+redeemed, reflecting the asset's current status, be it exercised or not.
 
 To provide a snapshot:
 - **Underlying Asset & Amount:** The ERC-20 asset you'll receive when you exercise.
 - **Exercise Asset & Amount:** The requisite ERC-20 asset and amount for option exercise.
 - **Exercise & Expiry Timestamp:** The windows defining when the option can be exercised.
 
-The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where you purchase it, its profitability upon exercise—Valorem doesn't judge. With every option written, the settlement is swift and gas-friendly.
+With these parameters, you can configure any type of option to suit your needs.
+
+The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where
+you purchase it, its profitability upon exercise — Valorem doesn't judge. With
+every option written, the settlement is swift and gas-friendly.
+
+### Venture Into Creating Options On-Chain
+Valorem is pioneering a new era of flexible permissionless derivatives.
+Every Valorem option is crafted through a set of 6 parameters, providing
+the unparalleled flexibility to conceive options for any pair of ERC-20 assets.
+This is however a novel way of thinking, but we have designed it to be
+lightweight and intuitive for any options trader to transition into the world of
+on-chain options.
+
+Here we will walk through how to create a vanilla call and put, directly with Valorem Clear.
+
+You can create new option types with clear using the `newOptionType` function,
+specifying the option parameters, and then write using the `write` funtion.
+See the [Clear smart contract ABI](/docs/clear-contracts/) for more detail.
+
+#### Call Option
+A call option gives the holder the right to buy an asset at a specified price (strike
+price) within the exercise window. The option writer (or whoever holds the short
+side token) is obligated to sell the asset at the strike price if the option is
+exercised. For Valorem options, the short side token is the Claim token minted
+upon writing options. This gives the holder claim to the corresponding assets,
+which can be redeemed after the option expires.
+
+This is how one would construct an American ETH call option, with a strike price of
+$4000, and expiry 2 days from now.
+
+- `underlyingAsset`: The contract address of WETH
+- `underlyingAmount`: 1 ETH in wei ($1 \times 10^{18}$)
+- `exerciseAsset`: The contract address of USDC
+- `exerciseAmount`: 4000 USDC in wei ($4000 \times 10^{6}$)
+- `exerciseTimestamp`: The timestamp of now
+- `expiryTimestamp`: The timestamp of 2 days from now
+
+The option writer can then `write` their desired number of option contracts, specifying the
+option token id unique to these parameters.
+
+#### Put Option
+For a put option, the holder has the right to sell an asset at a specified
+price. Valorem allows put options to be created by swapping the underlying and
+exercise assets. This draws upon a concept called put-call parity.
+
+This is how one would construct an American ETH call option, with a strike price of
+$4000, and expiry 2 days from now.
+
+- `underlyingAsset`: The contract address of USDC
+- `underlyingAmount`: 4000 USDC in wei ($4000 \times 10^{6}$)
+- `exerciseAsset`: The contract address of WETH
+- `exerciseAmount`: 1 ETH in wei ($1 \times 10^{18}$)
+- `exerciseTimestamp`: The timestamp of now
+- `expiryTimestamp`: The timestamp of 2 days from now
+
 
 ## Trust Landscape
 
@@ -40,7 +104,7 @@ The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where
     - Collecting the accrued fees.
 
 2. **Option Writers:** The creators who give birth to options. Their capabilities are:
-    - Crafting new option types for valid ERC-20 asset pairs, albeit with certain exceptions.
+    - Crafting new option types for valid ERC-20 asset pairs.
     - Writing new options and staking the required amount of the underlying asset.
     - Redeeming their Claim NFT after the option's expiration to retrieve their proportionate share of the underlying and exercise assets.
 
@@ -78,7 +142,7 @@ The elegance of Valorem Clear? It's neutral. Whether it's a call or a put, where
 
 ## Safety First
 
-While Valorem Clear v1.0.0 has been diligently audited, it's essential to note a medium-risk observation. The odds of an option bucket being chosen for an exercise isn't strictly proportional to its size. This means smaller buckets might have a marginally higher chance of selection. Our tech wizards are hard at work, devising a remedy. Until then, for the curious minds, the nitty-gritty can be found at [LibDDRV](https://github.com/valorem-labs-inc/LibDDRV).
+While Valorem Clear v1.0.0 has been diligently audited, it is essential to note the odds of an option bucket being chosen for an exercise isn't strictly proportional to its size. This means smaller buckets might have a marginally higher chance of selection. Our tech wizards are hard at work, devising a remedy. Until then, for the curious minds, the nitty-gritty can be found at [LibDDRV](https://github.com/valorem-labs-inc/LibDDRV).
 
 - Deep Dives: [Audit Chronicles](https://github.com/valorem-labs-inc/valorem-core/tree/master/audits)
-- Connect with our Security Guardians: info(at)valorem(dot)xyz
+- Connect with our Security Guardians: info@valorem.xyz
