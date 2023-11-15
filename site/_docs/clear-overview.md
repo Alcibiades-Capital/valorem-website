@@ -150,4 +150,4 @@ While Valorem Clear v1.0.0 has been diligently audited, it is essential to note 
 - Connect with our Security Guardians: info@valorem.xyz
 
 
-\* Valorem Clear is currently not compatible with ERC-20 assets that have a fee on transfer.
+\* Valorem Clear is currently not compatible with ERC-20 tokens that have a fee on transfer.
