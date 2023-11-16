@@ -12,6 +12,211 @@ on [GitHub](https://github.com/valorem-labs-inc/valorem-core).
 The `ValoremOptionsClearinghouse` implements the `IValoremOptionsClearinghouse`
 and [`ERC1155Metadata_URI`](https://eips.ethereum.org/EIPS/eip-1155) interfaces.
 
+## Write options
+
+#### newOptionType
+
+Creates a new option contract type if it doesn't already exist.
+
+- `underlyingAsset`: The contract address of the ERC20 underlying asset.
+- `underlyingAmount`: The amount of underlyingAsset, in wei, collateralizing each option contract.
+- `exerciseAsset`: The contract address of the ERC20 exercise asset.
+- `exerciseAmount`: The amount of exerciseAsset, in wei, required to exercise each option contract.
+- `exerciseTimestamp`: The timestamp after which this option can be exercised.
+- `expiryTimestamp`: The timestamp before which this option can be exercised.
+
+Returns `optionId`: The token id for the new option type created by this call.
+
+_Dev note — optionId can be precomputed using:_
+
+
+```solidity
+uint160 optionKey = uint160(
+    bytes20(
+        keccak256(
+            abi.encode(
+                 underlyingAsset,
+                underlyingAmount,
+                exerciseAsset,
+                exerciseAmount,
+                exerciseTimestamp,
+                expiryTimestamp,
+                uint160(0),
+                uint96(0)
+            )
+        )
+    )
+);
+optionId = uint256(optionKey) << OPTION_ID_PADDING;
+```
+
+_and then_ `tokenType(optionId) == TokenType.Option` _to check if the option already exists._
+
+
+```solidity
+function newOptionType(
+    address underlyingAsset,
+    uint96 underlyingAmount,
+    address exerciseAsset,
+    uint96 exerciseAmount,
+    uint40 exerciseTimestamp,
+    uint40 expiryTimestamp
+) external returns (uint256 optionId);
+```
+
+#### write
+
+Writes a specified amount of the specified option.
+
+- `tokenId`: The desired token id to write against, input an optionId to get a new claim, or a claimId to add to an
+  existing claim.
+- `amount`: The desired number of option contracts to write.
+
+Returns `claimId`: The token id of the claim NFT which was input or created.
+
+
+```solidity
+function write(uint256 tokenId,
+               uint112 amount) external returns (uint256 claimId);
+```
+
+## Redeem claims
+
+#### redeem
+
+Redeems a claim NFT, transfers the underlying/exercise tokens to the caller. Can be called after option expiry
+timestamp (inclusive).
+
+- `claimId`: The ID of the claim to redeem.
+
+
+```solidity
+function redeem(uint256 claimId) external;
+```
+
+## Exercise options
+
+#### exercise
+
+Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if
+requirements are met. Can be called from exercise timestamp (inclusive), until option expiry timestamp (exclusive).
+
+- `optionId`: The option token id of the option type to exercise.
+- `amount`: The amount of option contracts to exercise.
+
+
+```solidity
+function exercise(uint256 optionId, uint112 amount) external;
+```
+
+## Views
+
+### Option information
+
+#### option
+
+Gets information about an option.
+
+- `tokenId`: The tokenId of an option or claim.
+- `optionInfo`: The Option for the given tokenId.
+
+```solidity
+function option(uint256 tokenId) external view returns (Option memory optionInfo);
+```
+
+#### claim
+
+Gets information about a claim.
+
+- `claimId`: The tokenId of the claim.
+
+```solidity
+function claim(uint256 claimId) external view returns (Claim memory claimInfo);
+```
+
+#### position
+
+Gets information about the ERC20 token positions of an option or claim.
+
+- `tokenId`: The tokenId of the option or claim.
+
+```solidity
+function position(uint256 tokenId) external view returns (Position memory positionInfo);
+```
+
+### Token information
+
+#### tokenType
+
+Gets the TokenType for a given tokenId.
+
+- `tokenId`: The token id to get the TokenType of.
+
+_Dev note — Option and claim token ids are encoded as follows:_
+
+```
+MSb
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key, created from Option struct hash.
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b auto-incrementing claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+                                          LSb
+```
+
+```solidity
+function tokenType(uint256 tokenId) external view returns (TokenType typeOfToken);
+```
+
+#### tokenURIGenerator
+
+Gets the contract address for generating token URIs for tokens.
+
+```solidity
+function tokenURIGenerator() external view returns (ITokenURIGenerator uriGenerator);
+```
+
+### Fee information
+
+#### feeBalance
+
+Gets the balance of protocol fees for a given token which have not been swept yet.
+
+- `token`: The token for the un-swept fee balance.
+
+```solidity
+function feeBalance(address token) external view returns (uint256);
+```
+
+#### feeBps
+
+Gets the protocol fee, expressed in basis points.
+
+```solidity
+function feeBps() external view returns (uint8 fee);
+```
+
+#### feesEnabled
+
+Checks if protocol fees are enabled.
+
+```solidity
+function feesEnabled() external view returns (bool enabled);
+```
+
+#### feeTo
+
+Returns the address to which protocol fees are swept.
+
+```solidity
+function feeTo() external view returns (address);
+```
+
+
 ## Structs
 
 ### Option
@@ -130,9 +335,9 @@ Emitted when new options contracts are written.
 - `amount`: The amount of options contracts written.
 
 ```solidity
-event OptionsWritten(uint256 indexed optionId, 
-                     address indexed writer, 
-                     uint256 indexed claimId, 
+event OptionsWritten(uint256 indexed optionId,
+                     address indexed writer,
+                     uint256 indexed claimId,
                      uint112 amount);
 ```
 
@@ -146,7 +351,7 @@ Emitted when options contracts are written into a bucket.
 - `amount`: The amount of options contracts written.
 
 ```solidity
-event BucketWrittenInto(uint256 indexed optionId, 
+event BucketWrittenInto(uint256 indexed optionId,
                         uint256 indexed claimId,
                         uint96 indexed bucketIndex,
                         uint112 amount);
@@ -183,7 +388,7 @@ Emitted when option contract(s) is(are) exercised.
 - `amount`: The amount of option contracts exercised.
 
 ```solidity
-event OptionsExercised(uint256 indexed optionId, 
+event OptionsExercised(uint256 indexed optionId,
                        address indexed exerciser,
                        uint112 amount);
 ```
@@ -197,7 +402,7 @@ Emitted when a bucket is assigned exercise.
 - `amountAssigned`: The amount of options contracts assigned exercise in the given bucket.
 
 ```solidity
-event BucketAssignedExercise(uint256 indexed optionId, 
+event BucketAssignedExercise(uint256 indexed optionId,
                              uint96 indexed bucketIndex,
                              uint112 amountAssigned);
 ```
@@ -218,8 +423,8 @@ exercise asset. Will not be emitted when feesEnabled is false._
 
 
 ```solidity
-event FeeAccrued(uint256 indexed optionId, 
-                 address indexed asset, 
+event FeeAccrued(uint256 indexed optionId,
+                 address indexed asset,
                  address indexed payer,
                  uint256 amount);
 ```
@@ -248,7 +453,7 @@ Emitted when protocol fees are enabled or disabled.
 
 
 ```solidity
-event FeeSwitchUpdated(address feeTo, 
+event FeeSwitchUpdated(address feeTo,
                        bool enabled);
 ```
 
@@ -289,7 +494,7 @@ The caller doesn't have permission to access that function.
 
 
 ```solidity
-error AccessControlViolation(address accessor, 
+error AccessControlViolation(address accessor,
                              address permissioned);
 ```
 
@@ -452,209 +657,6 @@ The requested token is not found.
 error TokenNotFound(uint256 token);
 ```
 
-## Views
-
-### Option information
-
-#### option
-
-Gets information about an option.
-
-- `tokenId`: The tokenId of an option or claim.
-- `optionInfo`: The Option for the given tokenId.
-
-```solidity
-function option(uint256 tokenId) external view returns (Option memory optionInfo);
-```
-
-#### claim
-
-Gets information about a claim.
-
-- `claimId`: The tokenId of the claim.
-
-```solidity
-function claim(uint256 claimId) external view returns (Claim memory claimInfo);
-```
-
-#### position
-
-Gets information about the ERC20 token positions of an option or claim.
-
-- `tokenId`: The tokenId of the option or claim.
-
-```solidity
-function position(uint256 tokenId) external view returns (Position memory positionInfo);
-```
-
-### Token information
-
-#### tokenType
-
-Gets the TokenType for a given tokenId.
-
-- `tokenId`: The token id to get the TokenType of.
-
-_Dev note — Option and claim token ids are encoded as follows:_
-
-```
-MSb
-0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key, created from Option struct hash.
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 ┘
-0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b auto-incrementing claim key.
-0000 0000   0000 0000   0000 0000   0000 0000 ┘
-                                          LSb
-```
-
-```solidity
-function tokenType(uint256 tokenId) external view returns (TokenType typeOfToken);
-```
-
-#### tokenURIGenerator
-
-Gets the contract address for generating token URIs for tokens.
-
-```solidity
-function tokenURIGenerator() external view returns (ITokenURIGenerator uriGenerator);
-```
-
-### Fee information
-
-#### feeBalance
-
-Gets the balance of protocol fees for a given token which have not been swept yet.
-
-- `token`: The token for the un-swept fee balance.
-
-```solidity
-function feeBalance(address token) external view returns (uint256);
-```
-
-#### feeBps
-
-Gets the protocol fee, expressed in basis points.
-
-```solidity
-function feeBps() external view returns (uint8 fee);
-```
-
-#### feesEnabled
-
-Checks if protocol fees are enabled.
-
-```solidity
-function feesEnabled() external view returns (bool enabled);
-```
-
-#### feeTo
-
-Returns the address to which protocol fees are swept.
-
-```solidity
-function feeTo() external view returns (address);
-```
-
-## Write options
-
-#### newOptionType
-
-Creates a new option contract type if it doesn't already exist.
-
-- `underlyingAsset`: The contract address of the ERC20 underlying asset.
-- `underlyingAmount`: The amount of underlyingAsset, in wei, collateralizing each option contract.
-- `exerciseAsset`: The contract address of the ERC20 exercise asset.
-- `exerciseAmount`: The amount of exerciseAsset, in wei, required to exercise each option contract.
-- `exerciseTimestamp`: The timestamp after which this option can be exercised.
-- `expiryTimestamp`: The timestamp before which this option can be exercised.
-
-Returns `optionId`: The token id for the new option type created by this call.
-
-_Dev note — optionId can be precomputed using:_
-
-
-```solidity
-uint160 optionKey = uint160(
-    bytes20(
-        keccak256(
-            abi.encode(
-                 underlyingAsset,
-                underlyingAmount,
-                exerciseAsset,
-                exerciseAmount,
-                exerciseTimestamp,
-                expiryTimestamp,
-                uint160(0),
-                uint96(0)
-            )
-        )
-    )
-);
-optionId = uint256(optionKey) << OPTION_ID_PADDING;
-```
-
-_and then_ `tokenType(optionId) == TokenType.Option` _to check if the option already exists._
-
-
-```solidity
-function newOptionType(
-    address underlyingAsset,
-    uint96 underlyingAmount,
-    address exerciseAsset,
-    uint96 exerciseAmount,
-    uint40 exerciseTimestamp,
-    uint40 expiryTimestamp
-) external returns (uint256 optionId);
-```
-
-#### write
-
-Writes a specified amount of the specified option.
-
-- `tokenId`: The desired token id to write against, input an optionId to get a new claim, or a claimId to add to an
-  existing claim.
-- `amount`: The desired number of option contracts to write.
-
-Returns `claimId`: The token id of the claim NFT which was input or created.
-
-
-```solidity
-function write(uint256 tokenId,
-               uint112 amount) external returns (uint256 claimId);
-```
-
-## Redeem claims
-
-#### redeem
-
-Redeems a claim NFT, transfers the underlying/exercise tokens to the caller. Can be called after option expiry
-timestamp (inclusive).
-
-- `claimId`: The ID of the claim to redeem.
-
-
-```solidity
-function redeem(uint256 claimId) external;
-```
-
-## Exercise options
-
-#### exercise
-
-Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if
-requirements are met. Can be called from exercise timestamp (inclusive), until option expiry timestamp (exclusive).
-
-- `optionId`: The option token id of the option type to exercise.
-- `amount`: The amount of option contracts to exercise.
-
-
-```solidity
-function exercise(uint256 optionId, uint112 amount) external;
-```
 
 ## Protocol administration
 
