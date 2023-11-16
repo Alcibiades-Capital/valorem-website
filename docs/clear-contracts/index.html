@@ -76,7 +76,7 @@
         },
         "datePublished":"2022-11-29T19:00:00-05:00",
         "dateCreated":"2022-11-29T19:00:00-05:00",
-        "dateModified":"2023-11-10T09:26:17-05:00",
+        "dateModified":"2023-11-16T13:32:20-05:00",
         "description":"Explore Valorem Clear’s ABI — An interface to efficient option contract clearing and settlement system compatible with all EVMs and ERC20s. A must-read for developers integrating with the Valorem protocol.
 ",
         "url":"https://valorem.xyz/docs/clear-contracts/",
@@ -349,9 +349,211 @@ on <a href="https://github.com/valorem-labs-inc/valorem-core">GitHub</a>.</p>
 <p>The <code class="language-plaintext highlighter-rouge">ValoremOptionsClearinghouse</code> implements the <code class="language-plaintext highlighter-rouge">IValoremOptionsClearinghouse</code>
 and <a href="https://eips.ethereum.org/EIPS/eip-1155"><code class="language-plaintext highlighter-rouge">ERC1155Metadata_URI</code></a> interfaces.</p>
 
+<h2 id="write-options">Write options</h2>
+
+<h4 id="newoptiontype">newOptionType</h4>
+
+<p>Creates a new option contract type if it doesn’t already exist.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">underlyingAsset</code>: The contract address of the ERC20 underlying asset.</li>
+  <li><code class="language-plaintext highlighter-rouge">underlyingAmount</code>: The amount of underlyingAsset, in wei, collateralizing each option contract.</li>
+  <li><code class="language-plaintext highlighter-rouge">exerciseAsset</code>: The contract address of the ERC20 exercise asset.</li>
+  <li><code class="language-plaintext highlighter-rouge">exerciseAmount</code>: The amount of exerciseAsset, in wei, required to exercise each option contract.</li>
+  <li><code class="language-plaintext highlighter-rouge">exerciseTimestamp</code>: The timestamp after which this option can be exercised.</li>
+  <li><code class="language-plaintext highlighter-rouge">expiryTimestamp</code>: The timestamp before which this option can be exercised.</li>
+</ul>
+
+<p>Returns <code class="language-plaintext highlighter-rouge">optionId</code>: The token id for the new option type created by this call.</p>
+
+<p><em>Dev note — optionId can be precomputed using:</em></p>
+
+<pre><code class="language-solidity">uint160 optionKey = uint160(
+    bytes20(
+        keccak256(
+            abi.encode(
+                 underlyingAsset,
+                underlyingAmount,
+                exerciseAsset,
+                exerciseAmount,
+                exerciseTimestamp,
+                expiryTimestamp,
+                uint160(0),
+                uint96(0)
+            )
+        )
+    )
+);
+optionId = uint256(optionKey) &lt;&lt; OPTION_ID_PADDING;
+</code></pre>
+
+<p><em>and then</em> <code class="language-plaintext highlighter-rouge">tokenType(optionId) == TokenType.Option</code> <em>to check if the option already exists.</em></p>
+
+<pre><code class="language-solidity">function newOptionType(
+    address underlyingAsset,
+    uint96 underlyingAmount,
+    address exerciseAsset,
+    uint96 exerciseAmount,
+    uint40 exerciseTimestamp,
+    uint40 expiryTimestamp
+) external returns (uint256 optionId);
+</code></pre>
+
+<h4 id="write">write</h4>
+
+<p>Writes a specified amount of the specified option.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The desired token id to write against, input an optionId to get a new claim, or a claimId to add to an
+existing claim.</li>
+  <li><code class="language-plaintext highlighter-rouge">amount</code>: The desired number of option contracts to write.</li>
+</ul>
+
+<p>Returns <code class="language-plaintext highlighter-rouge">claimId</code>: The token id of the claim NFT which was input or created.</p>
+
+<pre><code class="language-solidity">function write(uint256 tokenId,
+               uint112 amount) external returns (uint256 claimId);
+</code></pre>
+
+<h2 id="redeem-claims">Redeem claims</h2>
+
+<h4 id="redeem">redeem</h4>
+
+<p>Redeems a claim NFT, transfers the underlying/exercise tokens to the caller. Can be called after option expiry
+timestamp (inclusive).</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">claimId</code>: The ID of the claim to redeem.</li>
+</ul>
+
+<pre><code class="language-solidity">function redeem(uint256 claimId) external;
+</code></pre>
+
+<h2 id="exercise-options">Exercise options</h2>
+
+<h4 id="exercise">exercise</h4>
+
+<p>Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if
+requirements are met. Can be called from exercise timestamp (inclusive), until option expiry timestamp (exclusive).</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">optionId</code>: The option token id of the option type to exercise.</li>
+  <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of option contracts to exercise.</li>
+</ul>
+
+<pre><code class="language-solidity">function exercise(uint256 optionId, uint112 amount) external;
+</code></pre>
+
+<h2 id="views">Views</h2>
+
+<h3 id="option-information">Option information</h3>
+
+<h4 id="option">option</h4>
+
+<p>Gets information about an option.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The tokenId of an option or claim.</li>
+  <li><code class="language-plaintext highlighter-rouge">optionInfo</code>: The Option for the given tokenId.</li>
+</ul>
+
+<pre><code class="language-solidity">function option(uint256 tokenId) external view returns (Option memory optionInfo);
+</code></pre>
+
+<h4 id="claim">claim</h4>
+
+<p>Gets information about a claim.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">claimId</code>: The tokenId of the claim.</li>
+</ul>
+
+<pre><code class="language-solidity">function claim(uint256 claimId) external view returns (Claim memory claimInfo);
+</code></pre>
+
+<h4 id="position">position</h4>
+
+<p>Gets information about the ERC20 token positions of an option or claim.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The tokenId of the option or claim.</li>
+</ul>
+
+<pre><code class="language-solidity">function position(uint256 tokenId) external view returns (Position memory positionInfo);
+</code></pre>
+
+<h3 id="token-information">Token information</h3>
+
+<h4 id="tokentype">tokenType</h4>
+
+<p>Gets the TokenType for a given tokenId.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The token id to get the TokenType of.</li>
+</ul>
+
+<p><em>Dev note — Option and claim token ids are encoded as follows:</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MSb
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key, created from Option struct hash.
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 │
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+0000 0000   0000 0000   0000 0000   0000 0000 ┐
+0000 0000   0000 0000   0000 0000   0000 0000 │ 96b auto-incrementing claim key.
+0000 0000   0000 0000   0000 0000   0000 0000 ┘
+                                          LSb
+</code></pre></div></div>
+
+<pre><code class="language-solidity">function tokenType(uint256 tokenId) external view returns (TokenType typeOfToken);
+</code></pre>
+
+<h4 id="tokenurigenerator">tokenURIGenerator</h4>
+
+<p>Gets the contract address for generating token URIs for tokens.</p>
+
+<pre><code class="language-solidity">function tokenURIGenerator() external view returns (ITokenURIGenerator uriGenerator);
+</code></pre>
+
+<h3 id="fee-information">Fee information</h3>
+
+<h4 id="feebalance">feeBalance</h4>
+
+<p>Gets the balance of protocol fees for a given token which have not been swept yet.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">token</code>: The token for the un-swept fee balance.</li>
+</ul>
+
+<pre><code class="language-solidity">function feeBalance(address token) external view returns (uint256);
+</code></pre>
+
+<h4 id="feebps">feeBps</h4>
+
+<p>Gets the protocol fee, expressed in basis points.</p>
+
+<pre><code class="language-solidity">function feeBps() external view returns (uint8 fee);
+</code></pre>
+
+<h4 id="feesenabled">feesEnabled</h4>
+
+<p>Checks if protocol fees are enabled.</p>
+
+<pre><code class="language-solidity">function feesEnabled() external view returns (bool enabled);
+</code></pre>
+
+<h4 id="feeto">feeTo</h4>
+
+<p>Returns the address to which protocol fees are swept.</p>
+
+<pre><code class="language-solidity">function feeTo() external view returns (address);
+</code></pre>
+
 <h2 id="structs">Structs</h2>
 
-<h3 id="option">Option</h3>
+<h3 id="option-1">Option</h3>
 
 <p>Data comprising the unique tuple of an option type associated with an ERC-1155 option token.</p>
 
@@ -378,7 +580,7 @@ and <a href="https://eips.ethereum.org/EIPS/eip-1155"><code class="language-plai
 }
 </code></pre>
 
-<h3 id="claim">Claim</h3>
+<h3 id="claim-1">Claim</h3>
 
 <p>Data about a claim to a short position written on an option type.
 When writing an amount of options of a particular type, the writer will be issued an ERC 1155 NFT
@@ -400,7 +602,7 @@ and what portion of this claim was assigned exercise, if any, before expiry.</p>
 }
 </code></pre>
 
-<h3 id="position">Position</h3>
+<h3 id="position-1">Position</h3>
 
 <p>Data about the ERC20 assets and liabilities for a given option (long) or claim (short) token,
 in terms of the underlying and exercise ERC20 tokens.</p>
@@ -422,7 +624,7 @@ in terms of the underlying and exercise ERC20 tokens.</p>
 
 <h2 id="enums">Enums</h2>
 
-<h3 id="tokentype">TokenType</h3>
+<h3 id="tokentype-1">TokenType</h3>
 
 <p>The type of ERC1155 subtoken in Valorem Clear.</p>
 
@@ -437,7 +639,7 @@ in terms of the underlying and exercise ERC20 tokens.</p>
 
 <h3 id="write-events">Write events</h3>
 
-<h4 id="newoptiontype">newOptionType</h4>
+<h4 id="newoptiontype-1">newOptionType</h4>
 
 <p>Emitted when a new option type is created.</p>
 
@@ -471,9 +673,9 @@ in terms of the underlying and exercise ERC20 tokens.</p>
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of options contracts written.</li>
 </ul>
 
-<pre><code class="language-solidity">event OptionsWritten(uint256 indexed optionId, 
-                     address indexed writer, 
-                     uint256 indexed claimId, 
+<pre><code class="language-solidity">event OptionsWritten(uint256 indexed optionId,
+                     address indexed writer,
+                     uint256 indexed claimId,
                      uint112 amount);
 </code></pre>
 
@@ -488,7 +690,7 @@ in terms of the underlying and exercise ERC20 tokens.</p>
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of options contracts written.</li>
 </ul>
 
-<pre><code class="language-solidity">event BucketWrittenInto(uint256 indexed optionId, 
+<pre><code class="language-solidity">event BucketWrittenInto(uint256 indexed optionId,
                         uint256 indexed claimId,
                         uint96 indexed bucketIndex,
                         uint112 amount);
@@ -527,7 +729,7 @@ in terms of the underlying and exercise ERC20 tokens.</p>
   <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of option contracts exercised.</li>
 </ul>
 
-<pre><code class="language-solidity">event OptionsExercised(uint256 indexed optionId, 
+<pre><code class="language-solidity">event OptionsExercised(uint256 indexed optionId,
                        address indexed exerciser,
                        uint112 amount);
 </code></pre>
@@ -542,7 +744,7 @@ in terms of the underlying and exercise ERC20 tokens.</p>
   <li><code class="language-plaintext highlighter-rouge">amountAssigned</code>: The amount of options contracts assigned exercise in the given bucket.</li>
 </ul>
 
-<pre><code class="language-solidity">event BucketAssignedExercise(uint256 indexed optionId, 
+<pre><code class="language-solidity">event BucketAssignedExercise(uint256 indexed optionId,
                              uint96 indexed bucketIndex,
                              uint112 amountAssigned);
 </code></pre>
@@ -563,8 +765,8 @@ in terms of the underlying and exercise ERC20 tokens.</p>
 <p><em>Dev note — Emitted on write() when fees are accrued on the underlying asset, or exercise() when fees are accrued on the
 exercise asset. Will not be emitted when feesEnabled is false.</em></p>
 
-<pre><code class="language-solidity">event FeeAccrued(uint256 indexed optionId, 
-                 address indexed asset, 
+<pre><code class="language-solidity">event FeeAccrued(uint256 indexed optionId,
+                 address indexed asset,
                  address indexed payer,
                  uint256 amount);
 </code></pre>
@@ -593,7 +795,7 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">enabled</code>: Whether fees are enabled or disabled.</li>
 </ul>
 
-<pre><code class="language-solidity">event FeeSwitchUpdated(address feeTo, 
+<pre><code class="language-solidity">event FeeSwitchUpdated(address feeTo,
                        bool enabled);
 </code></pre>
 
@@ -634,7 +836,7 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
   <li><code class="language-plaintext highlighter-rouge">permissioned</code>: The address which has the requisite permissions.</li>
 </ul>
 
-<pre><code class="language-solidity">error AccessControlViolation(address accessor, 
+<pre><code class="language-solidity">error AccessControlViolation(address accessor,
                              address permissioned);
 </code></pre>
 
@@ -800,208 +1002,6 @@ exercise asset. Will not be emitted when feesEnabled is false.</em></p>
 <pre><code class="language-solidity">error TokenNotFound(uint256 token);
 </code></pre>
 
-<h2 id="views">Views</h2>
-
-<h3 id="option-information">Option information</h3>
-
-<h4 id="option-1">option</h4>
-
-<p>Gets information about an option.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The tokenId of an option or claim.</li>
-  <li><code class="language-plaintext highlighter-rouge">optionInfo</code>: The Option for the given tokenId.</li>
-</ul>
-
-<pre><code class="language-solidity">function option(uint256 tokenId) external view returns (Option memory optionInfo);
-</code></pre>
-
-<h4 id="claim-1">claim</h4>
-
-<p>Gets information about a claim.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">claimId</code>: The tokenId of the claim.</li>
-</ul>
-
-<pre><code class="language-solidity">function claim(uint256 claimId) external view returns (Claim memory claimInfo);
-</code></pre>
-
-<h4 id="position-1">position</h4>
-
-<p>Gets information about the ERC20 token positions of an option or claim.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The tokenId of the option or claim.</li>
-</ul>
-
-<pre><code class="language-solidity">function position(uint256 tokenId) external view returns (Position memory positionInfo);
-</code></pre>
-
-<h3 id="token-information">Token information</h3>
-
-<h4 id="tokentype-1">tokenType</h4>
-
-<p>Gets the TokenType for a given tokenId.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The token id to get the TokenType of.</li>
-</ul>
-
-<p><em>Dev note — Option and claim token ids are encoded as follows:</em></p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MSb
-0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │ 160b option key, created from Option struct hash.
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 │
-0000 0000   0000 0000   0000 0000   0000 0000 ┘
-0000 0000   0000 0000   0000 0000   0000 0000 ┐
-0000 0000   0000 0000   0000 0000   0000 0000 │ 96b auto-incrementing claim key.
-0000 0000   0000 0000   0000 0000   0000 0000 ┘
-                                          LSb
-</code></pre></div></div>
-
-<pre><code class="language-solidity">function tokenType(uint256 tokenId) external view returns (TokenType typeOfToken);
-</code></pre>
-
-<h4 id="tokenurigenerator">tokenURIGenerator</h4>
-
-<p>Gets the contract address for generating token URIs for tokens.</p>
-
-<pre><code class="language-solidity">function tokenURIGenerator() external view returns (ITokenURIGenerator uriGenerator);
-</code></pre>
-
-<h3 id="fee-information">Fee information</h3>
-
-<h4 id="feebalance">feeBalance</h4>
-
-<p>Gets the balance of protocol fees for a given token which have not been swept yet.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">token</code>: The token for the un-swept fee balance.</li>
-</ul>
-
-<pre><code class="language-solidity">function feeBalance(address token) external view returns (uint256);
-</code></pre>
-
-<h4 id="feebps">feeBps</h4>
-
-<p>Gets the protocol fee, expressed in basis points.</p>
-
-<pre><code class="language-solidity">function feeBps() external view returns (uint8 fee);
-</code></pre>
-
-<h4 id="feesenabled">feesEnabled</h4>
-
-<p>Checks if protocol fees are enabled.</p>
-
-<pre><code class="language-solidity">function feesEnabled() external view returns (bool enabled);
-</code></pre>
-
-<h4 id="feeto">feeTo</h4>
-
-<p>Returns the address to which protocol fees are swept.</p>
-
-<pre><code class="language-solidity">function feeTo() external view returns (address);
-</code></pre>
-
-<h2 id="write-options">Write options</h2>
-
-<h4 id="newoptiontype-1">newOptionType</h4>
-
-<p>Creates a new option contract type if it doesn’t already exist.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">underlyingAsset</code>: The contract address of the ERC20 underlying asset.</li>
-  <li><code class="language-plaintext highlighter-rouge">underlyingAmount</code>: The amount of underlyingAsset, in wei, collateralizing each option contract.</li>
-  <li><code class="language-plaintext highlighter-rouge">exerciseAsset</code>: The contract address of the ERC20 exercise asset.</li>
-  <li><code class="language-plaintext highlighter-rouge">exerciseAmount</code>: The amount of exerciseAsset, in wei, required to exercise each option contract.</li>
-  <li><code class="language-plaintext highlighter-rouge">exerciseTimestamp</code>: The timestamp after which this option can be exercised.</li>
-  <li><code class="language-plaintext highlighter-rouge">expiryTimestamp</code>: The timestamp before which this option can be exercised.</li>
-</ul>
-
-<p>Returns <code class="language-plaintext highlighter-rouge">optionId</code>: The token id for the new option type created by this call.</p>
-
-<p><em>Dev note — optionId can be precomputed using:</em></p>
-
-<pre><code class="language-solidity">uint160 optionKey = uint160(
-    bytes20(
-        keccak256(
-            abi.encode(
-                 underlyingAsset,
-                underlyingAmount,
-                exerciseAsset,
-                exerciseAmount,
-                exerciseTimestamp,
-                expiryTimestamp,
-                uint160(0),
-                uint96(0)
-            )
-        )
-    )
-);
-optionId = uint256(optionKey) &lt;&lt; OPTION_ID_PADDING;
-</code></pre>
-
-<p><em>and then</em> <code class="language-plaintext highlighter-rouge">tokenType(optionId) == TokenType.Option</code> <em>to check if the option already exists.</em></p>
-
-<pre><code class="language-solidity">function newOptionType(
-    address underlyingAsset,
-    uint96 underlyingAmount,
-    address exerciseAsset,
-    uint96 exerciseAmount,
-    uint40 exerciseTimestamp,
-    uint40 expiryTimestamp
-) external returns (uint256 optionId);
-</code></pre>
-
-<h4 id="write">write</h4>
-
-<p>Writes a specified amount of the specified option.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">tokenId</code>: The desired token id to write against, input an optionId to get a new claim, or a claimId to add to an
-existing claim.</li>
-  <li><code class="language-plaintext highlighter-rouge">amount</code>: The desired number of option contracts to write.</li>
-</ul>
-
-<p>Returns <code class="language-plaintext highlighter-rouge">claimId</code>: The token id of the claim NFT which was input or created.</p>
-
-<pre><code class="language-solidity">function write(uint256 tokenId,
-               uint112 amount) external returns (uint256 claimId);
-</code></pre>
-
-<h2 id="redeem-claims">Redeem claims</h2>
-
-<h4 id="redeem">redeem</h4>
-
-<p>Redeems a claim NFT, transfers the underlying/exercise tokens to the caller. Can be called after option expiry
-timestamp (inclusive).</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">claimId</code>: The ID of the claim to redeem.</li>
-</ul>
-
-<pre><code class="language-solidity">function redeem(uint256 claimId) external;
-</code></pre>
-
-<h2 id="exercise-options">Exercise options</h2>
-
-<h4 id="exercise">exercise</h4>
-
-<p>Exercises specified amount of optionId, transferring in the exercise asset, and transferring out the underlying asset if
-requirements are met. Can be called from exercise timestamp (inclusive), until option expiry timestamp (exclusive).</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">optionId</code>: The option token id of the option type to exercise.</li>
-  <li><code class="language-plaintext highlighter-rouge">amount</code>: The amount of option contracts to exercise.</li>
-</ul>
-
-<pre><code class="language-solidity">function exercise(uint256 optionId, uint112 amount) external;
-</code></pre>
-
 <h2 id="protocol-administration">Protocol administration</h2>
 
 <h4 id="setfeesenabled">setFeesEnabled</h4>
@@ -1063,7 +1063,7 @@ complete. See also acceptFeeTo().</p>
         <nav class="flex-shrink-0 w-60 text-sm hidden xl:block relative">
             <div class="sticky top-20">
                 <div class="label mb-6">On this page</div>
-                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#structs" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structs</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#option" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Option</a></li><li class=""><a href="#claim" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Claim</a></li><li class=""><a href="#position" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Position</a></li></ol></li><li class=""><a href="#enums" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Enums</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#tokentype" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">TokenType</a></li></ol></li><li class=""><a href="#events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Events</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#write-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write events</a></li><li class=""><a href="#redeem-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem events</a></li><li class=""><a href="#exercise-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise events</a></li><li class=""><a href="#fee-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fee events</a></li><li class=""><a href="#access-control-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Access control events</a></li></ol></li><li class=""><a href="#errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#access-control-errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Access control errors</a></li><li class=""><a href="#input-errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Input errors</a></li></ol></li><li class=""><a href="#views" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Views</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#option-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Option information</a></li><li class=""><a href="#token-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Token information</a></li><li class=""><a href="#fee-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fee information</a></li></ol></li><li class=""><a href="#write-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write options</a></li><li class=""><a href="#redeem-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem claims</a></li><li class=""><a href="#exercise-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise options</a></li><li class=""><a href="#protocol-administration" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol administration</a></li></ol>
+                <ol class="border-l-2 border-gray-300" id="my_toc"><li class=""><a href="#write-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write options</a></li><li class=""><a href="#redeem-claims" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem claims</a></li><li class=""><a href="#exercise-options" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise options</a></li><li class=""><a href="#views" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Views</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#option-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Option information</a></li><li class=""><a href="#token-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Token information</a></li><li class=""><a href="#fee-information" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fee information</a></li></ol></li><li class=""><a href="#structs" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Structs</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#option-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Option</a></li><li class=""><a href="#claim-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Claim</a></li><li class=""><a href="#position-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Position</a></li></ol></li><li class=""><a href="#enums" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Enums</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#tokentype-1" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">TokenType</a></li></ol></li><li class=""><a href="#events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Events</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#write-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Write events</a></li><li class=""><a href="#redeem-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Redeem events</a></li><li class=""><a href="#exercise-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Exercise events</a></li><li class=""><a href="#fee-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Fee events</a></li><li class=""><a href="#access-control-events" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Access control events</a></li></ol></li><li class=""><a href="#errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Errors</a><ol class="ml-3 sm:ml-6 border-l-2 border-gray-300"><li class=""><a href="#access-control-errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Access control errors</a></li><li class=""><a href="#input-errors" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Input errors</a></li></ol></li><li class=""><a href="#protocol-administration" class="block py-1 pl-3 sm:pl-6 -ml-1 border-l-4 border-transparent hover:border-purple-500 hover:text-purple-500 space-y-4">Protocol administration</a></li></ol>
             </div>
         </nav>
     </div>
