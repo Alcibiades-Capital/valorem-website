@@ -168,7 +168,7 @@ uses
 the upper 160 bits for fungible option token types, keyed on
 `uint160 optionKey`, and the lower 96 bits for non-fungible claim tokens
 within each option type, keyed on an auto-incrementing `uint96 claimKey`
-starting from one. This results in a 256-bit token id address space laid out as
+starting from one. This results in a 256-bit token address space laid out as
 follows:
 
 ```
