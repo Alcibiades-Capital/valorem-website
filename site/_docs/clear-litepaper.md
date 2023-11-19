@@ -2,7 +2,7 @@
 date: 2022-04-13 00:00:00 +01
 last_modified_at: 2022-05-29 00:00:00 +01
 title: Clear Litepaper
-description: Discover how Valorem revolutionizes options clearing in the decentralized space, offering unparalleled flexibility, reduced execution costs, and a promise of permission-less interactions. Explore the novel mechanisms that steer away from traditional constraints, enabling a future where decentralized finance evolves, adapts, and thrives. Embrace a new era of options clearing with Valorem Clear.
+description: Discover how Valorem disrupts options clearing in the decentralized space, offering unparalleled flexibility, reduced execution costs, and a promise of permission-less interactions. Dig deeper into the novel mechanisms that steer away from traditional constraints, enabling a future where decentralized finance evolves, adapts, and thrives.
 usemathjax: true
 redirect_from:
   - /docs/options-litepaper/
@@ -34,14 +34,14 @@ past year — both centralized exchanges, such as Deribit, and on-chain protocol
 — it is clear that significant untapped market opportunities remain.
 
 There are already a number of on-chain options market making protocols. While
-most of these trade products which emulate traditional options structures, the
-reliance on price oracles and assumptions around option premia via models
-such as Black-Scholes make them inflexible and subject to toxic orderflow.
+most of these trade products emulate traditional options structures, the
+reliance on price oracles and assumptions around premia via models
+such as Black-Scholes, make them inflexible and subject to toxic orderflow.
 Recently, protocols synthesizing options via single tick Uniswap V3 LPs have
 emerged, but they are restricted by the lack of Uniswap V3 deployment across
 EVM chains, the gas inefficiency of Uniswap V3 LP NFTs, and the pricing
 limitations of perpetual options (as opposed to ones with fixed exercise and
-expiry [timestamps](https://en.wikipedia.org/wiki/Unix_time)).
+expiry [timestamps](https://en.wikipedia.org/wiki/Unix_time).
 
 A flexible base layer, which is EVM-portable, enables the proliferation of
 derivatives products and facilitates the maturity of decentralized finance
@@ -154,7 +154,6 @@ A Valorem claim is represented with the following virtual [data structure](/docs
 is not represented directly in storage:
 
 ```solidity
-
     struct Claim {
         uint256 amountWritten;
         uint256 amountExercised;
@@ -198,9 +197,9 @@ and `type(uint96).max - 1` individual claims for each option type.
 
 Once an option type has been created, any actor can [write options](/docs/clear-contracts#write) of that
 type. Upon writing, the requisite amount of the underlying token is transferred
-in to the engine and the option writer receives a non-fungible claim token
-representing the short position, which is a claim to the underlying asset and
-the liability to accept the exercise asset on full or partial exercise
+into the engine and the option writer receives a non-fungible claim token
+representing the short position. This is a claim to the underlying asset and
+the liability to accept the exercise asset, on full or partial exercise
 assignment. In addition, the option writer receives fungible option tokens
 equal to the number of options they wrote, conferring the ability to exercise
 the option pursuant to the terms set during option type creation. Both the
@@ -208,7 +207,7 @@ option tokens and the claim NFT can be transferred to other actors on the chain.
 
 Additional options can be written on existing claims — that is, an option
 writer can add additional underlying assets to a previously written claim by
-providing the claim NFT identifier when writing.
+providing the claim NFT identifier when [writing](/docs/clear-contracts#write).
 
 ### Exercising options
 
