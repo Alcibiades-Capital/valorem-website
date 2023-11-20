@@ -46,7 +46,7 @@ every option written, the settlement is swift and gas-friendly.
 ### Venture Into Creating Options On-Chain
 Valorem is pioneering a new era of flexible permissionless derivatives.
 Every Valorem option is crafted through a set of 6 parameters, providing the
-unparalleled flexibility to conceive options for any pair of ERC-20 assets. This
+unparalleled flexibility to create options for any pair of ERC-20 assets. This
 can be a somewhat unfamiliar way of thinking about options, but we have designed
 it to be lightweight and intuitive for any options trader to transition into the
 world of on-chain options.
@@ -54,7 +54,7 @@ world of on-chain options.
 Here we will walk through how to create a vanilla call and put, directly with
 Valorem Clear.
 
-You can create new option types with clear using the `newOptionType` function,
+You can create new option types with Clear using the `newOptionType` function,
 specifying the option parameters, and then write using the `write` funtion.
 See the [Clear smart contract ABI](/docs/clear-contracts#write-options) for more detail.
 
@@ -64,9 +64,9 @@ A call option gives the holder the right to buy an asset at a specified price
 the short side token) is obligated to sell the asset at the strike price if the
 option is exercised. For Valorem options, the short side token is the Claim
 token minted upon writing options. This gives the holder claim to the
-corresponding assets, which can be redeemed after the option expires.
+corresponding assets, which may be redeemed after the option expires.
 
-This is how one would construct an American ETH call option, with a strike price
+This is how one would write an American ETH call option, with a strike price
 of $4000, and expiry 2 days from now.
 
 - `underlyingAsset`: The contract address of WETH
@@ -81,10 +81,9 @@ specifying the option token id unique to these parameters.
 
 #### Put Option
 For a put option, the holder has the right to sell an asset at a specified
-price. Valorem allows put options to be created by swapping the underlying and
-exercise assets. This draws upon a concept called put-call parity.
+price (strike price). Valorem allows put options to be created by swapping the underlying and exercise assets. This draws upon the concept of [put-call parity](https://www.cmegroup.com/education/courses/introduction-to-options/put-call-parity.html).
 
-This is how one would construct an American ETH call option, with a strike price
+This is how one would write an American ETH put option, with a strike price
 of $4000, and expiry 2 days from now.
 
 - `underlyingAsset`: The contract address of USDC
@@ -105,7 +104,7 @@ of $4000, and expiry 2 days from now.
     - Switching the protocol fees on or off.
     - Collecting the accrued fees.
 
-2. **Option Writers:** The creators who give birth to options. Their capabilities are:
+2. **Option Writers:** The creators of new options. Their capabilities are:
     - Crafting new option types for valid ERC-20 asset pairs.
     - Writing new options and staking the required amount of the underlying asset.
     - Redeeming their Claim NFT after the option's expiration to retrieve their proportionate share of the underlying and exercise assets.
@@ -143,8 +142,7 @@ of $4000, and expiry 2 days from now.
         - Toggle protocol fees, appoint a new Protocol Admin, modify the contract address of the TokenURIGenerator, and gather the accrued fees.
 
 ## Safety First
-
-While Valorem Clear v1.0.0 has been diligently audited, it is essential to note the odds of an option bucket being chosen for an exercise isn't strictly proportional to its size. This means smaller buckets might have a marginally higher chance of selection. Our tech wizards are hard at work, devising a remedy. Until then, for the curious minds, the nitty-gritty can be found at [LibDDRV](https://github.com/valorem-labs-inc/LibDDRV).
+While Valorem Clear v1.0.0 has been diligently audited, it is essential to note a limitation in its current capabilities. The odds of an option bucket being chosen for an exercise isn't strictly proportional to its size. This means smaller buckets might have a marginally higher chance of selection. Our tech wizards are hard at work, devising a remedy. Until then, for the curious minds, the nitty-gritty can be found at [LibDDRV](https://github.com/valorem-labs-inc/LibDDRV).
 
 - Deep Dives: [Audit Chronicles](https://github.com/valorem-labs-inc/valorem-core/tree/master/audits)
 - Connect with our Security Guardians: info@valorem.xyz
