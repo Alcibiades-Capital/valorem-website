@@ -38,7 +38,7 @@ There are two principal user roles in the Valorem Trade API:
 
 The Valorem Trade API uses the GoDaddy Root TLS certificate authority (CA) to
 issue certificates; some protobuf clients may need to add this CA, which can be
-found [here](certs/trade.valorem.xyz.pem).
+found [here](https://github.com/valorem-labs-inc/trade-interfaces/blob/main/certs/trade.valorem.xyz.pem).
 
 ## ALPN
 
