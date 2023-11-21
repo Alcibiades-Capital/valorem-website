@@ -24,7 +24,7 @@ advanced derivatives structures.
 
 Here's the gist: Valorem Clear utilises the
 [ERC-1155 multi-token](https://eips.ethereum.org/EIPS/eip-1155)
-capabilities. You can create options for any compliant ERC-20 duo, with a few
+capabilities. You can create options for any compliant [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) duo, with a few
 exceptions*. Once written, these options manifest as semi-fungible option tokens
  — tradeable, transferrable, and tangible.
 
@@ -123,15 +123,15 @@ of $4000, and expiry 2 days from now.
 
 ### Actions:
 
-- **General (`ERC1155` Interactions):**
-    - Anyone can peek into token balances, ownership details, transfer approvals, supported interfaces (like ERC165 and ERC1155), and render the URI for any token.
+- **General (`ERC-1155` Interactions):**
+    - Anyone can peek into token balances, ownership details, transfer approvals, supported interfaces (like ERC-165 and ERC-1155), and render the URI for any token.
 
 - **Valorem’s Options Clearinghouse Dynamics:**
     - Any participant can:
         - Dig deep into details of any Option fungible token ID or Claim non-fungible token ID.
         - Check the positions of underlying and exercise assets of any token.
         - Identify if a token ID represents an Option or a Claim.
-        - Explore contract details of the TokenURIGenerator, verify fee balances of ERC20 assets, and glean other protocol-specific details.
+        - Explore contract details of the TokenURIGenerator, verify fee balances of ERC-20 assets, and glean other protocol-specific details.
         - Craft a new Option Type or script a new Claim for an existing Option Type.
     - Claim NFT holders (Option Writers) can:
         - Write new options aligned to their Claim NFT before its expiry.
@@ -148,4 +148,4 @@ While Valorem Clear v1.0.0 has been diligently audited, it is essential to note 
 - Connect with our Security Guardians: info@valorem.xyz
 
 
-\* Valorem Clear currently does not support fee-on-transfer or rebasing ERC-20 tokens. Any tokens which alter the quantity a user holds would need to be wrapped in order to be compatible.
+\* Valorem Clear currently does not support fee-on-transfer or rebasing ERC-20 tokens. Any token that can change quantity over time must be wrapped in order to be compatible.
