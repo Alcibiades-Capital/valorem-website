@@ -1,6 +1,6 @@
 ---
 date: 2022-11-30 00:00:00
-title: Valorem Clear Overview
+title: Clear Overview
 description: Learn about the capabilities of Valorem Clear, a cutting-edge DeFi clearing and settlement system for options. Understand how it streamlines covered calls, cash-secured puts, and more.
 usemathjax: true
 redirect_from:
