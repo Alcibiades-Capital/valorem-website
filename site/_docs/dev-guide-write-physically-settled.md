@@ -9,7 +9,7 @@ in call or put options, this comprehensive tutorial provides hands-on Solidity a
 From option creation, transferring positions, exercising options, to the final steps of claim redemption, we cover it 
 all. Ready to leverage the power of Valorem Clear for optimized option writing? Let's dive in!
 
-All code examples are provided in Solidity // `forge` and CLI // `cast` (more languages to come).
+All code examples are provided in Solidity with `forge` and CLI with `cast`.
 
 ## Creating an option type
 
@@ -26,7 +26,7 @@ Here are the details of the call option we want to write:
 
 Note that this call option grants the holder the right, but not the obligation, to buy the volatile asset, in this example Wrapped Ether. The underlying asset is volatile, the exercise asset is stable, and the strike price is implicitly the exercise amount divided by the underlying amount (2100 USDC / 1 WETH = $2100).
 
-For put options, it's the inverse — the holder has the option to sell the exercise asset (WETH) at the strike price. The underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (which is still 2100 USD / 1 WETH, because for puts the underlying and exercise assets are inverted in comparision with calls).
+For put options, it's the inverse — the holder has the option to sell the exercise asset (WETH) at the strike price. The underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (which is still 2100 USDC / 1 WETH, because for puts the underlying and exercise assets are inverted in comparision with calls).
 
 In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this *Asset A In, Asset B Out* mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.
 
@@ -110,7 +110,7 @@ $ cast send $CH_ADDRESS --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY "safeTrans
 
 ## Exercising an option
 
-We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for this option type (on or after `exerciseTimestamp`, before `expiryTimestamp`), he can exercise his some or all of his position.
+We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for this option type (on or after `exerciseTimestamp`, before `expiryTimestamp`), he can exercise some or all of his position.
 
 Let's imagine for this example that the position is in-the-money, and Bob wants to exercise his options. This is done by calling the [`exercise`](/docs/clear-contracts/#exercise) function. The result is that Bob's 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e6 USDC) is transferred in to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1e18 WETH) is transferred out from the Clearinghouse to Bob.
 
