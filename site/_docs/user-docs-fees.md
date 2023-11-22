@@ -1,6 +1,6 @@
 ---
 date: 2023-09-06 00:00:00
-title: Understanding Valorem Fees
+title: Understanding Valorem Protocol Fees
 description: Dive deep into Valorem's fee structure, breaking down the maker-taker fee model for trade relays, and the associated costs for clearing and settlement. Use real-world examples to simplify the process of calculating fees when writing, trading, and exercising options on the Valorem platform.
 ---
 
