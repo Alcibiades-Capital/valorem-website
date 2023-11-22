@@ -1,7 +1,7 @@
 ---
 date: 2023-04-12 00:00:00
-title: Valorem Clear Smart Contract Addresses - Your On-Chain Gateway
-description: Unlock the power of Valorem Clear through our official smart contract addresses. Navigate with confidence in the world of on-chain derivatives, backed by our transparent and cutting-edge options clearing contracts.
+title: Clear Addresses
+description: Your On-Chain Gateway. Unlock the power of Valorem Clear through our official smart contract addresses. Navigate with confidence in the world of on-chain derivatives, backed by our transparent and cutting-edge options clearing contracts.
 ---
 
 Welcome, visionary traders and innovators, to the nerve center of Valorem Clear - our official smart contract addresses. 

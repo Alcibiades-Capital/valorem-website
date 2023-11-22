@@ -1,6 +1,6 @@
 ---
 date: 2023-04-12 00:00:00
-title: Valorem Clear Subgraph - Data Indexing & GraphQL Interface
+title: Clear Subgraph
 description: Get insights into the Valorem Clear Subgraph, a tool for indexing and querying data from Valorem Clear smart contracts using GraphQL. Discover example queries, supported networks, and how it powers frontend apps.
 ---
 
