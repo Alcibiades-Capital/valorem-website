@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-05T20:00:00-04:00",
         "dateCreated":"2023-06-05T20:00:00-04:00",
-        "dateModified":"2023-11-22T14:37:49-05:00",
+        "dateModified":"2023-11-22T14:37:22-05:00",
         "description":"Master the process of writing physically settled options on digital assets using Valorem Clear. Dive into step-by-step Solidity and CLI code examples covering option creation, transfer, exercise, and claim redemption.
 ",
         "url":"https://valorem.xyz/docs/dev-guide-write-physically-settled/",
@@ -346,7 +346,7 @@ in call or put options, this comprehensive tutorial provides hands-on Solidity a
 From option creation, transferring positions, exercising options, to the final steps of claim redemption, we cover it 
 all. Ready to leverage the power of Valorem Clear for optimized option writing? Let’s dive in!</p>
 
-<p>All code examples are provided in Solidity with <code class="language-plaintext highlighter-rouge">forge</code> and CLI with <code class="language-plaintext highlighter-rouge">cast</code>.</p>
+<p>All code examples are provided in Solidity // <code class="language-plaintext highlighter-rouge">forge</code> and CLI // <code class="language-plaintext highlighter-rouge">cast</code> (more languages to come).</p>
 
 <h2 id="creating-an-option-type">Creating an option type</h2>
 
@@ -365,11 +365,11 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
 
 <p>Note that this call option grants the holder the right, but not the obligation, to buy the volatile asset, in this example Wrapped Ether. The underlying asset is volatile, the exercise asset is stable, and the strike price is implicitly the exercise amount divided by the underlying amount (2100 USDC / 1 WETH = $2100).</p>
 
-<p>For put options, it’s the inverse — the holder has the option to sell the exercise asset (WETH) at the strike price. The underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (which is still 2100 USDC / 1 WETH, because for puts the underlying and exercise assets are inverted in comparision with calls).</p>
+<p>For put options, it’s the inverse — the holder has the option to sell the exercise asset (WETH) at the strike price. The underlying asset is stable, the exercise asset is volatile, and the strike is the underlying amount divided by the exercise amount (which is still 2100 USD / 1 WETH, because for puts the underlying and exercise assets are inverted in comparision with calls).</p>
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="a27b9f2a-e98a-4da1-98d5-7969c4b73132" data-name="log">
+<ul class="tab" data-tab="aa008a65-6483-4726-a96a-5bac5de7051a" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -380,7 +380,7 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
       </li>
   
 </ul>
-<ul class="tab-content" id="a27b9f2a-e98a-4da1-98d5-7969c4b73132" data-name="log">
+<ul class="tab-content" id="aa008a65-6483-4726-a96a-5bac5de7051a" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice creates a new option type.
@@ -415,7 +415,7 @@ uint256 optionId = clearinghouse.newOptionType({
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="3403733a-5871-4b15-a66e-7fcca4e387c1" data-name="log">
+<ul class="tab" data-tab="bfb87a20-865c-4f1c-9f79-0d18eef87748" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -426,7 +426,7 @@ uint256 optionId = clearinghouse.newOptionType({
       </li>
   
 </ul>
-<ul class="tab-content" id="3403733a-5871-4b15-a66e-7fcca4e387c1" data-name="log">
+<ul class="tab-content" id="bfb87a20-865c-4f1c-9f79-0d18eef87748" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice writes 10 options.
@@ -448,7 +448,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="0830223f-5a1e-4bc7-af26-16365bcbc479" data-name="log">
+<ul class="tab" data-tab="0151ae4c-9df0-499a-8fa6-4e0570dbf7d3" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -459,7 +459,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
       </li>
   
 </ul>
-<ul class="tab-content" id="0830223f-5a1e-4bc7-af26-16365bcbc479" data-name="log">
+<ul class="tab-content" id="0151ae4c-9df0-499a-8fa6-4e0570dbf7d3" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice transfers 4 options to Bob.
@@ -476,13 +476,13 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
 
 <h2 id="exercising-an-option">Exercising an option</h2>
 
-<p>We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for this option type (on or after <code class="language-plaintext highlighter-rouge">exerciseTimestamp</code>, before <code class="language-plaintext highlighter-rouge">expiryTimestamp</code>), he can exercise some or all of his position.</p>
+<p>We have transferred some of our Option tokens to Bob, and as long as it is within the exercise window defined for this option type (on or after <code class="language-plaintext highlighter-rouge">exerciseTimestamp</code>, before <code class="language-plaintext highlighter-rouge">expiryTimestamp</code>), he can exercise his some or all of his position.</p>
 
 <p>Let’s imagine for this example that the position is in-the-money, and Bob wants to exercise his options. This is done by calling the <a href="/docs/clear-contracts/#exercise"><code class="language-plaintext highlighter-rouge">exercise</code></a> function. The result is that Bob’s 4 Option tokens are burned, the required amount of the exercise asset (4 * 2100e6 USDC) is transferred in to the Clearinghouse from Bob, and the correct amount of the underlying asset (4 * 1e18 WETH) is transferred out from the Clearinghouse to Bob.</p>
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="bcbd9601-a5cd-4680-8346-edda7c8b9ef8" data-name="log">
+<ul class="tab" data-tab="2b84320c-80fc-4b24-938c-2e7826fb2b2c" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -493,7 +493,7 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
       </li>
   
 </ul>
-<ul class="tab-content" id="bcbd9601-a5cd-4680-8346-edda7c8b9ef8" data-name="log">
+<ul class="tab-content" id="2b84320c-80fc-4b24-938c-2e7826fb2b2c" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the exercise timestamp.
@@ -524,7 +524,7 @@ clearinghouse.exercise(optionId, 4);
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="62473911-aecf-4d28-bf80-0e3f6b87fee7" data-name="log">
+<ul class="tab" data-tab="8934231a-4704-4b6b-b275-7d1c176b9b51" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -535,7 +535,7 @@ clearinghouse.exercise(optionId, 4);
       </li>
   
 </ul>
-<ul class="tab-content" id="62473911-aecf-4d28-bf80-0e3f6b87fee7" data-name="log">
+<ul class="tab-content" id="8934231a-4704-4b6b-b275-7d1c176b9b51" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the expiry timestamp.
