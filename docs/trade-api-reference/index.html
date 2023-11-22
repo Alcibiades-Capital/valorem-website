@@ -43,14 +43,14 @@
     <link rel="alternate" type="application/atom+xml" title="Valorem - Pioneering On-Chain Derivatives Trading with Unmatched Liquidity" href="/feed.xml" title="Valorem - Pioneering On-Chain Derivatives Trading with Unmatched Liquidity">
 
     
-    <title>Valorem Trade API - Low-latency off-chain intent based RFQ</title>
-<meta property="og:title" content="Valorem Trade API - Low-latency off-chain intent based RFQ
+    <title>Trade API Reference | Valorem - Pioneering On-Chain Derivatives Trading with Unmatched Liquidity</title>
+<meta property="og:title" content="Trade API Reference
 " />
 <meta name="author" content="Valorem Protocol Team" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem’s advanced intent based RFQ.
+<meta name="description" content="Seamlessly integrate and leverage assets with Valorem’s advanced low-latency intent based RFQ. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading.
 " />
-<meta property="og:description" content="Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem’s advanced intent based RFQ.
+<meta property="og:description" content="Seamlessly integrate and leverage assets with Valorem’s advanced low-latency intent based RFQ. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading.
 " />
 <link rel="canonical" href="https://valorem.xyz/docs/trade-api-reference/" />
 <meta property="og:url" content="https://valorem.xyz/docs/trade-api-reference/" />
@@ -58,7 +58,7 @@
 <meta property="og:image" content="https://valorem.xyz/assets/images/1-default.jpg" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-11-02T20:03:16-04:00" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:image" content="https://valorem.xyz/assets/images/1-default.jpg" />
-<meta property="twitter:title" content="Valorem Trade API - Low-latency off-chain intent based RFQ
+<meta property="twitter:title" content="Trade API Reference
 " />
 <meta name="google-site-verification" content="" />
 
@@ -66,7 +66,7 @@
     {
         "@context":"https://schema.org",
         "@type":"TechArticle",
-        "headline":"Valorem Trade API - Low-latency off-chain intent based RFQ
+        "headline":"Trade API Reference
 ",
         "image":"https://valorem.xyz/assets/images/1-default.jpg",
         "author":{
@@ -76,8 +76,8 @@
         },
         "datePublished":"2023-11-02T20:03:16-04:00",
         "dateCreated":"2023-11-02T20:03:16-04:00",
-        "dateModified":"2023-11-21T17:00:31-05:00",
-        "description":"Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem’s advanced intent based RFQ.
+        "dateModified":"2023-11-22T12:08:06-05:00",
+        "description":"Seamlessly integrate and leverage assets with Valorem’s advanced low-latency intent based RFQ. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading.
 ",
         "url":"https://valorem.xyz/docs/trade-api-reference/",
         "publisher":{
@@ -339,7 +339,7 @@
         </nav>
         <article class="lg:flex-grow">
             <div class="prose">
-                <h1>Valorem Trade API - Low-latency off-chain intent based RFQ</h1>
+                <h1>Trade API Reference</h1>
                 <hr>
                 <p><em>Version: 1.0.4</em></p>
 
@@ -371,19 +371,15 @@ the maker API via the <a href="https://discord.gg/valorem">Valorem discord</a>.<
   </li>
   <li>
     <p><strong>Taker</strong>: Takers request quotes from makers and optionally
-execute signed offers via the Seaport smart contracts. Takers are presently
-required to possess a <a href="https://opensea.io/collection/valorem-access-pass">Valorem Access Pass</a> to access the API.</p>
+execute signed offers via the Seaport smart contracts.</p>
   </li>
 </ul>
-
-<p>These protections are in place to ensure that the API is not abused during the
-early access period.</p>
 
 <h2 id="tls-certificate-authority">TLS Certificate Authority</h2>
 
 <p>The Valorem Trade API uses the GoDaddy Root TLS certificate authority (CA) to
 issue certificates; some protobuf clients may need to add this CA, which can be
-found <a href="certs/trade.valorem.xyz.pem">here</a>.</p>
+found <a href="https://github.com/valorem-labs-inc/trade-interfaces/blob/main/certs/trade.valorem.xyz.pem">here</a>.</p>
 
 <h2 id="alpn">ALPN</h2>
 
@@ -551,7 +547,7 @@ ERC721 with “criteria” (explained below), and ERC1155 with criteria.</p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">item_type</code>: Designates the type of item.</li>
-  <li><code class="language-plaintext highlighter-rouge">token</code>: Designates the account of the item’s token contract (with the null<br />
+  <li><code class="language-plaintext highlighter-rouge">token</code>: Designates the account of the item’s token contract (with the null
 address used for Ether or other native tokens).</li>
   <li><code class="language-plaintext highlighter-rouge">identifier_or_criteria</code>: Represents either the ERC721 or ERC1155
 token identifier or, in the case of a criteria-based item type, a
@@ -729,7 +725,7 @@ which is passed back on the request.</p>
 
 <p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
 
-<p>The request was successful.</p>
+<p>The request was successful, the response is an <a href="https://eips.ethereum.org/EIPS/eip-4361">EIP-4361</a> nonce as a <code class="language-plaintext highlighter-rouge">string</code>.</p>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">NonceText</span> <span class="p">{</span>
   <span class="kt">string</span> <span class="na">nonce</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -804,6 +800,53 @@ address for an Auth session.</p>
 
 </code></pre></div></div>
 
+<h5 id="session"><code class="language-plaintext highlighter-rouge">Session</code></h5>
+
+<p>Returns the SIWE session information for the request’s session ID. This method provides access to details of the currently authenticated session.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">Session</span> <span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">SiweSession</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h6 id="unary-request-3">Unary request</h6>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<h6 id="unary-response-3">Unary response</h6>
+
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
+
+<p>The request was successful, the response is the <code class="language-plaintext highlighter-rouge">SiweSession</code> info.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">SiweSession</span> <span class="p">{</span>
+  <span class="n">H160</span> <span class="na">address</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">H256</span> <span class="na">chain_id</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">address</code> (<code class="language-plaintext highlighter-rouge">H160</code>): The Ethereum address of the authenticated user.</li>
+  <li><code class="language-plaintext highlighter-rouge">chain_id</code> (<code class="language-plaintext highlighter-rouge">H256</code>): The chain ID associated with the session.</li>
+</ul>
+
+<h5 id="signout"><code class="language-plaintext highlighter-rouge">SignOut</code></h5>
+
+<p>Invalidates the current session based on the request’s session ID. This method is used to end an authenticated session, effectively signing out the user.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">SignOut</span> <span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Empty</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h6 id="unary-request-4">Unary request</h6>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">SignOut</span> <span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">Empty</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h6 id="unary-response-4">Unary response</h6>
+
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
+
+<p>The request was successful, and the session has been invalidated.</p>
+
 <h3 id="fees">Fees</h3>
 
 <p>The Fees Service in Valorem Trade API provides information about the fees which
@@ -829,12 +872,16 @@ various users.</p>
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">getFeeStructure</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">FeeStructure</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h6 id="unary-request-3">Unary request</h6>
+<h6 id="unary-request-5">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span>
 </code></pre></div></div>
 
-<h6 id="unary-response-3">Unary response</h6>
+<h6 id="unary-response-5">Unary response</h6>
+
+<p><code class="language-plaintext highlighter-rouge">0 OK</code></p>
+
+<p>The request was successful, the response is the <code class="language-plaintext highlighter-rouge">FeeStructure</code> for the user.</p>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">FeeStructure</span> <span class="p">{</span>
   <span class="n">TradeFees</span> <span class="na">maker</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
@@ -1093,7 +1140,7 @@ of <code class="language-plaintext highlighter-rouge">QuoteResponse</code> messa
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">rpc</span> <span class="n">WebTaker</span> <span class="p">(</span><span class="n">QuoteRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">stream</span> <span class="n">QuoteResponse</span><span class="p">);</span>
 </code></pre></div></div>
 
-<h6 id="unary-request-4">Unary request</h6>
+<h6 id="unary-request-6">Unary request</h6>
 
 <div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">QuoteRequest</span> <span class="p">{</span>
   <span class="k">optional</span> <span class="n">H128</span> <span class="na">ulid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
