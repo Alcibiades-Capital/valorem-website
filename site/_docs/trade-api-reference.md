@@ -1,8 +1,8 @@
 ---
 date: 2023-11-03 00:03:16
 
-title: Valorem Trade API - Low-latency off-chain intent based RFQ
-description: Unleashing next-gen on-chain derivatives trading. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading. Seamlessly integrate and leverage assets with Valorem's advanced intent based RFQ. 
+title: Trade API Reference
+description: Seamlessly integrate and leverage assets with Valorem's advanced low-latency intent based RFQ. Explore the Valorem Trade API Reference Documentation – your definitive guide to our cutting-edge interface that empowers on-chain derivatives trading.
 ---
 
 *Version: 1.0.4*
@@ -32,17 +32,13 @@ There are two principal user roles in the Valorem Trade API:
   the maker API via the [Valorem discord](https://discord.gg/valorem).
 
 - **Taker**: Takers request quotes from makers and optionally
-  execute signed offers via the Seaport smart contracts. Takers are presently
-  required to possess a [Valorem Access Pass](https://opensea.io/collection/valorem-access-pass) to access the API.
-
-These protections are in place to ensure that the API is not abused during the
-early access period.
+  execute signed offers via the Seaport smart contracts.
 
 ## TLS Certificate Authority
 
 The Valorem Trade API uses the GoDaddy Root TLS certificate authority (CA) to
 issue certificates; some protobuf clients may need to add this CA, which can be
-found [here](certs/trade.valorem.xyz.pem).
+found [here](https://github.com/valorem-labs-inc/trade-interfaces/blob/main/certs/trade.valorem.xyz.pem).
 
 ## ALPN
 
@@ -217,7 +213,7 @@ message OfferItem {
 ```
 
 - `item_type`: Designates the type of item.
-- `token`: Designates the account of the item's token contract (with the null  
+- `token`: Designates the account of the item's token contract (with the null
   address used for Ether or other native tokens).
 - `identifier_or_criteria`: Represents either the ERC721 or ERC1155
   token identifier or, in the case of a criteria-based item type, a
@@ -393,7 +389,7 @@ message Empty {}
 
 `0 OK`
 
-The request was successful.
+The request was successful, the response is an [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) nonce as a `string`.
 
 ```protobuf
 message NonceText {
@@ -472,6 +468,57 @@ message H160 {
 
 ```
 
+##### `Session`
+
+Returns the SIWE session information for the request's session ID. This method provides access to details of the currently authenticated session.
+
+```protobuf
+rpc Session (Empty) returns (SiweSession);
+```
+
+###### Unary request
+
+```protobuf
+message Empty {}
+```
+
+###### Unary response
+
+`0 OK`
+
+The request was successful, the response is the `SiweSession` info.
+
+```protobuf
+message SiweSession {
+  H160 address = 1;
+  H256 chain_id = 2;
+}
+```
+
+- `address` (`H160`): The Ethereum address of the authenticated user.
+- `chain_id` (`H256`): The chain ID associated with the session.
+
+
+##### `SignOut`
+
+Invalidates the current session based on the request's session ID. This method is used to end an authenticated session, effectively signing out the user.
+
+```protobuf
+rpc SignOut (Empty) returns (Empty);
+```
+
+###### Unary request
+
+```protobuf
+rpc SignOut (Empty) returns (Empty);
+```
+
+###### Unary response
+
+`0 OK`
+
+The request was successful, and the session has been invalidated.
+
 ### Fees
 
 The Fees Service in Valorem Trade API provides information about the fees which
@@ -506,6 +553,10 @@ message Empty {}
 ```
 
 ###### Unary response
+
+`0 OK`
+
+The request was successful, the response is the `FeeStructure` for the user.
 
 ```protobuf
 message FeeStructure {
