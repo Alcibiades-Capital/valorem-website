@@ -587,5 +587,11 @@ html {
 
   .tab-content>li.active {
     display: initial;
+    overflow: auto;
+  }
+  
+  .tab-content>li.active>pre {
+    overflow-x: scroll;
+    @apply p-5 -mt-4 bg-gray-200;
   }
 }
