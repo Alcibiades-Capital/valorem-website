@@ -76,7 +76,7 @@
         },
         "datePublished":"2023-06-05T20:00:00-04:00",
         "dateCreated":"2023-06-05T20:00:00-04:00",
-        "dateModified":"2023-12-05T19:32:33-05:00",
+        "dateModified":"2023-12-05T19:32:56-05:00",
         "description":"Master the process of writing physically settled options on digital assets using Valorem Clear. Dive into step-by-step Solidity and CLI code examples covering option creation, transfer, exercise, and claim redemption.
 ",
         "url":"https://valorem.xyz/docs/dev-guide-write-physically-settled/",
@@ -369,7 +369,7 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
 
 <p>In both cases, upon exercise, the exercise asset is transferred in and the underlying asset is transferred out. The simplicity of this <em>Asset A In, Asset B Out</em> mechanism is how Valorem Clear is able to achieve gas-efficient, oracle-free clearing and settlement of option contracts.</p>
 
-<ul class="tab" data-tab="b1760316-477c-4081-88d8-c3ac5a83f5c2" data-name="log">
+<ul class="tab" data-tab="a0b75d0d-fd86-4523-9458-79b8013c5fb3" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -380,7 +380,7 @@ all. Ready to leverage the power of Valorem Clear for optimized option writing? 
       </li>
   
 </ul>
-<ul class="tab-content" id="b1760316-477c-4081-88d8-c3ac5a83f5c2" data-name="log">
+<ul class="tab-content" id="a0b75d0d-fd86-4523-9458-79b8013c5fb3" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice creates a new option type.
@@ -415,7 +415,7 @@ uint256 optionId = clearinghouse.newOptionType({
 
 <p>Note that sufficient ERC20 approval for the underlying asset, WETH, must be granted to the Clearinghouse contract before calling this function.</p>
 
-<ul class="tab" data-tab="64cffbc2-3ed7-4604-a4c0-1c90fb2eb106" data-name="log">
+<ul class="tab" data-tab="c96eaa9d-ce96-4a4b-bfec-7a929c2b574f" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -426,7 +426,7 @@ uint256 optionId = clearinghouse.newOptionType({
       </li>
   
 </ul>
-<ul class="tab-content" id="64cffbc2-3ed7-4604-a4c0-1c90fb2eb106" data-name="log">
+<ul class="tab-content" id="c96eaa9d-ce96-4a4b-bfec-7a929c2b574f" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice writes 10 options.
@@ -448,7 +448,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
 
 <p>In this example, we transfer 4 options to Bob. So we retain 6 long Option tokens and our 1 short Claim NFT, which represents our redemption rights over the correct proportion of underlying and exercise asset remaining at expiry.</p>
 
-<ul class="tab" data-tab="ed8e43b5-ae78-4892-8671-09d932b22e7a" data-name="log">
+<ul class="tab" data-tab="f59d349a-8ebe-4fbe-bd50-2b2973ae78b3" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -459,7 +459,7 @@ uint256 claimId = clearinghouse.write(optionId, 10);
       </li>
   
 </ul>
-<ul class="tab-content" id="ed8e43b5-ae78-4892-8671-09d932b22e7a" data-name="log">
+<ul class="tab-content" id="f59d349a-8ebe-4fbe-bd50-2b2973ae78b3" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Alice transfers 4 options to Bob.
@@ -482,7 +482,7 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
 
 <p>Note again that sufficient ERC20 approval must be granted by Bob to the Clearinghouse contract before calling this function (although in this case for USDC, the exercise asset).</p>
 
-<ul class="tab" data-tab="5dde8628-03c9-4ca6-be1a-db87733f8351" data-name="log">
+<ul class="tab" data-tab="2d7cd78c-5686-4df6-b76e-22054eab138e" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -493,7 +493,7 @@ clearinghouse.safeTransferFrom(ALICE, BOB, optionId, 4, "");
       </li>
   
 </ul>
-<ul class="tab-content" id="5dde8628-03c9-4ca6-be1a-db87733f8351" data-name="log">
+<ul class="tab-content" id="2d7cd78c-5686-4df6-b76e-22054eab138e" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the exercise timestamp.
@@ -524,7 +524,7 @@ clearinghouse.exercise(optionId, 4);
 
 <p>In our example, we will redeem the claim for the WETH and USDC remaining in the position. And we can always use the <a href="/docs/clear-contracts/#claim"><code class="language-plaintext highlighter-rouge">claim</code></a> function to check the exercise status of our Claim NFT before redeeming.</p>
 
-<ul class="tab" data-tab="de0b8c9a-1af8-4b6a-bf07-52852c42cc3f" data-name="log">
+<ul class="tab" data-tab="17c3b8c2-dd66-464a-8cbd-9ec31a5b15e6" data-name="log">
   
       <li class="active">
           <a href="#">solidity </a>
@@ -535,7 +535,7 @@ clearinghouse.exercise(optionId, 4);
       </li>
   
 </ul>
-<ul class="tab-content" id="de0b8c9a-1af8-4b6a-bf07-52852c42cc3f" data-name="log">
+<ul class="tab-content" id="17c3b8c2-dd66-464a-8cbd-9ec31a5b15e6" data-name="log">
   
       <li class="active">
 <pre><code class="language-solidity">// Warp to the expiry timestamp.
